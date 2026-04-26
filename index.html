@@ -8,6 +8,8 @@
 <title>ปพ.5 สมุดบันทึกการพัฒนาคุณภาพผู้เรียน</title>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://apis.google.com/js/api.js" async defer></script>
 <style>
 :root{
   --primary:#1e3a5f;--primary2:#2563a8;--accent:#f59e0b;
@@ -675,6 +677,39 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
 .plt-num{width:16px;text-align:center;}
 .plt-dash{width:8px;text-align:center;}
 .plt-pct{width:28px;text-align:center;}
+
+/* ── GOOGLE AUTH UI ── */
+#auth-overlay{
+  position:fixed;inset:0;z-index:10000;
+  background:linear-gradient(135deg,#1e3a5f 0%,#2563a8 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:20px;
+}
+#auth-overlay .auth-card{
+  background:#fff;border-radius:20px;padding:32px 24px;
+  width:100%;max-width:360px;text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,0.3);
+}
+#auth-overlay .auth-logo{font-size:48px;margin-bottom:12px;}
+#auth-overlay .auth-title{font-size:20px;font-weight:800;color:#1e3a5f;margin-bottom:4px;}
+#auth-overlay .auth-sub{font-size:13px;color:#64748b;margin-bottom:24px;line-height:1.5;}
+#auth-overlay .auth-divider{border:none;border-top:1px solid #e2e8f0;margin:20px 0;}
+#auth-overlay .auth-note{font-size:11px;color:#94a3b8;margin-top:16px;line-height:1.6;}
+#sync-status{
+  position:fixed;bottom:calc(var(--nav-h) + 4px + var(--safe-bottom));
+  right:8px;z-index:999;
+  font-size:10px;color:#64748b;
+  display:flex;align-items:center;gap:4px;
+  background:rgba(255,255,255,0.9);
+  border-radius:20px;padding:3px 8px;
+  box-shadow:0 1px 4px rgba(0,0,0,0.1);
+  pointer-events:none;
+}
+#sync-dot{width:6px;height:6px;border-radius:50%;background:#94a3b8;flex-shrink:0;}
+#sync-dot.syncing{background:#f59e0b;animation:pulse 1s infinite;}
+#sync-dot.ok{background:#16a34a;}
+#sync-dot.err{background:#dc2626;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
 </style>
 </head>
 <body>
@@ -688,6 +723,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
     <p id="tb-sub"></p>
   </div>
   <div class="topbar-actions no-print">
+    <div id="tb-user" onclick="showUserMenu()" style="width:30px;height:30px;border-radius:50%;overflow:hidden;cursor:pointer;flex-shrink:0;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:14px;display:none">👤</div>
     <button class="tb-btn" onclick="openLauncher()" title="เลือก/เปลี่ยนรายวิชา">📂</button><button class="tb-btn" onclick="exportCurrentSlot()" title="ส่งออกข้อมูลเป็น .json">📤</button><button class="tb-btn accent" onclick="saveData()">💾 บันทึก</button>
     <button class="tb-btn" onclick="openModal('report-modal')">📊</button>
     <button class="tb-btn" onclick="printCurrentPage()">🖨️</button>
@@ -2515,6 +2551,8 @@ function printCurrentPage(){
 
 /* ══ BOOT ══ */
 window.addEventListener('load',()=>{
+  // ถ้ายังไม่ได้ auth → หยุดรอ (auth-overlay จะ handle เอง)
+  if(document.getElementById('auth-overlay') && document.getElementById('auth-overlay').style.display !== 'none') return;
   // getAllSlots จะ migrate pp5v2→pp5v3 อัตโนมัติถ้ายังไม่ได้ migrate
   const allSlots=getAllSlots();
   const sessionSlot=sessionStorage.getItem('pp5_slot');
@@ -2688,8 +2726,324 @@ function handleImportFile(e){
   };
   reader.readAsText(file,'utf-8');
 }
+
+/* ══════════════════════════════════════════
+   GOOGLE AUTH + DRIVE SYNC
+══════════════════════════════════════════ */
+const GAPI_CLIENT_ID = '509416975772-jqb267gqe7bvqm6gasn9c69l0k8hqj36.apps.googleusercontent.com';
+const DRIVE_FOLDER_NAME = 'สมุดบันทึก ปพ.5';
+const DRIVE_MIME = 'application/json';
+let gUser = null;       // Google user object
+let gAccessToken = null;
+let gDriveFolderId = null;
+let syncTimeout = null;
+
+/* ── Init Google Sign-In ── */
+function initGoogleAuth(){
+  if(typeof google === 'undefined'){
+    setTimeout(initGoogleAuth, 500);
+    return;
+  }
+  google.accounts.id.initialize({
+    client_id: GAPI_CLIENT_ID,
+    callback: onGoogleSignIn,
+    auto_select: true,         // ลองไซน์อินอัตโนมัติถ้าเคย login ไว้
+    cancel_on_tap_outside: false,
+  });
+  // render ปุ่ม Sign In
+  google.accounts.id.renderButton(
+    document.getElementById('g_signin_btn'),
+    {theme:'outline', size:'large', width:280, locale:'th', text:'signin_with'}
+  );
+  // พยายาม auto sign-in
+  google.accounts.id.prompt();
+}
+
+/* ── Callback เมื่อ Sign-In สำเร็จ ── */
+async function onGoogleSignIn(response){
+  try{
+    // decode JWT credential
+    const payload = JSON.parse(atob(response.credential.split('.')[1]));
+    gUser = {
+      id: payload.sub,
+      name: payload.name,
+      email: payload.email,
+      picture: payload.picture,
+    };
+    // ขอ access token สำหรับ Drive API
+    await requestDriveToken(response.credential);
+  } catch(e){
+    console.error('Sign-in error:', e);
+    showToast('❌ เข้าสู่ระบบไม่สำเร็จ');
+  }
+}
+
+/* ── ขอ Access Token ผ่าน OAuth2 Token Client ── */
+let tokenClient = null;
+function requestDriveToken(id_credential){
+  return new Promise((resolve) => {
+    if(typeof google === 'undefined'){ resolve(); return; }
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: GAPI_CLIENT_ID,
+      scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.profile',
+      callback: async (tokenResponse) => {
+        if(tokenResponse.error){ console.error(tokenResponse); resolve(); return; }
+        gAccessToken = tokenResponse.access_token;
+        await afterSignIn();
+        resolve();
+      },
+    });
+    tokenClient.requestAccessToken({prompt:''});
+  });
+}
+
+/* ── หลัง Sign-In สำเร็จ ── */
+async function afterSignIn(){
+  // แสดง avatar
+  const tbUser = document.getElementById('tb-user');
+  if(gUser.picture){
+    tbUser.innerHTML = `<img src="${gUser.picture}" style="width:100%;height:100%;object-fit:cover">`;
+  } else {
+    tbUser.textContent = gUser.name.charAt(0);
+  }
+  tbUser.style.display = 'flex';
+
+  // ซ่อน auth overlay
+  document.getElementById('auth-overlay').style.display = 'none';
+
+  // แสดง sync status
+  document.getElementById('sync-status').style.display = 'flex';
+  setSyncStatus('syncing', 'กำลังโหลด...');
+
+  // สร้าง / หา folder ใน Drive
+  gDriveFolderId = await getOrCreateDriveFolder();
+
+  // โหลด slot list จาก Drive แล้วแสดง launcher หรือโหลดเลย
+  await syncSlotsFromDrive();
+  bootAfterAuth();
+}
+
+/* ── Boot หลัง Auth ── */
+function bootAfterAuth(){
+  const allSlots = getAllSlots();
+  const sessionSlot = sessionStorage.getItem('pp5_slot');
+
+  if(sessionSlot && localStorage.getItem(sessionSlot)){
+    D = Object.assign({}, defaultD(), JSON.parse(localStorage.getItem(sessionSlot)));
+    initArrays(); fillForm(); refreshSubtitle(); renderCoverStats(); renderCoverBehRead(); applyLogo();
+    setSyncStatus('ok', gUser.email);
+  } else if(allSlots.length === 1){
+    D = Object.assign({}, defaultD(), JSON.parse(localStorage.getItem(allSlots[0].key)));
+    initArrays();
+    sessionStorage.setItem('pp5_slot', allSlots[0].key);
+    fillForm(); refreshSubtitle(); renderCoverStats(); renderCoverBehRead(); applyLogo();
+    setSyncStatus('ok', gUser.email);
+  } else if(allSlots.length > 1){
+    initArrays(); fillForm(); refreshSubtitle(); renderCoverStats(); renderCoverBehRead(); applyLogo();
+    setSyncStatus('ok', gUser.email);
+    openLauncher();
+  } else {
+    initArrays(); fillForm(); refreshSubtitle(); renderCoverStats(); renderCoverBehRead(); applyLogo();
+    setSyncStatus('ok', gUser.email);
+    openLauncher();
+  }
+}
+
+/* ── Sync Status UI ── */
+function setSyncStatus(state, text){
+  const dot = document.getElementById('sync-dot');
+  const txt = document.getElementById('sync-text');
+  if(!dot) return;
+  dot.className = 'sync-dot ' + state;
+  // map id correctly
+  document.getElementById('sync-dot').className = '';
+  document.getElementById('sync-dot').classList.add(state === 'syncing' ? 'syncing' : state === 'ok' ? 'ok' : 'err');
+  if(txt) txt.textContent = text || '';
+}
+
+/* ════════════════════════════
+   GOOGLE DRIVE API HELPERS
+════════════════════════════ */
+async function driveRequest(method, url, body, isUpload){
+  const headers = {
+    'Authorization': 'Bearer ' + gAccessToken,
+  };
+  if(!isUpload) headers['Content-Type'] = 'application/json';
+  const res = await fetch(url, {
+    method,
+    headers,
+    body: body ? (isUpload ? body : JSON.stringify(body)) : undefined,
+  });
+  if(res.status === 401){
+    // token หมดอายุ → ขอใหม่
+    await refreshToken();
+    return driveRequest(method, url, body, isUpload);
+  }
+  if(!res.ok) throw new Error('Drive API ' + res.status);
+  if(res.status === 204) return null;
+  return res.json();
+}
+
+async function refreshToken(){
+  return new Promise((resolve) => {
+    if(!tokenClient){ resolve(); return; }
+    tokenClient.requestAccessToken({prompt:'', callback:(t)=>{ gAccessToken=t.access_token; resolve(); }});
+  });
+}
+
+/* ── หา/สร้าง folder "สมุดบันทึก ปพ.5" ── */
+async function getOrCreateDriveFolder(){
+  const q = encodeURIComponent(`mimeType='application/vnd.google-apps.folder' and name='${DRIVE_FOLDER_NAME}' and trashed=false`);
+  const res = await driveRequest('GET', `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`);
+  if(res.files && res.files.length > 0) return res.files[0].id;
+  // สร้างใหม่
+  const created = await driveRequest('POST', 'https://www.googleapis.com/drive/v3/files', {
+    name: DRIVE_FOLDER_NAME,
+    mimeType: 'application/vnd.google-apps.folder',
+  });
+  return created.id;
+}
+
+/* ── โหลด slot ทั้งหมดจาก Drive → localStorage ── */
+async function syncSlotsFromDrive(){
+  if(!gDriveFolderId) return;
+  try{
+    const q = encodeURIComponent(`'${gDriveFolderId}' in parents and mimeType='application/json' and trashed=false`);
+    const res = await driveRequest('GET', `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,modifiedTime)`);
+    if(!res.files) return;
+    for(const file of res.files){
+      const content = await driveRequest('GET', `https://www.googleapis.com/drive/v3/files/${file.id}?alt=media`);
+      if(!content || !content.grade || !content.subject) continue;
+      const g = (content.grade||'').trim();
+      const s = (content.subject||'').trim();
+      const key = 'pp5v3:' + g + '__' + s;
+      // เอา Drive เป็น source of truth (ถ้า Drive ใหม่กว่า)
+      const local = localStorage.getItem(key);
+      if(!local) {
+        localStorage.setItem(key, JSON.stringify(content));
+      } else {
+        // เก็บ driveFileId ไว้ใน metadata
+        try{
+          const ld = JSON.parse(local);
+          ld._driveFileId = file.id;
+          localStorage.setItem(key, JSON.stringify(ld));
+        }catch(e){}
+      }
+    }
+    setSyncStatus('ok', gUser ? gUser.email : 'ซิงค์แล้ว');
+  } catch(e){
+    console.error('syncSlotsFromDrive error:', e);
+    setSyncStatus('err', 'ซิงค์ไม่สำเร็จ');
+  }
+}
+
+/* ── อัปโหลด slot ปัจจุบันไป Drive ── */
+async function uploadSlotToDrive(key){
+  if(!gAccessToken || !gDriveFolderId) return;
+  setSyncStatus('syncing', 'กำลังซิงค์...');
+  try{
+    const raw = localStorage.getItem(key);
+    if(!raw) return;
+    const data = JSON.parse(raw);
+    const fileId = data._driveFileId;
+    const g = (data.grade||'').trim();
+    const s = (data.subject||'').trim();
+    const filename = 'pp5_' + g + '_' + s + '.json';
+    // ลบ internal fields ก่อน upload
+    const uploadData = Object.assign({}, data);
+    delete uploadData._driveFileId;
+    const blob = new Blob([JSON.stringify(uploadData, null, 2)], {type: DRIVE_MIME});
+
+    if(fileId){
+      // PATCH (update existing)
+      const form = new FormData();
+      form.append('metadata', new Blob([JSON.stringify({name: filename})], {type:'application/json'}));
+      form.append('file', blob);
+      await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart`, {
+        method: 'PATCH',
+        headers: {'Authorization': 'Bearer ' + gAccessToken},
+        body: form,
+      });
+    } else {
+      // POST (create new)
+      const form = new FormData();
+      form.append('metadata', new Blob([JSON.stringify({
+        name: filename,
+        parents: [gDriveFolderId],
+        mimeType: DRIVE_MIME,
+      })], {type:'application/json'}));
+      form.append('file', blob);
+      const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', {
+        method: 'POST',
+        headers: {'Authorization': 'Bearer ' + gAccessToken},
+        body: form,
+      });
+      const created = await res.json();
+      // บันทึก fileId กลับ localStorage
+      data._driveFileId = created.id;
+      localStorage.setItem(key, JSON.stringify(data));
+    }
+    setSyncStatus('ok', gUser ? gUser.email : 'ซิงค์แล้ว');
+  } catch(e){
+    console.error('uploadSlotToDrive error:', e);
+    setSyncStatus('err', 'ซิงค์ไม่สำเร็จ');
+  }
+}
+
+/* ── Auto sync เมื่อ saveData ── */
+const _origSaveData = saveData;
+saveData = function(){
+  _origSaveData();
+  if(gAccessToken){
+    clearTimeout(syncTimeout);
+    syncTimeout = setTimeout(()=>{
+      const key = getCurrentKey();
+      uploadSlotToDrive(key);
+    }, 1500);
+  }
+};
+
+/* ── User menu (sign out) ── */
+function showUserMenu(){
+  if(!gUser) return;
+  const ok = confirm(`บัญชี: ${gUser.email}\n\nต้องการออกจากระบบ?`);
+  if(ok){
+    google.accounts.id.disableAutoSelect();
+    gUser = null; gAccessToken = null; gDriveFolderId = null;
+    sessionStorage.removeItem('pp5_slot');
+    document.getElementById('tb-user').style.display = 'none';
+    document.getElementById('sync-status').style.display = 'none';
+    document.getElementById('auth-overlay').style.display = 'flex';
+    initGoogleAuth();
+  }
+}
+
+/* ── เริ่มต้น Auth เมื่อ page โหลด ── */
+window.addEventListener('load', ()=>{
+  // รอ GSI script โหลดเสร็จ
+  setTimeout(initGoogleAuth, 300);
+}, {once: false});
+
 </script>
 
+
+
+<!-- ══ AUTH OVERLAY ══ -->
+<div id="auth-overlay">
+  <div class="auth-card">
+    <div class="auth-logo">📚</div>
+    <div class="auth-title">สมุดบันทึกคุณภาพผู้เรียน</div>
+    <div class="auth-sub">ปพ.5 — ลงชื่อเข้าใช้ด้วย Google<br>เพื่อซิงค์ข้อมูลอัตโนมัติกับ Google Drive</div>
+    <div id="g_signin_btn"></div>
+    <hr class="auth-divider">
+    <div class="auth-note">ข้อมูลจะถูกเก็บในโฟลเดอร์<br><b>สมุดบันทึก ปพ.5</b> บน Google Drive ของคุณ<br>ไม่มีการแชร์ข้อมูลกับผู้อื่น</div>
+  </div>
+</div>
+<!-- ══ SYNC STATUS ══ -->
+<div id="sync-status" style="display:none">
+  <div id="sync-dot"></div>
+  <span id="sync-text">พร้อม</span>
+</div>
 
 <!-- ══ LAUNCHER OVERLAY ══ -->
 <div id="launcher" style="
