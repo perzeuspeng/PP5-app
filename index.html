@@ -18,7 +18,7 @@
   --nav-h:56px;--safe-bottom:env(safe-area-inset-bottom,0px);--safe-top:env(safe-area-inset-top,0px);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);font-size:14px;overflow:hidden;}
+html,body{height:100%;font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);font-size:14px;overflow:hidden;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 
 /* ── APP SHELL ── */
 .app-wrap{display:flex;flex-direction:column;height:100%;overflow:hidden;}
@@ -972,12 +972,29 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   background:#fff;border-radius:20px;padding:32px 24px;
   width:100%;max-width:360px;text-align:center;
   box-shadow:0 20px 60px rgba(0,0,0,0.3);
+  font-family:'Sarabun',sans-serif;
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
 }
 #auth-overlay .auth-logo{font-size:48px;margin-bottom:12px;}
-#auth-overlay .auth-title{font-size:20px;font-weight:800;color:#1e3a5f;margin-bottom:4px;}
-#auth-overlay .auth-sub{font-size:13px;color:#64748b;margin-bottom:24px;line-height:1.5;}
+#auth-overlay .auth-title{
+  font-size:20px;font-weight:800;color:#1e3a5f;margin-bottom:4px;
+  font-family:'Sarabun',sans-serif;
+  letter-spacing:normal;word-spacing:normal;
+  -webkit-text-size-adjust:100%;text-size-adjust:100%;
+}
+#auth-overlay .auth-sub{
+  font-size:13px;color:#64748b;margin-bottom:24px;line-height:1.5;
+  font-family:'Sarabun',sans-serif;
+  -webkit-text-size-adjust:100%;text-size-adjust:100%;
+}
 #auth-overlay .auth-divider{border:none;border-top:1px solid #e2e8f0;margin:20px 0;}
-#auth-overlay .auth-note{font-size:11px;color:#94a3b8;margin-top:16px;line-height:1.6;}
+#auth-overlay .auth-note{
+  font-size:11px;color:#94a3b8;margin-top:16px;line-height:1.6;
+  font-family:'Sarabun',sans-serif;
+  -webkit-text-size-adjust:100%;text-size-adjust:100%;
+}
+#auth-overlay #g_signin_btn{display:flex;justify-content:center;align-items:center;width:100%;}
 #sync-status{
   position:fixed;bottom:calc(var(--nav-h) + 4px + var(--safe-bottom));
   right:8px;z-index:999;
