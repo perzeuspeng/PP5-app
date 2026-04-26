@@ -2910,41 +2910,51 @@ async function getOrCreateDriveFolder(){
 
 /* ── โหลด slot ทั้งหมดจาก Drive → localStorage ── */
 async function syncSlotsFromDrive(){
-  if(!gDriveFolderId) return;
+  if(!gDriveFolderId || !gAccessToken) return;
   try{
+    setSyncStatus('syncing','กำลังโหลดจาก Drive...');
     const q = encodeURIComponent(`'${gDriveFolderId}' in parents and mimeType='application/json' and trashed=false`);
-    const res = await driveRequest('GET', `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,modifiedTime)`);
-    if(!res.files) return;
-    for(const file of res.files){
-      const content = await driveRequest('GET', `https://www.googleapis.com/drive/v3/files/${file.id}?alt=media`);
-      if(!content || !content.grade || !content.subject) continue;
-      const g = (content.grade||'').trim();
-      const s = (content.subject||'').trim();
-      const key = 'pp5v3:' + g + '__' + s;
-      // เอา Drive เป็น source of truth (ถ้า Drive ใหม่กว่า)
-      const local = localStorage.getItem(key);
-      if(!local) {
-        localStorage.setItem(key, JSON.stringify(content));
-      } else {
-        // เก็บ driveFileId ไว้ใน metadata
-        try{
-          const ld = JSON.parse(local);
-          ld._driveFileId = file.id;
-          localStorage.setItem(key, JSON.stringify(ld));
-        }catch(e){}
-      }
+    // ดึงรายชื่อไฟล์ก่อน
+    const listRes = await fetch(
+      `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,modifiedTime)`,
+      {headers:{'Authorization':'Bearer '+gAccessToken}}
+    );
+    if(!listRes.ok) throw new Error('list failed '+listRes.status);
+    const listData = await listRes.json();
+    if(!listData.files || listData.files.length===0){
+      setSyncStatus('ok', gUser?gUser.email:'ซิงค์แล้ว');
+      return;
     }
-    setSyncStatus('ok', gUser ? gUser.email : 'ซิงค์แล้ว');
-  } catch(e){
+    // ดึงเนื้อหาแต่ละไฟล์
+    for(const file of listData.files){
+      try{
+        const fileRes = await fetch(
+          `https://www.googleapis.com/drive/v3/files/${file.id}?alt=media`,
+          {headers:{'Authorization':'Bearer '+gAccessToken}}
+        );
+        if(!fileRes.ok) continue;
+        const content = await fileRes.json();
+        if(!content || !content.grade || !content.subject) continue;
+        const g = (content.grade||'').trim();
+        const s = (content.subject||'').trim();
+        const key = 'pp5v3:'+g+'__'+s;
+        // บันทึก driveFileId ใน content
+        content._driveFileId = file.id;
+        // Drive เป็น source of truth เสมอ
+        localStorage.setItem(key, JSON.stringify(content));
+      }catch(fe){ console.warn('file fetch error', fe); }
+    }
+    setSyncStatus('ok', gUser?gUser.email:'ซิงค์แล้ว');
+  }catch(e){
     console.error('syncSlotsFromDrive error:', e);
-    setSyncStatus('err', 'ซิงค์ไม่สำเร็จ');
+    setSyncStatus('err','ซิงค์ไม่สำเร็จ');
   }
 }
 
 /* ── อัปโหลด slot ปัจจุบันไป Drive ── */
 async function uploadSlotToDrive(key){
   if(!gAccessToken || !gDriveFolderId) return;
-  setSyncStatus('syncing', 'กำลังซิงค์...');
+  setSyncStatus('syncing','กำลังซิงค์...');
   try{
     const raw = localStorage.getItem(key);
     if(!raw) return;
@@ -2952,45 +2962,43 @@ async function uploadSlotToDrive(key){
     const fileId = data._driveFileId;
     const g = (data.grade||'').trim();
     const s = (data.subject||'').trim();
-    const filename = 'pp5_' + g + '_' + s + '.json';
-    // ลบ internal fields ก่อน upload
-    const uploadData = Object.assign({}, data);
-    delete uploadData._driveFileId;
-    const blob = new Blob([JSON.stringify(uploadData, null, 2)], {type: DRIVE_MIME});
+    const filename = 'pp5_'+g+'_'+s+'.json';
+    // สร้าง payload ไม่มี internal fields
+    const payload = Object.assign({}, data);
+    delete payload._driveFileId;
+    const jsonBlob = new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
 
+    let uploadRes;
     if(fileId){
-      // PATCH (update existing)
+      // อัปเดตไฟล์เดิม
       const form = new FormData();
-      form.append('metadata', new Blob([JSON.stringify({name: filename})], {type:'application/json'}));
-      form.append('file', blob);
-      await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart`, {
-        method: 'PATCH',
-        headers: {'Authorization': 'Bearer ' + gAccessToken},
-        body: form,
-      });
+      form.append('metadata', new Blob([JSON.stringify({name:filename})],{type:'application/json'}));
+      form.append('file', jsonBlob);
+      uploadRes = await fetch(
+        `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart&fields=id`,
+        {method:'PATCH', headers:{'Authorization':'Bearer '+gAccessToken}, body:form}
+      );
     } else {
-      // POST (create new)
+      // สร้างไฟล์ใหม่
       const form = new FormData();
       form.append('metadata', new Blob([JSON.stringify({
-        name: filename,
-        parents: [gDriveFolderId],
-        mimeType: DRIVE_MIME,
-      })], {type:'application/json'}));
-      form.append('file', blob);
-      const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', {
-        method: 'POST',
-        headers: {'Authorization': 'Bearer ' + gAccessToken},
-        body: form,
-      });
-      const created = await res.json();
-      // บันทึก fileId กลับ localStorage
-      data._driveFileId = created.id;
-      localStorage.setItem(key, JSON.stringify(data));
+        name:filename, parents:[gDriveFolderId], mimeType:'application/json'
+      })],{type:'application/json'}));
+      form.append('file', jsonBlob);
+      uploadRes = await fetch(
+        'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',
+        {method:'POST', headers:{'Authorization':'Bearer '+gAccessToken}, body:form}
+      );
     }
-    setSyncStatus('ok', gUser ? gUser.email : 'ซิงค์แล้ว');
-  } catch(e){
-    console.error('uploadSlotToDrive error:', e);
-    setSyncStatus('err', 'ซิงค์ไม่สำเร็จ');
+    if(!uploadRes.ok) throw new Error('upload failed '+uploadRes.status);
+    const result = await uploadRes.json();
+    // บันทึก fileId กลับ localStorage
+    data._driveFileId = result.id || fileId;
+    localStorage.setItem(key, JSON.stringify(data));
+    setSyncStatus('ok', gUser?gUser.email:'ซิงค์แล้ว');
+  }catch(e){
+    console.error('uploadSlotToDrive error:',e);
+    setSyncStatus('err','ซิงค์ไม่สำเร็จ');
   }
 }
 
