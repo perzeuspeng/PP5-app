@@ -1290,7 +1290,14 @@ function initArrays(){
 }
 
 /* ── MULTI-SLOT STORAGE ── */
-const SLOT_PREFIX='pp5v3:';
+const SLOT_BASE='pp5v3:';
+// SLOT_PREFIX จะเปลี่ยนตาม user ที่ login — ตั้งค่าใน setUserPrefix()
+let SLOT_PREFIX='pp5v3:__nouser__:';
+
+function setUserPrefix(userId){
+  // แต่ละ user มี prefix ของตัวเอง → ข้อมูลไม่ปน
+  SLOT_PREFIX = SLOT_BASE + (userId||'nouser') + ':';
+}
 function getCurrentKey(){
   const g=(D.grade||'').trim()||(gv('f-grade')||'').trim()||'ไม่ระบุชั้น';
   const s=(D.subject||'').trim()||(gv('f-subject')||'').trim()||'ไม่ระบุวิชา';
@@ -1299,7 +1306,7 @@ function getCurrentKey(){
 function getAllSlots(){
   const slots=[];
   const seen=new Set();
-  // โหลด pp5v3:* ทั้งหมด
+  // โหลดเฉพาะ key ของ user ที่ login อยู่
   for(let i=0;i<localStorage.length;i++){
     const k=localStorage.key(i);
     if(k&&k.startsWith(SLOT_PREFIX)){
@@ -1310,17 +1317,21 @@ function getAllSlots(){
       }catch(e){}
     }
   }
-  // migrate pp5v2 เดิม → ถ้ายังไม่มีใน pp5v3
+  // migrate pp5v2 เดิม → เฉพาะ user นี้ (ทำครั้งเดียว)
   try{
-    const old=localStorage.getItem('pp5v2');
-    if(old){
-      const d=JSON.parse(old);
-      const g=(d.grade||'ไม่ระบุชั้น').trim();
-      const s=(d.subject||'ไม่ระบุวิชา').trim();
-      const mk=SLOT_PREFIX+g+'__'+s;
-      if(!seen.has(mk)){
-        localStorage.setItem(mk,old);
-        slots.push({key:mk,grade:g,subject:s,year:d.year||'',sem:d.sem||''});
+    const migrateFlag='pp5v3_migrated_'+SLOT_PREFIX;
+    if(!localStorage.getItem(migrateFlag)){
+      const old=localStorage.getItem('pp5v2');
+      if(old){
+        const d=JSON.parse(old);
+        const g=(d.grade||'ไม่ระบุชั้น').trim();
+        const s=(d.subject||'ไม่ระบุวิชา').trim();
+        const mk=SLOT_PREFIX+g+'__'+s;
+        if(!seen.has(mk)){
+          localStorage.setItem(mk,old);
+          slots.push({key:mk,grade:g,subject:s,year:d.year||'',sem:d.sem||''});
+        }
+        localStorage.setItem(migrateFlag,'1');
       }
     }
   }catch(e){}
@@ -2714,7 +2725,7 @@ function handleImportFile(e){
       }
       const g=(d.grade||'').trim();
       const s=(d.subject||'').trim();
-      const key='pp5v3:'+g+'__'+s;
+      const key=SLOT_PREFIX+g+'__'+s;
       // ถ้ามีข้อมูลเดิมถามก่อน
       if(localStorage.getItem(key)){
         if(!confirm('มีข้อมูล "'+g+' · '+s+'" อยู่แล้ว  ต้องการเขียนทับหรือไม่?'))return;
@@ -2809,7 +2820,7 @@ async function handleTokenResponse(tokenResponse){
   _isSigningIn = false;
 }
 
-/* ── ดึงข้อมูล user ── */
+/* ── ดึงข้อมูล user + ตั้ง prefix ── */
 async function fetchUserInfo(){
   try{
     const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{
@@ -2820,6 +2831,8 @@ async function fetchUserInfo(){
   }catch(e){
     gUser = {id:'unknown', name:'ผู้ใช้', email:'', picture:''};
   }
+  // ตั้ง SLOT_PREFIX ตาม user id ทันที → ข้อมูลแยกตาม user
+  setUserPrefix(gUser.id);
 }
 
 /* ── Refresh Token ── */
@@ -2994,7 +3007,7 @@ async function syncSlotsFromDrive(){
         if(!content || !content.grade || !content.subject) continue;
         const g = (content.grade||'').trim();
         const s = (content.subject||'').trim();
-        const key = 'pp5v3:'+g+'__'+s;
+        const key = SLOT_PREFIX+g+'__'+s;
         // บันทึก driveFileId ใน content
         content._driveFileId = file.id;
         // Drive เป็น source of truth เสมอ
@@ -3162,6 +3175,7 @@ function showUserMenu(){
     }
     gAccessToken = null;
     tokenClient = null;
+    setUserPrefix('nouser');
     gUser = null; gAccessToken = null; gDriveFolderId = null;
     sessionStorage.removeItem('pp5_slot');
     document.getElementById('tb-user').style.display = 'none';
