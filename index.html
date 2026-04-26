@@ -607,6 +607,9 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   /* ════════════════════════════════════════════
      ลายเซ็น — fixed bottom + ที่ว่างเซ็น 28mm
   ════════════════════════════════════════════ */
+  /* ── ซ่อน sync-status ใน print ── */
+  #sync-status{display:none!important;}
+
   /* ── Copyright Footer — แสดงทุกหน้าในโหมดพิมพ์ ── */
   #print-copyright-footer{
     display:block!important;
@@ -2646,9 +2649,9 @@ function printCurrentPage(){
     : '@media print{@page{size:A4 portrait;margin:12mm 14mm;}}';
 
   // ── อัพเดตลายเซ็น ──
-  document.getElementById('sig-teacher').textContent = D.teacher ? '( '+D.teacher+' )' : '';
+  document.getElementById('sig-teacher').textContent = D.teacher || '';
   document.getElementById('sig-teacher-pos').textContent = D.teacherPos ? 'ตำแหน่ง'+D.teacherPos : '';
-  document.getElementById('sig-director').textContent = D.director ? '( '+D.director+' )' : '';
+  document.getElementById('sig-director').textContent = D.director || '';
   document.getElementById('sig-director-pos').textContent = D.school ? 'ตำแหน่งผู้อำนวยการโรงเรียน'+D.school : 'ตำแหน่งผู้อำนวยการโรงเรียน';
 
   setTimeout(()=>{
