@@ -394,11 +394,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   .ind-grade-big{font-size:32pt!important;color:#000!important;font-weight:800!important;}
 
   /* ════════════════════════════════════════════════════
-     หน้าปก — layout ใหม่ เป็นเอกสารราชการ
-     โครงสร้าง:
-       [หัว: โลโก้ + ชื่อเอกสาร + ข้อมูลหลัก]
-       [แถว: ข้อมูลครู | จำนวนนักเรียน]
-       [แถว: ผลการเรียน | คุณลักษณะ | การอ่าน]
+     หน้าปก — layout เอกสารราชการ ตามภาพต้นฉบับ
   ════════════════════════════════════════════════════ */
   #page-cover.active{
     display:block!important;
@@ -407,7 +403,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   }
   #cover-logo-upload-ui{display:none!important;}
 
-  /* ── หัว: xls-header ── */
+  /* ── กล่องหลัก xls-header ── */
   #page-cover.active .xls-header{
     border:1.5px solid #000!important;
     border-radius:0!important;
@@ -416,35 +412,45 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
     background:#fff!important;
     overflow:hidden!important;
   }
-  /* แถวบนสุด: โลโก้ + ชื่อเอกสาร */
+
+  /* ── ส่วนหัว: โลโก้กลาง + ชื่อเอกสาร ── */
   #page-cover.active .xls-header-inner{
     display:flex!important;
+    flex-direction:column!important;
     align-items:center!important;
-    gap:0!important;
-    border-bottom:1px solid #000!important;
-    padding:8px 10px!important;
-    background:#f8f8f8!important;
+    justify-content:center!important;
+    gap:2px!important;
+    border-bottom:1.5px solid #000!important;
+    padding:8px 12px 6px!important;
+    background:#fff!important;
   }
-  /* โลโก้ */
+  /* โลโก้ตรงกลาง */
   #page-cover.active #cover-logo-print-wrap.cover-logo-show{
     display:flex!important;
     align-items:center!important;
     justify-content:center!important;
-    width:60px!important;height:60px!important;
+    width:70px!important;height:70px!important;
     flex-shrink:0!important;
-    margin-right:12px!important;
+    margin:0 0 2px 0!important;
     padding:0!important;
   }
-  #page-cover.active #cover-logo-placeholder-print{display:none!important;}
+  #page-cover.active #cover-logo-placeholder-print{
+    display:block!important;
+    font-size:44px!important;
+    text-align:center!important;
+    margin-bottom:2px!important;
+    flex-shrink:0!important;
+  }
   #cover-print-logo{
-    width:55px!important;height:55px!important;
-    object-fit:contain!important;border-radius:4px!important;
+    width:66px!important;height:66px!important;
+    object-fit:contain!important;
     display:block!important;
   }
-  /* ชื่อเอกสาร */
+  /* ชื่อเอกสารกลาง */
   #page-cover.active .xls-header-content{
-    flex:1!important;
+    width:100%!important;
     display:block!important;
+    text-align:center!important;
   }
   #page-cover.active .xls-header-title{
     font-size:12pt!important;
@@ -456,52 +462,116 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
     padding-bottom:0!important;
   }
 
-  /* ฟอร์มข้อมูล — grid 2 คอลัมน์ */
+  /* ── ฟอร์มข้อมูล — layout ตามภาพต้นฉบับ ── */
+  /*
+    โครงสร้าง HTML ใน .xls-form:
+      .xls-row (โรงเรียน)   ← แถวเดี่ยว
+      .xls-row (สังกัด)     ← แถวเดี่ยว
+      .xls-row-2col (ชั้น + ภาคเรียน)
+      .xls-row-2col (รายวิชา + รหัสวิชา)
+      .xls-row-2col (ปีการศึกษา + ชม./สัปดาห์)
+      .xls-row (ครูผู้สอน)
+      .xls-row (ตำแหน่ง — ซ่อน)
+      .xls-row (ครูที่ปรึกษา)
+      .xls-row (ตำแหน่ง — ซ่อน)
+      .xls-row (ผู้อำนวยการ)
+
+    ภาพต้นฉบับ:
+      บรรทัด 1: โรงเรียน ___ | สังกัด ___
+      บรรทัด 2: ชั้น ___ | ภาคเรียน ___ | ปีการศึกษา ___
+      บรรทัด 3: รายวิชา ___ | รหัส ___ | ชม./สัปดาห์ ___
+      บรรทัด 4: ค่าน้ำหนัก ___ | ชม./สัปดาห์ ___ | ครูที่ปรึกษา ___
+
+    วิธี: ทำ xls-form เป็น flex-wrap container
+    แล้วกำหนด flex-basis ของแต่ละ row
+  */
   #page-cover.active .xls-form{
-    display:grid!important;
-    grid-template-columns:1fr 1fr!important;
-    gap:0!important;
-    padding:0!important;
-  }
-  #page-cover.active .xls-row{
     display:flex!important;
-    align-items:center!important;
-    border-bottom:1px solid #ddd!important;
-    border-right:1px solid #ddd!important;
-    background:#fff!important;
+    flex-wrap:wrap!important;
+    width:100%!important;
     padding:0!important;
-    min-height:22px!important;
+    border-top:1px solid #000!important;
   }
-  /* แถวเดี่ยว (โรงเรียน, สังกัด, ครูผู้สอน, ผู้อำนวยการ) คาบ 2 คอลัมน์ */
+
+  /* xls-row เดี่ยว: full width โดย default */
   #page-cover.active .xls-form > .xls-row{
-    grid-column: 1 / -1!important;
+    display:flex!important;
+    align-items:stretch!important;
+    flex:0 0 100%!important;
+    max-width:100%!important;
+    border-bottom:1px solid #000!important;
+    background:#fff!important;
+    min-height:18px!important;
+    padding:0!important;
   }
+
+  /* โรงเรียน — 50% (ครึ่งซ้าย) */
+  #page-cover.active .xls-form > .xls-row:has(#f-school){
+    flex:0 0 50%!important;
+    max-width:50%!important;
+    border-right:1px solid #000!important;
+    border-bottom:1px solid #000!important;
+  }
+  /* สังกัด — 50% (ครึ่งขวา) */
+  #page-cover.active .xls-form > .xls-row:has(#f-dept){
+    flex:0 0 50%!important;
+    max-width:50%!important;
+    border-bottom:1px solid #000!important;
+  }
+
+  /* xls-row-2col: ให้ลูกอยู่คู่กัน */
   #page-cover.active .xls-row-2col{
-    display:contents!important;
+    display:flex!important;
+    flex:0 0 100%!important;
+    max-width:100%!important;
+    border-bottom:1px solid #000!important;
   }
   #page-cover.active .xls-row-2col > .xls-row{
-    grid-column: span 1!important;
+    flex:1!important;
+    border-bottom:none!important;
+    border-right:1px solid #000!important;
+    min-width:0!important;
+    display:flex!important;
+    align-items:stretch!important;
+    padding:0!important;
+    background:#fff!important;
+    min-height:18px!important;
   }
+  #page-cover.active .xls-row-2col > .xls-row:last-child{
+    border-right:none!important;
+  }
+
+  /* ชม./สัปดาห์ row ที่ 3 — ต้องการให้ปีการศึกษา+ชม. อยู่ใน row-2col
+     แต่จากภาพ มี 3 ช่อง ชั้น+ภาคเรียน+ปีการศึกษา บรรทัดเดียว
+     ปัจจุบัน HTML: ชั้น+ภาคเรียน = row-2col แรก, ปี+ชม = row-2col ที่สอง
+     ปล่อยตามโครงสร้าง HTML เดิม ก็ได้ (2+2 แถว) */
+
+  /* label และ val */
   #page-cover.active .xls-label{
-    font-size:7.5pt!important;
+    font-size:8pt!important;
     font-weight:700!important;
     color:#000!important;
     background:#f0f0f0!important;
-    padding:3px 6px!important;
-    min-width:60px!important;
-    border-right:1px solid #bbb!important;
+    padding:2px 5px!important;
+    min-width:56px!important;
+    border-right:1px solid #000!important;
     white-space:nowrap!important;
     flex-shrink:0!important;
+    display:flex!important;
+    align-items:center!important;
   }
   #page-cover.active .xls-val{
-    font-size:8pt!important;
+    font-size:8.5pt!important;
     color:#000!important;
     background:#fff!important;
-    padding:3px 6px!important;
+    padding:2px 5px!important;
     flex:1!important;
     font-weight:500!important;
     border:none!important;
     outline:none!important;
+    display:flex!important;
+    align-items:center!important;
+    min-width:0!important;
   }
   /* ซ่อน row ที่ไม่ต้องการ */
   #page-cover.active #teacher-pos-row,
@@ -525,15 +595,14 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   }
   #page-cover.active .sec-body{padding:5px 8px!important;}
 
-  /* ── แถวที่ 2: ข้อมูลครู + จำนวนนักเรียน (2 คอลัมน์) ── */
+  /* ── แถวที่ 2: จำนวนนักเรียน — เต็มความกว้าง ── */
   #page-cover.active #cover-row2{
-    display:grid!important;
-    grid-template-columns:1fr 1fr!important;
-    gap:5px!important;
+    display:block!important;
     margin-bottom:5px!important;
   }
   #page-cover.active #cover-row2 .sec-box{
-    margin-bottom:0!important;
+    margin-bottom:5px!important;
+    width:100%!important;
   }
 
   /* ตารางนักเรียน */
