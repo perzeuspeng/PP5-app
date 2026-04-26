@@ -644,24 +644,63 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   }
 
   #print-signature{
-    display:flex!important;justify-content:space-between!important;gap:20px!important;
-    position:fixed!important;bottom:8mm!important;left:14mm!important;right:14mm!important;
-    page-break-inside:avoid!important;background:#fff!important;
+    display:flex!important;
+    justify-content:space-between!important;
+    gap:30px!important;
+    position:fixed!important;
+    bottom:17mm!important;
+    left:14mm!important;
+    right:14mm!important;
+    page-break-inside:avoid!important;
+    background:#fff!important;
   }
-  .sig-box{flex:1!important;text-align:center!important;padding:0 6px!important;}
-  .sig-role-line{
-    font-size:9pt!important;font-weight:700!important;color:#000!important;
-    display:flex!important;align-items:baseline!important;
-    justify-content:center!important;gap:0!important;
-    margin-top:28mm!important;margin-bottom:2px!important;white-space:nowrap!important;
-    border-top:none!important;padding-top:0!important;
+  .sig-box{
+    flex:1!important;
+    text-align:left!important;
+    padding:0!important;
   }
-  .sig-dots{
-    flex:1!important;letter-spacing:1px!important;font-weight:400!important;
-    font-size:9pt!important;overflow:hidden!important;text-align:center!important;padding:0 2px!important;
+  /* แถวลงชื่อ: ลงชื่อ....ครูผู้สอน */
+  .sig-line-row{
+    display:flex!important;
+    align-items:baseline!important;
+    gap:0!important;
+    font-size:9pt!important;
+    font-weight:700!important;
+    color:#000!important;
+    margin-bottom:4px!important;
+    white-space:nowrap!important;
   }
-  .sig-name{font-size:9pt!important;font-weight:700!important;color:#000!important;text-align:center!important;min-height:12pt!important;}
-  .sig-pos{font-size:8.5pt!important;color:#000!important;font-weight:600!important;text-align:center!important;margin-top:1px!important;}
+  .sig-label{
+    font-size:9pt!important;
+    font-weight:700!important;
+    flex-shrink:0!important;
+  }
+  .sig-dots-line{
+    flex:1!important;
+    border-bottom:1px dotted #000!important;
+    margin:0 4px 2px 4px!important;
+    min-width:80px!important;
+  }
+  .sig-role{
+    font-size:9pt!important;
+    font-weight:700!important;
+    flex-shrink:0!important;
+  }
+  /* แถวชื่อ: ( นายปกรณ์ มั่นจิต ) */
+  .sig-name-row{
+    font-size:9pt!important;
+    font-weight:600!important;
+    color:#000!important;
+    text-align:center!important;
+    margin-bottom:2px!important;
+  }
+  /* แถวตำแหน่ง */
+  .sig-pos-row{
+    font-size:9pt!important;
+    font-weight:600!important;
+    color:#000!important;
+    text-align:center!important;
+  }
 }
 
 
@@ -3395,15 +3434,25 @@ window.addEventListener('load', ()=>{
 
 <!-- ══ SIGNATURE BLOCK (print only) ══ -->
 <div id="print-signature" style="display:none">
+  <!-- ซ้าย: ครูผู้สอน -->
   <div class="sig-box">
-    <div class="sig-role-line">ลงชื่อ<span class="sig-dots">.................................................</span>ครูผู้สอน</div>
-    <div class="sig-name" id="sig-teacher"></div>
-    <div class="sig-pos" id="sig-teacher-pos"></div>
+    <div class="sig-line-row">
+      <span class="sig-label">ลงชื่อ</span>
+      <span class="sig-dots-line"></span>
+      <span class="sig-role">ครูผู้สอน</span>
+    </div>
+    <div class="sig-name-row">( <span id="sig-teacher"></span> )</div>
+    <div class="sig-pos-row" id="sig-teacher-pos"></div>
   </div>
+  <!-- ขวา: ผู้อนุมัติ -->
   <div class="sig-box">
-    <div class="sig-role-line">ลงชื่อ<span class="sig-dots">.................................................</span>ผู้อนุมัติ</div>
-    <div class="sig-name" id="sig-director"></div>
-    <div class="sig-pos" id="sig-director-pos"></div>
+    <div class="sig-line-row">
+      <span class="sig-label">ลงชื่อ</span>
+      <span class="sig-dots-line"></span>
+      <span class="sig-role">ผู้อนุมัติ</span>
+    </div>
+    <div class="sig-name-row">( <span id="sig-director"></span> )</div>
+    <div class="sig-pos-row" id="sig-director-pos"></div>
   </div>
 </div>
 
