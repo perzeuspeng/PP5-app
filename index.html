@@ -2818,8 +2818,12 @@ async function afterSignIn(){
   // สร้าง / หา folder ใน Drive
   gDriveFolderId = await getOrCreateDriveFolder();
 
-  // โหลด slot list จาก Drive แล้วแสดง launcher หรือโหลดเลย
+  // โหลด slot ทั้งหมดจาก Drive → localStorage (source of truth)
   await syncSlotsFromDrive();
+
+  // เริ่ม auto sync
+  startAutoSync();
+
   bootAfterAuth();
 }
 
@@ -2990,24 +2994,103 @@ async function uploadSlotToDrive(key){
   }
 }
 
-/* ── Auto sync เมื่อ saveData ── */
+/* ════════════════════════════════════════
+   AUTO SYNC SYSTEM
+   - ทุก 30 วิ (interval)
+   - เมื่อเปลี่ยนแท็บกลับมา (visibilitychange)
+   - เมื่อกด 💾 บันทึก (manual)
+   - เมื่อสร้างวิชาใหม่ (launcherCreate)
+════════════════════════════════════════ */
+let autoSyncInterval = null;
+
+function startAutoSync(){
+  // ซิงค์ทุก 30 วินาที
+  if(autoSyncInterval) clearInterval(autoSyncInterval);
+  autoSyncInterval = setInterval(()=>{
+    if(gAccessToken && document.visibilityState === 'visible'){
+      syncAllSlotsUp();
+    }
+  }, 30000);
+
+  // ซิงค์เมื่อกลับมาที่แท็บ (visibility)
+  document.addEventListener('visibilitychange', onVisibilityChange);
+
+  // ซิงค์เมื่อเปลี่ยน tab ใน bottom nav
+  document.querySelectorAll('.bottom-nav .nav-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      if(gAccessToken) syncAllSlotsUp();
+    });
+  });
+}
+
+async function onVisibilityChange(){
+  if(document.visibilityState === 'visible' && gAccessToken){
+    // โหลดจาก Drive ก่อน (อาจมีการแก้จากอุปกรณ์อื่น)
+    await syncSlotsFromDrive();
+    // render ใหม่ถ้า slot ปัจจุบันเปลี่ยน
+    const key = sessionStorage.getItem('pp5_slot');
+    if(key){
+      const raw = localStorage.getItem(key);
+      if(raw){
+        const newD = JSON.parse(raw);
+        // เช็คว่าข้อมูลเปลี่ยนไปไหม (เปรียบ JSON สั้นๆ)
+        const oldHash = JSON.stringify(D).length;
+        const newHash = JSON.stringify(newD).length;
+        if(Math.abs(oldHash - newHash) > 10){
+          D = Object.assign({}, defaultD(), newD);
+          initArrays(); fillForm(); refreshSubtitle();
+          renderCoverStats(); renderCoverBehRead(); applyLogo();
+          showToast('🔄 ซิงค์ข้อมูลล่าสุดจาก Drive แล้ว');
+        }
+      }
+    }
+  }
+}
+
+/* ── อัปโหลดทุก slot ขึ้น Drive ── */
+async function syncAllSlotsUp(){
+  if(!gAccessToken || !gDriveFolderId) return;
+  const slots = getAllSlots();
+  for(const s of slots){
+    await uploadSlotToDrive(s.key);
+  }
+}
+
+/* ── Override saveData → sync ทันที ── */
 const _origSaveData = saveData;
 saveData = function(){
   _origSaveData();
   if(gAccessToken){
     clearTimeout(syncTimeout);
+    // upload ทันทีเลย ไม่รอ
     syncTimeout = setTimeout(()=>{
       const key = getCurrentKey();
+      uploadSlotToDrive(key).then(()=>{
+        setSyncStatus('ok', gUser ? gUser.email : 'ซิงค์แล้ว');
+      });
+    }, 800);
+  }
+};
+
+/* ── Override launcherCreate → sync ทันที ── */
+const _origLauncherCreate = launcherCreate;
+launcherCreate = function(){
+  _origLauncherCreate();
+  if(gAccessToken){
+    setTimeout(()=>{
+      const key = getCurrentKey();
       uploadSlotToDrive(key);
-    }, 1500);
+    }, 1000);
   }
 };
 
 /* ── User menu (sign out) ── */
 function showUserMenu(){
   if(!gUser) return;
-  const ok = confirm(`บัญชี: ${gUser.email}\n\nต้องการออกจากระบบ?`);
+  const ok = confirm('บัญชี: ' + gUser.email + '  ต้องการออกจากระบบ?');
   if(ok){
+    if(autoSyncInterval) clearInterval(autoSyncInterval);
+    document.removeEventListener('visibilitychange', onVisibilityChange);
     google.accounts.id.disableAutoSelect();
     gUser = null; gAccessToken = null; gDriveFolderId = null;
     sessionStorage.removeItem('pp5_slot');
@@ -3020,7 +3103,6 @@ function showUserMenu(){
 
 /* ── เริ่มต้น Auth เมื่อ page โหลด ── */
 window.addEventListener('load', ()=>{
-  // รอ GSI script โหลดเสร็จ
   setTimeout(initGoogleAuth, 300);
 }, {once: false});
 
