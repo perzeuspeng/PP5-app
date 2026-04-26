@@ -899,6 +899,58 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   <div id="cover-summary-print" style="display:none"></div>
 
   <button class="btn btn-success btn-full no-print" onclick="saveData()" style="margin-top:20px;margin-bottom:12px">✅ บันทึกข้อมูลปก</button>
+
+  <!-- ── ลิขสิทธิ์ — แสดงเฉพาะเว็บ ไม่พิมพ์ ── -->
+  <div class="no-print" style="
+    margin:18px 0 8px 0;
+    background:linear-gradient(135deg,#1e3a5f 0%,#2563a8 100%);
+    border-radius:16px;
+    padding:28px 20px 22px;
+    text-align:center;
+    box-shadow:0 4px 20px rgba(30,58,95,0.25);
+  ">
+    <!-- ไอคอน -->
+    <div style="font-size:38px;margin-bottom:10px">📋</div>
+    <!-- ชื่อระบบ -->
+    <div style="font-size:17px;font-weight:800;color:#fff;margin-bottom:6px;line-height:1.4">
+      ระบบบันทึกคุณภาพผู้เรียน (ปพ.5)
+    </div>
+    <!-- โรงเรียน/สังกัด — ดึงจากข้อมูลที่กรอก -->
+    <div id="cr-school" style="font-size:12px;color:rgba(255,255,255,0.75);margin-bottom:16px;line-height:1.6"></div>
+    <!-- ปุ่มลิขสิทธิ์ -->
+    <div style="
+      display:inline-block;
+      background:transparent;
+      border:2px solid #f59e0b;
+      border-radius:30px;
+      padding:8px 28px;
+      margin-bottom:16px;
+    ">
+      <span style="color:#f59e0b;font-size:14px;font-weight:800">
+        © นายปกรณ์ มั่นจิต
+      </span>
+    </div>
+    <!-- รายละเอียดลิขสิทธิ์ -->
+    <div style="font-size:12px;color:rgba(255,255,255,0.7);line-height:1.8;margin-bottom:8px">
+      สงวนลิขสิทธิ์ พ.ศ. 2568<br>
+      ห้ามทำซ้ำ ดัดแปลง หรือเผยแพร่โดยไม่ได้รับอนุญาต
+    </div>
+    <div style="font-size:11px;color:rgba(255,255,255,0.45);line-height:1.6">
+      All rights reserved. Unauthorized reproduction or distribution is prohibited.
+    </div>
+  </div>
+  <!-- footer ลิขสิทธิ์ -->
+  <div class="no-print" style="
+    background:#1e3a5f;
+    margin:0 -14px;
+    padding:12px 16px;
+    text-align:center;
+    font-size:12px;
+    color:rgba(255,255,255,0.7);
+  ">
+    © 2568 Copyright <span style="color:#f59e0b;font-weight:700">Pakorn Manchit</span> · สงวนลิขสิทธิ์ทุกประการ
+  </div>
+
   <div style="height:72px"></div>
 </div>
 
@@ -1444,6 +1496,14 @@ function refreshSubtitle(){
   const s=gv('f-subject')||D.subject||'';
   const sub_el=document.getElementById('tb-sub');
   if(sub_el)sub_el.textContent=(g||'ยังไม่ระบุชั้น')+(s?' · '+s:'');
+  // อัปเดตชื่อโรงเรียนในบล็อกลิขสิทธิ์
+  const crEl=document.getElementById('cr-school');
+  if(crEl){
+    const school=gv('f-school')||D.school||'';
+    const dept=gv('f-dept')||D.dept||'';
+    crEl.textContent=(school?school:'')+(dept&&school?'\n'+dept:dept);
+    crEl.style.whiteSpace='pre-line';
+  }
 }
 
 /* ══ NAVIGATION ══ */
