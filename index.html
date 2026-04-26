@@ -394,111 +394,247 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   .ind-grade-big{font-size:32pt!important;color:#000!important;font-weight:800!important;}
 
   /* ════════════════════════════════════════════════════
-     หน้าปก — 3 ตารางข้างกัน
+     หน้าปก — layout ใหม่ เป็นเอกสารราชการ
+     โครงสร้าง:
+       [หัว: โลโก้ + ชื่อเอกสาร + ข้อมูลหลัก]
+       [แถว: ข้อมูลครู | จำนวนนักเรียน]
+       [แถว: ผลการเรียน | คุณลักษณะ | การอ่าน]
   ════════════════════════════════════════════════════ */
-  #page-cover.active{display:block!important;width:100%!important;}
+  #page-cover.active{
+    display:block!important;
+    width:100%!important;
+    font-size:9pt!important;
+  }
   #cover-logo-upload-ui{display:none!important;}
-  #teacher-pos-row,#advisor-pos-row{display:none!important;}
+
+  /* ── หัว: xls-header ── */
+  #page-cover.active .xls-header{
+    border:1.5px solid #000!important;
+    border-radius:0!important;
+    padding:0!important;
+    margin-bottom:5px!important;
+    background:#fff!important;
+    overflow:hidden!important;
+  }
+  /* แถวบนสุด: โลโก้ + ชื่อเอกสาร */
+  #page-cover.active .xls-header-inner{
+    display:flex!important;
+    align-items:center!important;
+    gap:0!important;
+    border-bottom:1px solid #000!important;
+    padding:8px 10px!important;
+    background:#f8f8f8!important;
+  }
+  /* โลโก้ */
   #page-cover.active #cover-logo-print-wrap.cover-logo-show{
-    display:flex!important;justify-content:center!important;
-    width:100%!important;margin:0 0 8px 0!important;padding:6px 0!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    width:60px!important;height:60px!important;
+    flex-shrink:0!important;
+    margin-right:12px!important;
+    padding:0!important;
   }
   #page-cover.active #cover-logo-placeholder-print{display:none!important;}
   #cover-print-logo{
-    width:100px!important;height:100px!important;
-    object-fit:contain!important;border-radius:0!important;
-    display:block!important;margin:0 auto!important;
+    width:55px!important;height:55px!important;
+    object-fit:contain!important;border-radius:4px!important;
+    display:block!important;
+  }
+  /* ชื่อเอกสาร */
+  #page-cover.active .xls-header-content{
+    flex:1!important;
+    display:block!important;
+  }
+  #page-cover.active .xls-header-title{
+    font-size:12pt!important;
+    font-weight:800!important;
+    color:#000!important;
+    text-align:center!important;
+    margin-bottom:0!important;
+    border-bottom:none!important;
+    padding-bottom:0!important;
   }
 
-  /* sec-box ปก */
-  #page-cover.active .sec-box{margin-bottom:5px!important;}
-  #page-cover.active .sec-head{padding:4px 10px!important;}
-  #page-cover.active .sec-head-title{font-size:9pt!important;}
-  #page-cover.active .sec-body{padding:6px 10px!important;}
+  /* ฟอร์มข้อมูล — grid 2 คอลัมน์ */
+  #page-cover.active .xls-form{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:0!important;
+    padding:0!important;
+  }
+  #page-cover.active .xls-row{
+    display:flex!important;
+    align-items:center!important;
+    border-bottom:1px solid #ddd!important;
+    border-right:1px solid #ddd!important;
+    background:#fff!important;
+    padding:0!important;
+    min-height:22px!important;
+  }
+  /* แถวเดี่ยว (โรงเรียน, สังกัด, ครูผู้สอน, ผู้อำนวยการ) คาบ 2 คอลัมน์ */
+  #page-cover.active .xls-form > .xls-row{
+    grid-column: 1 / -1!important;
+  }
+  #page-cover.active .xls-row-2col{
+    display:contents!important;
+  }
+  #page-cover.active .xls-row-2col > .xls-row{
+    grid-column: span 1!important;
+  }
+  #page-cover.active .xls-label{
+    font-size:7.5pt!important;
+    font-weight:700!important;
+    color:#000!important;
+    background:#f0f0f0!important;
+    padding:3px 6px!important;
+    min-width:60px!important;
+    border-right:1px solid #bbb!important;
+    white-space:nowrap!important;
+    flex-shrink:0!important;
+  }
+  #page-cover.active .xls-val{
+    font-size:8pt!important;
+    color:#000!important;
+    background:#fff!important;
+    padding:3px 6px!important;
+    flex:1!important;
+    font-weight:500!important;
+    border:none!important;
+    outline:none!important;
+  }
+  /* ซ่อน row ที่ไม่ต้องการ */
+  #page-cover.active #teacher-pos-row,
+  #page-cover.active #advisor-pos-row{display:none!important;}
+
+  /* ── sec-box ทั่วไปในปก ── */
+  #page-cover.active .sec-box{
+    margin-bottom:5px!important;
+    border:1.5px solid #000!important;
+    border-radius:0!important;
+  }
+  #page-cover.active .sec-head{
+    background:#f0f0f0!important;
+    border-bottom:1px solid #000!important;
+    padding:3px 8px!important;
+  }
+  #page-cover.active .sec-head-title{
+    font-size:8.5pt!important;
+    font-weight:700!important;
+    color:#000!important;
+  }
+  #page-cover.active .sec-body{padding:5px 8px!important;}
+
+  /* ── แถวที่ 2: ข้อมูลครู + จำนวนนักเรียน (2 คอลัมน์) ── */
+  #page-cover.active #cover-row2{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:5px!important;
+    margin-bottom:5px!important;
+  }
+  #page-cover.active #cover-row2 .sec-box{
+    margin-bottom:0!important;
+  }
 
   /* ตารางนักเรียน */
-  #page-cover.active table.xlt{font-size:8.5pt!important;width:auto!important;}
-  #page-cover.active table.xlt th{font-size:8pt!important;padding:4px 6px!important;}
-  #page-cover.active table.xlt td{font-size:8.5pt!important;padding:4px 6px!important;}
-
-  /* stat-tiles ปก */
-  #page-cover.active .stats-row{
-    display:flex!important;flex-wrap:wrap!important;
-    justify-content:center!important;gap:5px!important;margin-bottom:5px!important;
+  #page-cover.active table.xlt{
+    width:100%!important;font-size:7.5pt!important;
+    border-collapse:collapse!important;table-layout:fixed!important;
   }
-  #page-cover.active .stat-tile{width:82px!important;padding:5px 4px!important;}
-  #page-cover.active .stat-num{font-size:13pt!important;}
-  #page-cover.active .stat-lbl{font-size:7pt!important;}
+  #page-cover.active table.xlt th{
+    font-size:7pt!important;padding:3px 4px!important;
+    background:#f0f0f0!important;color:#000!important;
+    border:1px solid #000!important;font-weight:700!important;text-align:center!important;
+  }
+  #page-cover.active table.xlt td{
+    font-size:7.5pt!important;padding:3px 4px!important;
+    border:1px solid #888!important;text-align:center!important;
+    background:#fff!important;color:#000!important;
+  }
+  #page-cover.active table.xlt td.left{text-align:left!important;}
+  #page-cover.active table.xlt td.ac{
+    background:#efefef!important;font-weight:700!important;
+  }
 
-  /* ── ซ่อนตาราง approval บนเว็บ ใน print ──
-     เพราะตารางเกรดถูก rebuild ใน cover-summary-print แล้ว */
+  /* stat-tiles — เรียงแถวเดียว */
+  #page-cover.active .stats-row{
+    display:flex!important;
+    flex-direction:row!important;
+    gap:4px!important;
+    margin-bottom:5px!important;
+    justify-content:flex-start!important;
+  }
+  #page-cover.active .stat-tile{
+    flex:1!important;
+    padding:4px 3px!important;
+    border:1px solid #aaa!important;
+    border-top:2px solid #555!important;
+    background:#fff!important;
+    text-align:center!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+  }
+  #page-cover.active .stat-num{font-size:11pt!important;color:#000!important;font-weight:800!important;}
+  #page-cover.active .stat-lbl{font-size:6pt!important;color:#444!important;}
+
+  /* ── ซ่อน approval sec-box (rebuild ใน cover-summary-print) ── */
   #page-cover.active .sec-box:has(#approval-body){
     display:none!important;
   }
+  /* ซ่อน cover-beh-read-web */
+  #page-cover.active #cover-beh-read-web{
+    display:none!important;
+  }
 
-  /* ══════════════════════════════════════════════
-     3 ตารางข้างกัน: grade | คุณลักษณะ | การอ่าน
-     ใน #cover-summary-print (JS สร้าง 3 .csbox)
-  ══════════════════════════════════════════════ */
+  /* ── 3 ตารางข้างกัน: ผลการเรียน | คุณลักษณะ | การอ่าน ── */
   #cover-summary-print{
     display:flex!important;
     flex-direction:row!important;
-    gap:6px!important;
+    gap:5px!important;
     margin-top:0!important;
-    page-break-inside:avoid;
     width:100%!important;
     align-items:stretch!important;
+    page-break-inside:avoid!important;
   }
   #cover-summary-print .csbox{
-    flex:1!important;
-    min-width:0!important;
-    border:1px solid #000!important;
-    border-radius:0!important;
-    overflow:hidden!important;
-    display:flex!important;
-    flex-direction:column!important;
+    flex:1!important;min-width:0!important;
+    border:1.5px solid #000!important;border-radius:0!important;
+    overflow:hidden!important;display:flex!important;flex-direction:column!important;
   }
   #cover-summary-print .cshead{
     background:#f0f0f0!important;color:#000!important;
-    font-size:8.5pt!important;font-weight:700!important;
-    padding:4px 8px!important;border-bottom:1px solid #000!important;
-    flex-shrink:0!important;
+    font-size:8pt!important;font-weight:700!important;
+    padding:3px 6px!important;border-bottom:1px solid #000!important;
+    flex-shrink:0!important;text-align:center!important;
   }
   #cover-summary-print table{
     width:100%!important;border-collapse:collapse!important;
-    font-size:7.5pt!important;table-layout:fixed!important;flex:1!important;
+    font-size:7pt!important;table-layout:fixed!important;flex:1!important;
   }
-  #cover-summary-print colgroup col:first-child{width:45%!important;}
-  #cover-summary-print colgroup col:not(:first-child){width:27.5%!important;}
   #cover-summary-print th{
     background:#f0f0f0!important;color:#000!important;
-    padding:3px 4px!important;font-size:7pt!important;font-weight:700!important;
+    padding:3px 3px!important;font-size:6.5pt!important;font-weight:700!important;
     text-align:center!important;border:1px solid #000!important;
   }
   #cover-summary-print td{
-    padding:3px 4px!important;border:1px solid #888!important;
-    text-align:center!important;font-size:7.5pt!important;
+    padding:3px 3px!important;border:1px solid #aaa!important;
+    text-align:center!important;font-size:7pt!important;
     background:#fff!important;color:#000!important;
   }
   #cover-summary-print td:first-child{
-    text-align:center!important;font-size:7pt!important;
+    text-align:left!important;font-size:6.5pt!important;
     font-weight:700!important;background:#fafafa!important;
-    border-right:1px solid #000!important;
+    border-right:1px solid #000!important;padding-left:4px!important;
   }
   #cover-summary-print .res-great,
   #cover-summary-print .res-good,
   #cover-summary-print .res-pass,
   #cover-summary-print .res-fail{color:#000!important;font-weight:700!important;}
-  /* ตาราง grade ใน csbox แรก */
-  #cover-summary-print .csbox:first-child table{font-size:7.5pt!important;}
-  #cover-summary-print .csbox:first-child td,
-  #cover-summary-print .csbox:first-child th{
-    padding:3px 4px!important;font-size:7pt!important;
-  }
-  /* สรุปสถิติด้านล่าง csbox แรก */
-  #cover-summary-print .csbox:first-child div{
-    font-size:7pt!important;padding:3px 5px!important;
+  /* สรุปสถิติใต้ตาราง grade */
+  #cover-summary-print .csbox:first-child > div:not(table):not(.cshead){
+    font-size:6.5pt!important;padding:2px 5px!important;
     border-top:1px solid #ccc!important;background:#fafafa!important;
+    line-height:1.6!important;
   }
 
   /* ════════════════════════════════════════════
@@ -898,6 +1034,9 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
     </div>
   </div>
 
+  <!-- wrapper 2 คอลัมน์: นักเรียน + (ใช้ใน print) -->
+  <div id="cover-row2">
+
   <!-- นักเรียนต้นปี -->
   <div class="sec-box">
     <div class="sec-head">
@@ -949,6 +1088,8 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
       </table>
     </div>
   </div>
+
+  </div><!-- /#cover-row2 -->
 
   <!-- อนุมัติผลการเรียน -->
   <div class="sec-box">
