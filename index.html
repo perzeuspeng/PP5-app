@@ -2729,9 +2729,7 @@ function handleImportFile(e){
 
 /* ══════════════════════════════════════════
    GOOGLE AUTH + DRIVE SYNC
-   Flow ถูกต้อง: ใช้ OAuth2 TokenClient เดียว
-   ขอทั้ง identity + Drive scope พร้อมกัน
-   ไม่ต้องกด login 2 รอบ
+   Flow: กดครั้งเดียว → consent (ถ้าจำเป็น) → token → เข้าระบบ
 ══════════════════════════════════════════ */
 const GAPI_CLIENT_ID = '509416975772-jqb267gqe7bvqm6gasn9c69l0k8hqj36.apps.googleusercontent.com';
 const DRIVE_FOLDER_NAME = 'สมุดบันทึก ปพ.5';
@@ -2741,86 +2739,96 @@ let gAccessToken = null;
 let gDriveFolderId = null;
 let syncTimeout = null;
 let tokenClient = null;
-let _isSigningIn = false;   // guard ป้องกัน afterSignIn ถูกเรียกซ้ำ
+let _isSigningIn = false;
 
-/* ── Init: ใช้ TokenClient เดียว ขอทุก scope พร้อมกัน ── */
+const SCOPES = [
+  'https://www.googleapis.com/auth/drive.file',
+  'https://www.googleapis.com/auth/userinfo.profile',
+  'https://www.googleapis.com/auth/userinfo.email',
+].join(' ');
+
+/* ── Init ── */
 function initGoogleAuth(){
   if(typeof google === 'undefined'){
     setTimeout(initGoogleAuth, 500);
     return;
   }
 
-  // สร้าง tokenClient ครั้งเดียว — callback จะเรียกเมื่อได้ token
+  // สร้าง tokenClient — callback เดียวจัดการทุกกรณี
   tokenClient = google.accounts.oauth2.initTokenClient({
     client_id: GAPI_CLIENT_ID,
-    scope: [
-      'https://www.googleapis.com/auth/drive.file',
-      'https://www.googleapis.com/auth/userinfo.profile',
-      'https://www.googleapis.com/auth/userinfo.email',
-    ].join(' '),
-    callback: async (tokenResponse) => {
-      if(tokenResponse.error){
-        console.error('token error:', tokenResponse);
-        _isSigningIn = false;
-        showToast('❌ เข้าสู่ระบบไม่สำเร็จ: ' + tokenResponse.error);
-        return;
-      }
-      if(_isSigningIn) return;   // ป้องกัน callback ซ้ำ
-      _isSigningIn = true;
-      gAccessToken = tokenResponse.access_token;
-      // ดึงข้อมูล user จาก token โดยตรง (ไม่ต้องผ่าน GSI)
-      await fetchUserInfo();
-      await afterSignIn();
+    scope: SCOPES,
+    callback: handleTokenResponse,
+    error_callback: (err) => {
+      console.error('token error:', err);
       _isSigningIn = false;
+      showToast('❌ เข้าสู่ระบบไม่สำเร็จ');
     },
   });
 
-  // render ปุ่ม Sign In — กดแล้วเรียก startLogin()
+  // render ปุ่ม
+  renderLoginButton();
+}
+
+function renderLoginButton(){
   const btnDiv = document.getElementById('g_signin_btn');
+  if(!btnDiv) return;
   btnDiv.innerHTML =
     '<button onclick="startLogin()" style="'+
-    'display:flex;align-items:center;gap:10px;padding:10px 20px;'+
+    'display:flex;align-items:center;gap:10px;padding:12px 24px;'+
     'border:1.5px solid #dadce0;border-radius:8px;background:#fff;'+
-    'font-family:inherit;font-size:14px;font-weight:600;color:#3c4043;'+
-    'cursor:pointer;width:100%;justify-content:center;'+
+    'font-family:inherit;font-size:15px;font-weight:600;color:#3c4043;'+
+    'cursor:pointer;width:280px;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,.1);'+
     '">' +
-    '<svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18l2.67-2.07z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.3z"/></svg>'+
+    '<svg width="20" height="20" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18l2.67-2.07z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.3z"/></svg>'+
     'ลงชื่อเข้าใช้ด้วย Google</button>';
 }
 
-/* ── เริ่ม login — เรียกครั้งเดียว ── */
+/* ── กดปุ่มครั้งเดียว: ขอ consent ทันที ── */
 function startLogin(){
-  if(_isSigningIn) return;
-  // ลอง silent ก่อน (ถ้าเคย grant แล้วจะไม่มี popup)
-  tokenClient.requestAccessToken({prompt:''});
+  if(!tokenClient || _isSigningIn) return;
+  _isSigningIn = true;
+  // ใช้ prompt:'select_account' เสมอ → Google แสดง account picker
+  // → ผู้ใช้เลือก account → ได้ token ทันที ไม่มีรอบที่ 2
+  tokenClient.requestAccessToken({prompt: 'select_account'});
 }
 
-/* ── ดึงข้อมูล user จาก Google API ── */
+/* ── จัดการ token response — เรียกครั้งเดียว ── */
+async function handleTokenResponse(tokenResponse){
+  if(tokenResponse.error){
+    console.error('handleTokenResponse error:', tokenResponse);
+    _isSigningIn = false;
+    showToast('❌ ' + (tokenResponse.error_description || tokenResponse.error));
+    return;
+  }
+  // ได้ token แล้ว — ดำเนินการต่อทันที
+  gAccessToken = tokenResponse.access_token;
+  await fetchUserInfo();
+  await afterSignIn();
+  // reset flag หลัง afterSignIn เสร็จ
+  _isSigningIn = false;
+}
+
+/* ── ดึงข้อมูล user ── */
 async function fetchUserInfo(){
   try{
-    const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-      headers: {'Authorization': 'Bearer ' + gAccessToken}
+    const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{
+      headers:{'Authorization':'Bearer '+gAccessToken}
     });
     const info = await res.json();
-    gUser = {
-      id: info.sub,
-      name: info.name,
-      email: info.email,
-      picture: info.picture,
-    };
+    gUser = {id:info.sub, name:info.name, email:info.email, picture:info.picture};
   }catch(e){
-    console.error('fetchUserInfo error:', e);
     gUser = {id:'unknown', name:'ผู้ใช้', email:'', picture:''};
   }
 }
 
-/* ── Refresh Token เมื่อหมดอายุ ── */
+/* ── Refresh Token ── */
 async function refreshToken(){
   return new Promise((resolve) => {
-    if(!tokenClient){ resolve(); return; }
-    const origCallback = tokenClient.callback;
+    if(!tokenClient){resolve();return;}
+    const orig = tokenClient.callback;
     tokenClient.callback = (t) => {
-      tokenClient.callback = origCallback;
+      tokenClient.callback = orig;
       if(!t.error) gAccessToken = t.access_token;
       resolve();
     };
@@ -3149,14 +3157,18 @@ function showUserMenu(){
     if(autoSyncInterval) clearInterval(autoSyncInterval);
     document.removeEventListener('visibilitychange', onVisibilityChange);
     _isSigningIn = false;
+    if(typeof google !== 'undefined' && gAccessToken){
+      google.accounts.oauth2.revoke(gAccessToken, ()=>{});
+    }
+    gAccessToken = null;
     tokenClient = null;
-    if(typeof google !== 'undefined') google.accounts.oauth2.revoke(gAccessToken, ()=>{});
     gUser = null; gAccessToken = null; gDriveFolderId = null;
     sessionStorage.removeItem('pp5_slot');
     document.getElementById('tb-user').style.display = 'none';
     document.getElementById('sync-status').style.display = 'none';
     document.getElementById('auth-overlay').style.display = 'flex';
     initGoogleAuth();
+    renderLoginButton();
   }
 }
 
