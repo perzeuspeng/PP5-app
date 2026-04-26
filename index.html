@@ -203,8 +203,8 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
     box-sizing:border-box!important;
   }
   /* margin ล่าง 35mm เผื่อที่เซ็นชื่อ */
-  @page          { size:A4 portrait;  margin:15mm 14mm 35mm 14mm; }
-  @page landscape{ size:A4 landscape; margin:12mm 12mm 32mm 12mm; }
+  @page          { size:A4 portrait;  margin:15mm 14mm 20mm 14mm; }
+  @page landscape{ size:A4 landscape; margin:12mm 12mm 18mm 12mm; }
 
   /* ═══ ซ่อน UI ═══ */
   #loading-overlay,.bottom-nav,.topbar,
@@ -607,6 +607,42 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   /* ════════════════════════════════════════════
      ลายเซ็น — fixed bottom + ที่ว่างเซ็น 28mm
   ════════════════════════════════════════════ */
+  /* ── Copyright Footer — แสดงทุกหน้าในโหมดพิมพ์ ── */
+  #print-copyright-footer{
+    display:block!important;
+    position:fixed!important;
+    bottom:0!important;
+    left:0!important;
+    right:0!important;
+    height:14mm!important;
+    background:#1e3a5f!important;
+    color:#fff!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    padding:0 14mm!important;
+    font-size:7.5pt!important;
+    font-family:'Sarabun',sans-serif!important;
+    z-index:9999!important;
+    box-sizing:border-box!important;
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+  }
+  #print-copyright-footer .pcf-left{
+    font-size:7.5pt!important;
+    color:rgba(255,255,255,0.85)!important;
+  }
+  #print-copyright-footer .pcf-center{
+    font-size:8pt!important;
+    font-weight:700!important;
+    color:#f59e0b!important;
+    letter-spacing:0.3px!important;
+  }
+  #print-copyright-footer .pcf-right{
+    font-size:7pt!important;
+    color:rgba(255,255,255,0.6)!important;
+  }
+
   #print-signature{
     display:flex!important;justify-content:space-between!important;gap:20px!important;
     position:fixed!important;bottom:8mm!important;left:14mm!important;right:14mm!important;
@@ -3388,6 +3424,12 @@ window.addEventListener('load', ()=>{
       <button class="btn btn-primary" style="flex:1" onclick="saveCriteria()">บันทึก</button>
     </div>
   </div>
+</div>
+<!-- ══ COPYRIGHT FOOTER (print only) ══ -->
+<div id="print-copyright-footer" style="display:none">
+  <span class="pcf-left">ระบบบันทึกคุณภาพผู้เรียน (ปพ.5)</span>
+  <span class="pcf-center">© 2568 นายปกรณ์ มั่นจิต · Pakorn Manchit · สงวนลิขสิทธิ์ทุกประการ</span>
+  <span class="pcf-right">All rights reserved</span>
 </div>
 </body>
 </html>
