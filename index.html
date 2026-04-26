@@ -2780,19 +2780,50 @@ async function onGoogleSignIn(response){
 
 /* ── ขอ Access Token ผ่าน OAuth2 Token Client ── */
 let tokenClient = null;
+let _afterSignInCalled = false;
+
 function requestDriveToken(id_credential){
   return new Promise((resolve) => {
     if(typeof google === 'undefined'){ resolve(); return; }
-    tokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: GAPI_CLIENT_ID,
-      scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.profile',
-      callback: async (tokenResponse) => {
-        if(tokenResponse.error){ console.error(tokenResponse); resolve(); return; }
-        gAccessToken = tokenResponse.access_token;
-        await afterSignIn();
-        resolve();
-      },
-    });
+
+    // สร้าง tokenClient ครั้งเดียว
+    if(!tokenClient){
+      tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: GAPI_CLIENT_ID,
+        scope: 'https://www.googleapis.com/auth/drive.file',
+        callback: async (tokenResponse) => {
+          if(tokenResponse.error){
+            console.error('token error:', tokenResponse);
+            // ถ้า error = interaction_required ให้ขอใหม่แบบมี prompt
+            if(tokenResponse.error === 'interaction_required'){
+              tokenClient.requestAccessToken({prompt:'consent'});
+            } else {
+              resolve();
+            }
+            return;
+          }
+          gAccessToken = tokenResponse.access_token;
+          if(!_afterSignInCalled){
+            _afterSignInCalled = true;
+            await afterSignIn();
+          }
+          resolve();
+        },
+      });
+    }
+
+    // ลอง silent ก่อน — ถ้าเคย grant แล้วจะไม่ popup
+    tokenClient.requestAccessToken({prompt:''});
+  });
+}
+
+async function refreshToken(){
+  return new Promise((resolve) => {
+    if(!tokenClient){ resolve(); return; }
+    tokenClient.callback = async (t) => {
+      if(!t.error) gAccessToken = t.access_token;
+      resolve();
+    };
     tokenClient.requestAccessToken({prompt:''});
   });
 }
@@ -2911,12 +2942,7 @@ async function driveRequest(method, url, body, isUpload){
   return res.json();
 }
 
-async function refreshToken(){
-  return new Promise((resolve) => {
-    if(!tokenClient){ resolve(); return; }
-    tokenClient.requestAccessToken({prompt:'', callback:(t)=>{ gAccessToken=t.access_token; resolve(); }});
-  });
-}
+
 
 /* ── หา/สร้าง folder "สมุดบันทึก ปพ.5" ── */
 async function getOrCreateDriveFolder(){
@@ -3122,6 +3148,7 @@ function showUserMenu(){
   if(ok){
     if(autoSyncInterval) clearInterval(autoSyncInterval);
     document.removeEventListener('visibilitychange', onVisibilityChange);
+    _afterSignInCalled = false;
     google.accounts.id.disableAutoSelect();
     gUser = null; gAccessToken = null; gDriveFolderId = null;
     sessionStorage.removeItem('pp5_slot');
