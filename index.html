@@ -1,0 +1,2812 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#a8c4d8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>ปพ.5 สมุดบันทึกการพัฒนาคุณภาพผู้เรียน</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{
+  --primary:#1e3a5f;--primary2:#2563a8;--accent:#f59e0b;
+  --light:#eff6ff;--success:#16a34a;--danger:#dc2626;
+  --text:#1e293b;--text2:#64748b;--border:#cbd5e1;--bg:#f0f4f8;
+  --nav-h:56px;--safe-bottom:env(safe-area-inset-bottom,0px);--safe-top:env(safe-area-inset-top,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);font-size:14px;overflow:hidden;}
+
+/* ── APP SHELL ── */
+.app-wrap{display:flex;flex-direction:column;height:100%;overflow:hidden;}
+.status-bar{height:var(--safe-top);background:#1e3a5f;}
+.topbar{background:linear-gradient(135deg,#1e3a5f 0%,#2563a8 100%);color:white;padding:9px 12px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 12px rgba(30,58,95,0.4);z-index:50;flex-shrink:0;}
+.topbar-logo{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.topbar-title{flex:1;min-width:0;}
+.topbar-title h1{font-size:14px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar-title p{font-size:10px;opacity:.7;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar-actions{display:flex;gap:5px;flex-shrink:0;}
+.tb-btn{height:32px;background:rgba(255,255,255,0.15);border:none;border-radius:8px;color:white;font-size:11px;cursor:pointer;display:flex;align-items:center;gap:4px;padding:0 10px;font-family:inherit;font-weight:700;transition:background .15s;white-space:nowrap;}
+.tb-btn:active{background:rgba(255,255,255,.28);}
+.tb-btn.accent{background:#f59e0b;color:#1e293b;}
+
+.scroll-area{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.scroll-content{padding:12px;padding-bottom:calc(var(--nav-h)+var(--safe-bottom)+120px);}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1.5px solid #e2e8f0;display:flex;padding-bottom:var(--safe-bottom);box-shadow:0 -3px 14px rgba(30,58,95,.12);z-index:100;height:calc(var(--nav-h)+var(--safe-bottom));}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 2px 8px;cursor:pointer;color:var(--text2);transition:color .15s;position:relative;min-width:0;}
+.nav-item.active{color:#1e3a5f;}
+.nav-item.active::before{content:'';position:absolute;top:0;left:15%;right:15%;height:3px;background:#f59e0b;border-radius:0 0 3px 3px;}
+.nav-icon{font-size:17px;line-height:1;margin-bottom:2px;}
+.nav-label{font-size:9px;font-weight:700;white-space:nowrap;}
+
+/* ── PAGES ── */
+.page{display:none;}.page.active{display:block;}
+
+/* ── EXCEL-STYLE SECTION HEADER ── */
+.xls-header{background:linear-gradient(135deg,#1e3a5f 0%,#2563a8 100%);color:white;border-radius:12px;padding:14px 16px;margin-bottom:10px;}
+.xls-header-title{font-size:15px;font-weight:800;margin-bottom:10px;text-align:center;}
+.xls-form{display:grid;gap:6px;}
+.xls-row{display:flex;align-items:center;gap:0;background:rgba(255,255,255,.12);border-radius:8px;overflow:hidden;}
+.xls-label{font-size:11px;font-weight:700;color:rgba(255,255,255,.8);padding:8px 10px;white-space:nowrap;min-width:90px;flex-shrink:0;}
+.xls-val{flex:1;font-size:13px;font-weight:600;color:white;padding:8px 10px;background:rgba(255,255,255,.14);border:none;font-family:inherit;outline:none;min-width:0;}
+.xls-val::placeholder{color:rgba(255,255,255,.4);font-weight:400;}
+.xls-val:focus{background:rgba(255,255,255,.24);}
+.xls-row-2col{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.xls-row-3col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;}
+.xls-row-readonly .xls-val{background:rgba(255,255,255,.07);color:rgba(255,255,255,.8);}
+
+/* ── SECTION BOX ── */
+.sec-box{background:white;border-radius:12px;margin-bottom:10px;overflow:hidden;box-shadow:0 2px 8px rgba(30,58,95,.1);}
+.sec-head{background:linear-gradient(135deg,#1e3a5f,#2563a8);color:white;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.sec-head-title{font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px;}
+.sec-head-dot{width:3px;height:14px;background:#f59e0b;border-radius:2px;flex-shrink:0;}
+.sec-body{padding:12px;}
+
+/* ── STAT TILES ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px;}
+.stat-tile{background:white;border-radius:10px;padding:10px 8px;text-align:center;box-shadow:0 2px 6px rgba(30,58,95,.1);border-top:3px solid #f59e0b;}
+.stat-num{font-size:22px;font-weight:800;color:#1e3a5f;}
+.stat-lbl{font-size:10px;color:var(--text2);margin-top:1px;}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:9px 14px;border-radius:9px;border:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;transition:opacity .1s;min-height:38px;}
+.btn:active{opacity:.7;}
+.btn-primary{background:#2563a8;color:white;}
+.btn-success{background:#16a34a;color:white;}
+.btn-accent{background:#f59e0b;color:#1e293b;}
+.btn-outline{background:white;color:#1e3a5f;border:1.5px solid #1e3a5f;}
+.btn-danger{background:#fee2e2;color:#dc2626;}
+.btn-sm{padding:6px 10px;font-size:12px;min-height:32px;border-radius:7px;}
+.btn-full{width:100%;}
+.btn-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
+.tb-btn:active{opacity:.6;}
+.nav-item:active{opacity:.5;}
+.rating-btn:active{opacity:.6;}
+.att-dot:active{opacity:.6;}
+
+/* ── EXCEL TABLES ── */
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:0 0 10px 10px;}
+table.xlt{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;}
+table.xlt th{background:#1e3a5f;color:white;padding:7px 5px;text-align:center;font-weight:700;white-space:nowrap;font-size:11px;border-top:1px solid rgba(255,255,255,.15);border-right:1px solid rgba(255,255,255,.15);border-bottom:1px solid rgba(255,255,255,.15);border-left:none;position:sticky;top:0;z-index:5;}
+table.xlt th:first-child{border-left:1px solid rgba(255,255,255,.15);}
+table.xlt th.left{text-align:left;padding-left:8px;}
+table.xlt td{padding:6px 5px;border-top:none;border-right:1px solid var(--border);border-bottom:1px solid var(--border);border-left:none;vertical-align:middle;text-align:center;background:#fff;}
+table.xlt tbody tr:first-child td{border-top:1px solid var(--border);}
+table.xlt td:first-child{border-left:1px solid var(--border);}
+table.xlt td.left{text-align:left;padding-left:8px;}
+table.xlt th.name-th{min-width:180px;width:180px;position:sticky;left:0;z-index:6;background:#1e3a5f;text-align:center;padding-left:0;border-left:1px solid rgba(255,255,255,.15);border-right:1.5px solid rgba(255,255,255,.4);}
+table.xlt th.no-th{width:32px;min-width:32px;position:sticky;left:180px;z-index:6;background:#1e3a5f;border-left:none;border-right:1.5px solid rgba(255,255,255,.4);}
+table.xlt td.name-td{width:180px;min-width:180px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;padding:6px 5px 6px 8px;font-weight:400;position:sticky;left:0;z-index:3;border-left:1px solid var(--border);border-right:1.5px solid #94a3b8;background:#f8fafc;}
+table.xlt td.no-td{width:32px;min-width:32px;max-width:32px;font-weight:700;text-align:center;padding:6px 2px;position:sticky;left:180px;z-index:3;border-left:none;border-right:1.5px solid #94a3b8;background:#f8fafc;}
+/* auto/formula cells */
+table.xlt td.ac{background:#dbeafe!important;color:#1e3a5f;font-weight:400;}
+table.xlt td.gc{background:#1e3a5f!important;color:white;font-weight:800;font-size:12px;}
+table.xlt td.gc-chip{background:white!important;font-weight:800;font-size:12px;text-align:center;}
+/* editable inputs in table */
+table.xlt td input[type=number],table.xlt td input[type=text]{
+  width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:12px;text-align:center;color:var(--text);padding:1px 2px;}
+table.xlt td input:focus{background:#fef9c3;border-radius:4px;}
+table.xlt td.edit-cell{background:#fefce8!important;padding:3px;}
+
+.result-cell{white-space:nowrap;min-width:90px;width:90px;}
+/* grade chips */
+.g-chip{display:inline-block;padding:1px 6px;border-radius:6px;font-size:inherit;font-weight:700;}
+.gA{background:#dcfce7;color:#15803d;}
+.gB{background:#dbeafe;color:#1d4ed8;}
+.gC{background:#fef9c3;color:#a16207;}
+.gD{background:#ffedd5;color:#c2410c;}
+.gF{background:#fee2e2;color:#b91c1c;}
+.gX{background:#ede9fe;color:#6d28d9;}
+
+/* ── ATTENDANCE GRID ── */
+.att-month-tabs{display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px;scrollbar-width:none;}
+.att-month-tabs::-webkit-scrollbar{display:none;}
+.att-tab{flex-shrink:0;padding:6px 12px;border-radius:18px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:white;color:var(--text2);transition:all .15s;}
+.att-tab.active{background:#1e3a5f;border-color:#1e3a5f;color:white;}
+.att-dot{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:4px;font-size:11px;font-weight:800;cursor:pointer;transition:all .1s;user-select:none;}
+.att-dot:active{transform:scale(.85);}
+.att-m{background:#dcfce7;color:#15803d;}
+.att-x{background:#fee2e2;color:#b91c1c;}
+.att-l{background:#fef9c3;color:#a16207;}
+.att-lv{background:#dbeafe;color:#1d4ed8;}
+.att-empty{background:#f1f5f9;color:#cbd5e1;}
+.att-noday{background:#f8fafc;color:#e2e8f0;cursor:default;}
+
+/* ── BEHAVIOR RATING ── */
+.rating-btn{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:6px;font-size:13px;font-weight:800;cursor:pointer;border:2px solid var(--border);background:white;color:var(--text2);transition:all .15s;user-select:none;}
+.rating-btn.sel-0{background:#fee2e2;border-color:#f87171;color:#b91c1c;}
+.rating-btn.sel-1{background:#fef9c3;border-color:#fbbf24;color:#a16207;}
+.rating-btn.sel-2{background:#dbeafe;border-color:#60a5fa;color:#1d4ed8;}
+.rating-btn.sel-3{background:#dcfce7;border-color:#4ade80;color:#15803d;}
+
+/* ── INDIVIDUAL REPORT ── */
+.ind-header{background:linear-gradient(135deg,#1e3a5f,#2563a8);color:white;border-radius:12px;padding:20px;text-align:center;margin-bottom:10px;}
+.ind-name{font-size:17px;font-weight:800;margin-bottom:4px;}
+.ind-sub{font-size:12px;opacity:.7;}
+.ind-grade-big{font-size:48px;font-weight:800;margin:10px 0 2px;}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;}
+.info-cell{background:#eff6ff;border-radius:8px;padding:8px 10px;}
+.info-cell.full{grid-column:1/-1;}
+.info-cell strong{display:block;font-size:10px;color:var(--text2);margin-bottom:2px;}
+.info-cell span{font-size:13px;font-weight:700;}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.bar-label{font-size:11px;color:var(--text2);width:120px;flex-shrink:0;line-height:1.3;}
+.bar-track{flex:1;background:#e2e8f0;border-radius:4px;height:12px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:4px;}
+.bar-val{font-size:11px;font-weight:700;width:52px;text-align:right;flex-shrink:0;white-space:nowrap;}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.5);display:flex;align-items:flex-end;z-index:200;opacity:0;pointer-events:none;transition:opacity .2s;}
+.modal-overlay.open{opacity:1;pointer-events:auto;}
+.modal-overlay.center{align-items:center;justify-content:center;}
+.modal-box{background:white;border-radius:16px;overflow:hidden;width:100%;}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);}
+.modal-title2{font-size:15px;font-weight:800;color:#1e3a5f;}
+.modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--text2);line-height:1;}
+.modal-body{padding:14px 16px;}
+.modal-sheet{background:white;width:100%;border-radius:20px 20px 0 0;padding:20px 18px calc(20px + var(--safe-bottom));transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1);max-height:92vh;overflow-y:auto;touch-action:pan-y;-webkit-overflow-scrolling:touch;}
+.modal-overlay.open .modal-sheet{transform:translateY(0);}
+.modal-handle{width:32px;height:4px;background:#e2e8f0;border-radius:2px;margin:0 auto 14px;}
+.modal-title{font-size:16px;font-weight:800;color:#1e3a5f;margin-bottom:14px;}
+dialog.unit-dialog{border:none;padding:0;border-radius:20px 20px 0 0;width:100%;max-width:100%;margin:auto 0 0 0;max-height:92dvh;overflow-y:auto;box-shadow:0 -4px 24px rgba(0,0,0,.18);}
+dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
+.unit-dialog-inner{padding:20px 18px calc(20px + var(--safe-bottom));}
+
+/* ── FORM FIELDS ── */
+.field-group{margin-bottom:10px;}
+.field-label{font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px;}
+.field-input{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-family:inherit;font-size:14px;color:var(--text);background:white;-webkit-appearance:none;transition:border .2s;}
+.field-input:focus{outline:none;border-color:var(--primary2);}
+.field-row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.field-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+
+/* ── TOAST / LOADING ── */
+.toast{position:fixed;bottom:calc(var(--nav-h)+var(--safe-bottom)+10px);left:50%;transform:translateX(-50%) translateY(20px);background:#1a2433;color:white;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;z-index:400;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+#loading-overlay{position:fixed;inset:0;z-index:998;background:rgba(26,58,92,.92);display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;}
+#loading-overlay.show{display:flex;}
+.spinner{width:36px;height:36px;border:3px solid rgba(255,255,255,.2);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── PRINT ── */
+@media print{
+
+  /* ═══ ฐาน ═══ */
+  *{
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+    box-sizing:border-box!important;
+  }
+  /* margin ล่าง 35mm เผื่อที่เซ็นชื่อ */
+  @page          { size:A4 portrait;  margin:15mm 14mm 35mm 14mm; }
+  @page landscape{ size:A4 landscape; margin:12mm 12mm 32mm 12mm; }
+
+  /* ═══ ซ่อน UI ═══ */
+  #loading-overlay,.bottom-nav,.topbar,
+  .status-bar,.topbar-actions,.no-print{display:none!important;}
+
+  /* ═══ รีเซ็ต body/wrapper ═══ */
+  html,body{
+    width:100%!important;margin:0!important;padding:0!important;
+    overflow:visible!important;background:#fff!important;
+    font-family:'Sarabun',sans-serif!important;font-size:10pt!important;color:#000!important;
+  }
+  .app-wrap,.scroll-area,.scroll-content{
+    display:block!important;width:100%!important;height:auto!important;
+    overflow:visible!important;position:static!important;
+    padding:0!important;margin:0!important;background:#fff!important;
+  }
+  .page{display:none!important;}
+  .page.active{display:block!important;width:100%!important;overflow:visible!important;}
+
+  /* ═══ SEC-BOX — กรอบดำบางๆ พื้นขาว ═══ */
+  .sec-box{
+    margin-bottom:7px!important;box-shadow:none!important;
+    border:1px solid #000!important;border-radius:0!important;
+    width:auto!important;overflow:visible!important;page-break-inside:avoid;
+  }
+  .sec-head{
+    background:#fff!important;color:#000!important;
+    border-bottom:1px solid #000!important;padding:4px 10px!important;
+  }
+  .sec-head-title{font-size:10pt!important;font-weight:700!important;color:#000!important;}
+  .sec-head-dot{display:none!important;}
+  .sec-body{padding:7px 10px!important;background:#fff!important;}
+
+  /* ═══ XLS-HEADER (ปก) — พื้นขาว กรอบดำ ═══ */
+  .xls-header{
+    background:#fff!important;border:1px solid #000!important;
+    border-radius:0!important;padding:10px 12px!important;margin-bottom:6px!important;
+  }
+  .xls-header-title{
+    font-size:12pt!important;font-weight:800!important;color:#000!important;
+    margin-bottom:6px!important;text-align:center!important;
+    border-bottom:1.5px solid #000!important;padding-bottom:4px!important;
+  }
+  .xls-row{
+    border-radius:0!important;overflow:visible!important;
+    background:#fff!important;border-bottom:1px solid #ddd!important;
+  }
+  .xls-label{
+    font-size:9pt!important;min-width:80px!important;padding:4px 8px!important;
+    color:#000!important;font-weight:700!important;
+    background:#f5f5f5!important;border-right:1px solid #ccc!important;
+  }
+  .xls-val{font-size:9pt!important;padding:4px 8px!important;color:#000!important;background:#fff!important;}
+  .xls-row-2col{gap:4px!important;}
+  .xls-form{gap:2px!important;}
+  .xls-header-inner{display:block!important;}
+  .xls-header-content{display:block!important;width:100%!important;}
+
+  /* ═══ STAT TILES — แถวเล็กๆ ไม่ยืด ═══ */
+  .stats-row{
+    display:flex!important;flex-wrap:wrap!important;
+    justify-content:center!important;gap:6px!important;margin-bottom:6px!important;
+  }
+  .stat-tile{
+    width:88px!important;flex-shrink:0!important;padding:7px 5px!important;
+    border-radius:0!important;border:1px solid #000!important;
+    box-shadow:none!important;background:#fff!important;text-align:center!important;
+  }
+  .stat-num{font-size:15pt!important;color:#000!important;font-weight:800!important;}
+  .stat-lbl{font-size:7pt!important;color:#333!important;}
+
+  /* ═══ ตารางทั่วไป — width:auto ไม่ยืด ═══ */
+  .tbl-wrap{overflow:visible!important;width:auto!important;max-width:100%!important;}
+  table.xlt{
+    width:auto!important;max-width:100%!important;min-width:0!important;
+    font-size:9pt!important;border-collapse:collapse!important;table-layout:auto!important;
+  }
+  table.xlt th{
+    font-size:8.5pt!important;padding:5px 6px!important;
+    background:#f0f0f0!important;color:#000!important;
+    position:static!important;white-space:normal!important;
+    border:1px solid #000!important;text-align:center!important;font-weight:700!important;
+  }
+  table.xlt th.left{text-align:left!important;padding-left:8px!important;}
+  table.xlt td{
+    font-size:9pt!important;padding:4px 6px!important;position:static!important;
+    white-space:nowrap!important;overflow:hidden!important;
+    border:1px solid #888!important;text-align:center!important;
+    vertical-align:middle!important;background:#fff!important;color:#000!important;
+  }
+  table.xlt td.left{text-align:left!important;padding-left:8px!important;}
+  table.xlt td.name-td{
+    background:#fafafa!important;color:#000!important;font-size:9pt!important;
+    text-align:left!important;padding-left:8px!important;position:static!important;
+    border-right:1.5px solid #000!important;
+  }
+  table.xlt td.no-td{
+    background:#fafafa!important;color:#000!important;font-weight:700!important;
+    position:static!important;border-right:1px solid #000!important;text-align:center!important;
+  }
+  table.xlt th.name-th,table.xlt th.no-th{
+    position:static!important;background:#f0f0f0!important;color:#000!important;
+  }
+  table.xlt td.ac{
+    background:#efefef!important;color:#000!important;
+    font-weight:700!important;border:1px solid #555!important;
+  }
+  table.xlt td.gc{
+    background:#e0e0e0!important;color:#000!important;
+    font-weight:800!important;border:1px solid #555!important;
+  }
+  table.xlt td.edit-cell{background:#fff!important;}
+  table.xlt td input[type=number],table.xlt td input[type=text]{
+    font-size:9pt!important;width:100%!important;
+    background:transparent!important;border:none!important;
+    text-align:center!important;color:#000!important;
+  }
+  tr{page-break-inside:avoid;}
+  .g-chip{
+    font-size:8.5pt!important;padding:1px 5px!important;font-weight:700!important;
+    background:#fff!important;border:1px solid #000!important;
+    color:#000!important;border-radius:0!important;
+  }
+  .gA,.gB,.gC,.gD,.gF,.gX{background:#fff!important;color:#000!important;border:1px solid #000!important;}
+
+  /* ═══ RATING BUTTONS ═══ */
+  .rating-btn{
+    border:none!important;font-size:9.5pt!important;font-weight:800!important;
+    background:transparent!important;width:auto!important;height:auto!important;color:#000!important;
+  }
+  .rating-btn.sel-0,.rating-btn.sel-1,
+  .rating-btn.sel-2,.rating-btn.sel-3{color:#000!important;}
+
+  /* ═══ CHART ═══ */
+  .chart-wrap{
+    padding:10px 12px!important;border-radius:0!important;box-shadow:none!important;
+    border:1px solid #000!important;page-break-inside:avoid;
+    width:auto!important;margin-bottom:8px!important;background:#fff!important;
+  }
+  .chart-wrap.grade-chart-wrap{padding:12px 14px!important;}
+  .charts-grid{
+    display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important;margin-bottom:8px!important;width:auto!important;max-width:100%!important;
+  }
+  .charts-grid .chart-wrap{margin-bottom:0!important;}
+  .chart-title{
+    font-size:10pt!important;font-weight:800!important;color:#000!important;
+    margin-bottom:8px!important;border-bottom:1px solid #000!important;padding-bottom:3px!important;
+  }
+  .chart-title::before{display:none!important;}
+  .pie-legend-tbl td,.pie-legend-name,.pie-legend-val,
+  .plt-dot,.plt-name,.plt-num,.plt-dash,.plt-pct{font-size:8.5pt!important;color:#000!important;}
+  .pie-legend-dot{width:9px!important;height:9px!important;}
+  .bar-label{font-size:8.5pt!important;width:130px!important;color:#000!important;}
+  .bar-val{font-size:8.5pt!important;width:55px!important;color:#000!important;}
+  .bar-track{height:10px!important;background:#ddd!important;}
+  .bar-fill{border-radius:0!important;}
+  .bar-row{margin-bottom:4px!important;}
+  .legend-bar{font-size:8.5pt!important;gap:10px!important;}
+
+  /* att-dot ขาวดำ */
+  .att-dot{
+    width:16px!important;height:16px!important;font-size:8pt!important;
+    border-radius:0!important;border:1px solid #666!important;
+    background:#fff!important;color:#000!important;
+  }
+  .att-m{background:#fff!important;color:#000!important;}
+  .att-x{background:#ccc!important;color:#000!important;}
+  .att-l{background:#eee!important;color:#000!important;}
+  .att-lv{background:#f5f5f5!important;color:#000!important;}
+  .att-empty{background:#fff!important;}
+
+  /* ═══ INFO / IND ═══ */
+  .info-cell{
+    padding:6px 8px!important;border-radius:0!important;
+    background:#fff!important;border:1px solid #888!important;
+  }
+  .info-cell strong{font-size:8pt!important;color:#555!important;}
+  .info-cell span{font-size:11pt!important;color:#000!important;font-weight:700!important;}
+  .ind-header{
+    padding:14px!important;border-radius:0!important;
+    background:#fff!important;color:#000!important;
+    border:1.5px solid #000!important;margin-bottom:8px!important;
+  }
+  .ind-name{font-size:13pt!important;color:#000!important;font-weight:800!important;}
+  .ind-sub{color:#333!important;}
+  .ind-grade-big{font-size:32pt!important;color:#000!important;font-weight:800!important;}
+
+  /* ════════════════════════════════════════════════════
+     หน้าปก — 3 ตารางข้างกัน
+  ════════════════════════════════════════════════════ */
+  #page-cover.active{display:block!important;width:100%!important;}
+  #cover-logo-upload-ui{display:none!important;}
+  #teacher-pos-row,#advisor-pos-row{display:none!important;}
+  #page-cover.active #cover-logo-print-wrap.cover-logo-show{
+    display:flex!important;justify-content:center!important;
+    width:100%!important;margin:0 0 8px 0!important;padding:6px 0!important;
+  }
+  #page-cover.active #cover-logo-placeholder-print{display:none!important;}
+  #cover-print-logo{
+    width:100px!important;height:100px!important;
+    object-fit:contain!important;border-radius:0!important;
+    display:block!important;margin:0 auto!important;
+  }
+
+  /* sec-box ปก */
+  #page-cover.active .sec-box{margin-bottom:5px!important;}
+  #page-cover.active .sec-head{padding:4px 10px!important;}
+  #page-cover.active .sec-head-title{font-size:9pt!important;}
+  #page-cover.active .sec-body{padding:6px 10px!important;}
+
+  /* ตารางนักเรียน */
+  #page-cover.active table.xlt{font-size:8.5pt!important;width:auto!important;}
+  #page-cover.active table.xlt th{font-size:8pt!important;padding:4px 6px!important;}
+  #page-cover.active table.xlt td{font-size:8.5pt!important;padding:4px 6px!important;}
+
+  /* stat-tiles ปก */
+  #page-cover.active .stats-row{
+    display:flex!important;flex-wrap:wrap!important;
+    justify-content:center!important;gap:5px!important;margin-bottom:5px!important;
+  }
+  #page-cover.active .stat-tile{width:82px!important;padding:5px 4px!important;}
+  #page-cover.active .stat-num{font-size:13pt!important;}
+  #page-cover.active .stat-lbl{font-size:7pt!important;}
+
+  /* ── ซ่อนตาราง approval บนเว็บ ใน print ──
+     เพราะตารางเกรดถูก rebuild ใน cover-summary-print แล้ว */
+  #page-cover.active .sec-box:has(#approval-body){
+    display:none!important;
+  }
+
+  /* ══════════════════════════════════════════════
+     3 ตารางข้างกัน: grade | คุณลักษณะ | การอ่าน
+     ใน #cover-summary-print (JS สร้าง 3 .csbox)
+  ══════════════════════════════════════════════ */
+  #cover-summary-print{
+    display:flex!important;
+    flex-direction:row!important;
+    gap:6px!important;
+    margin-top:0!important;
+    page-break-inside:avoid;
+    width:100%!important;
+    align-items:stretch!important;
+  }
+  #cover-summary-print .csbox{
+    flex:1!important;
+    min-width:0!important;
+    border:1px solid #000!important;
+    border-radius:0!important;
+    overflow:hidden!important;
+    display:flex!important;
+    flex-direction:column!important;
+  }
+  #cover-summary-print .cshead{
+    background:#f0f0f0!important;color:#000!important;
+    font-size:8.5pt!important;font-weight:700!important;
+    padding:4px 8px!important;border-bottom:1px solid #000!important;
+    flex-shrink:0!important;
+  }
+  #cover-summary-print table{
+    width:100%!important;border-collapse:collapse!important;
+    font-size:7.5pt!important;table-layout:fixed!important;flex:1!important;
+  }
+  #cover-summary-print colgroup col:first-child{width:45%!important;}
+  #cover-summary-print colgroup col:not(:first-child){width:27.5%!important;}
+  #cover-summary-print th{
+    background:#f0f0f0!important;color:#000!important;
+    padding:3px 4px!important;font-size:7pt!important;font-weight:700!important;
+    text-align:center!important;border:1px solid #000!important;
+  }
+  #cover-summary-print td{
+    padding:3px 4px!important;border:1px solid #888!important;
+    text-align:center!important;font-size:7.5pt!important;
+    background:#fff!important;color:#000!important;
+  }
+  #cover-summary-print td:first-child{
+    text-align:center!important;font-size:7pt!important;
+    font-weight:700!important;background:#fafafa!important;
+    border-right:1px solid #000!important;
+  }
+  #cover-summary-print .res-great,
+  #cover-summary-print .res-good,
+  #cover-summary-print .res-pass,
+  #cover-summary-print .res-fail{color:#000!important;font-weight:700!important;}
+  /* ตาราง grade ใน csbox แรก */
+  #cover-summary-print .csbox:first-child table{font-size:7.5pt!important;}
+  #cover-summary-print .csbox:first-child td,
+  #cover-summary-print .csbox:first-child th{
+    padding:3px 4px!important;font-size:7pt!important;
+  }
+  /* สรุปสถิติด้านล่าง csbox แรก */
+  #cover-summary-print .csbox:first-child div{
+    font-size:7pt!important;padding:3px 5px!important;
+    border-top:1px solid #ccc!important;background:#fafafa!important;
+  }
+
+  /* ════════════════════════════════════════════
+     หน้าเวลาเรียน (Landscape)
+  ════════════════════════════════════════════ */
+  #page-att.active{page:landscape;}
+  #page-att.active .tbl-wrap{overflow:visible!important;width:auto!important;max-width:100%!important;}
+  #page-att.active #att-grid-table{
+    width:auto!important;max-width:100%!important;min-width:0!important;
+    table-layout:fixed!important;font-size:5.5pt!important;border-collapse:collapse!important;
+  }
+  #page-att.active #att-grid-table th,
+  #page-att.active #att-grid-table td{
+    position:static!important;padding:2px 1px!important;overflow:hidden!important;
+    font-size:5.5pt!important;white-space:nowrap!important;border:1px solid #888!important;
+  }
+  #page-att.active #att-grid-table th{
+    background:#f0f0f0!important;color:#000!important;font-weight:700!important;
+  }
+  #page-att.active #att-grid-table th.name-th,
+  #page-att.active #att-grid-table td.name-td{
+    width:14%!important;font-size:5.5pt!important;text-overflow:ellipsis!important;
+    text-align:left!important;padding-left:3px!important;border-right:1px solid #000!important;
+  }
+  #page-att.active #att-grid-table th.no-th,
+  #page-att.active #att-grid-table td.no-td{
+    width:1.8%!important;border-right:1px solid #000!important;
+  }
+  #page-att.active #att-grid-table td:not(.name-td):not(.no-td):not(.ac){
+    width:2%!important;padding:1px 0!important;text-align:center!important;
+  }
+  #page-att.active .att-dot{
+    width:11px!important;height:11px!important;font-size:4.5pt!important;
+    border-radius:0!important;border:1px solid #666!important;
+    display:inline-flex!important;align-items:center!important;justify-content:center!important;
+    background:#fff!important;color:#000!important;
+  }
+  #page-att.active .att-x{background:#ccc!important;}
+  #page-att.active #att-grid-table th.att-sum-th,
+  #page-att.active #att-grid-table th.att-pct-th{width:2.5%!important;}
+  #page-att.active #att-grid-table td.ac{
+    width:2.5%!important;font-size:5.5pt!important;
+    background:#efefef!important;color:#000!important;
+    border:1px solid #555!important;font-weight:700!important;
+  }
+
+  /* ════════════════════════════════════════════
+     หน้าคะแนน ภาค 1 & 2 (Landscape)
+  ════════════════════════════════════════════ */
+  #page-s1.active,#page-s2.active{page:landscape;}
+  #page-s1.active .tbl-wrap,#page-s2.active .tbl-wrap{
+    overflow:visible!important;width:auto!important;max-width:100%!important;
+  }
+  #page-s1.active table.xlt,#page-s2.active table.xlt{
+    width:auto!important;max-width:100%!important;min-width:0!important;
+    table-layout:fixed!important;font-size:6pt!important;border-collapse:collapse!important;
+  }
+  #page-s1.active table.xlt th,#page-s2.active table.xlt th{
+    position:static!important;font-size:5.5pt!important;
+    padding:3px 2px!important;white-space:normal!important;
+    word-break:break-word!important;overflow:hidden!important;
+    background:#f0f0f0!important;color:#000!important;
+    border:1px solid #000!important;font-weight:700!important;
+  }
+  #page-s1.active table.xlt td,#page-s2.active table.xlt td{
+    position:static!important;font-size:6pt!important;padding:2px 2px!important;
+    overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+    border:1px solid #888!important;background:#fff!important;color:#000!important;
+  }
+  #page-s1.active table.xlt th.name-th,#page-s2.active table.xlt th.name-th,
+  #page-s1.active table.xlt td.name-td,#page-s2.active table.xlt td.name-td{
+    width:13%!important;font-size:6pt!important;
+    white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+    text-align:left!important;padding-left:4px!important;border-right:1px solid #000!important;
+  }
+  #page-s1.active table.xlt td.name-td,#page-s2.active table.xlt td.name-td{background:#fafafa!important;}
+  #page-s1.active table.xlt th.no-th,#page-s2.active table.xlt th.no-th,
+  #page-s1.active table.xlt td.no-td,#page-s2.active table.xlt td.no-td{
+    width:2%!important;border-right:1px solid #000!important;
+  }
+  #page-s1.active table.xlt td.no-td,#page-s2.active table.xlt td.no-td{background:#fafafa!important;}
+  #page-s1.active table.xlt thead th:not(.name-th):not(.no-th),
+  #page-s2.active table.xlt thead th:not(.name-th):not(.no-th){
+    width:2.8%!important;min-width:0!important;height:72px!important;
+    font-size:5pt!important;padding:2px 0!important;vertical-align:bottom!important;
+    writing-mode:vertical-lr!important;transform:rotate(180deg)!important;
+    word-break:break-all!important;overflow:hidden!important;
+  }
+  #page-s1.active table.xlt td.ac,#page-s2.active table.xlt td.ac{
+    width:4%!important;font-size:6pt!important;
+    background:#efefef!important;color:#000!important;
+    font-weight:700!important;border:1px solid #555!important;
+  }
+  #page-s1.active table.xlt td.gc,#page-s2.active table.xlt td.gc{
+    width:4%!important;font-size:6pt!important;
+    background:#e0e0e0!important;color:#000!important;
+    font-weight:800!important;border:1px solid #555!important;
+  }
+  #page-s1.active table.xlt input,#page-s2.active table.xlt input{
+    width:100%!important;font-size:6pt!important;padding:0!important;
+    border:none!important;background:transparent!important;text-align:center!important;
+  }
+  #page-s1.active .sec-box,#page-s2.active .sec-box{margin-bottom:4px!important;}
+  #page-s1.active table.xlt tr,#page-s2.active table.xlt tr{page-break-inside:avoid!important;}
+
+  /* ════════════════════════════════════════════
+     ลายเซ็น — fixed bottom + ที่ว่างเซ็น 28mm
+  ════════════════════════════════════════════ */
+  #print-signature{
+    display:flex!important;justify-content:space-between!important;gap:20px!important;
+    position:fixed!important;bottom:8mm!important;left:14mm!important;right:14mm!important;
+    page-break-inside:avoid!important;background:#fff!important;
+  }
+  .sig-box{flex:1!important;text-align:center!important;padding:0 6px!important;}
+  .sig-role-line{
+    font-size:9pt!important;font-weight:700!important;color:#000!important;
+    display:flex!important;align-items:baseline!important;
+    justify-content:center!important;gap:0!important;
+    margin-top:28mm!important;margin-bottom:2px!important;white-space:nowrap!important;
+    border-top:1px solid #000!important;padding-top:4px!important;
+  }
+  .sig-dots{
+    flex:1!important;letter-spacing:1px!important;font-weight:400!important;
+    font-size:9pt!important;overflow:hidden!important;text-align:center!important;padding:0 2px!important;
+  }
+  .sig-name{font-size:9pt!important;font-weight:700!important;color:#000!important;text-align:center!important;min-height:12pt!important;}
+  .sig-pos{font-size:8.5pt!important;color:#000!important;font-weight:600!important;text-align:center!important;margin-top:1px!important;}
+}
+
+
+/* ── LOGO UPLOAD ── */
+.logo-wrap{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.cover-logo-print-hide{display:none;}
+.logo-preview{width:64px;height:64px;border-radius:10px;object-fit:contain;background:rgba(255,255,255,.18);border:2px dashed rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;overflow:hidden;}
+.logo-preview img{width:100%;height:100%;object-fit:contain;}
+.logo-upload-btn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:white;border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;}
+.logo-upload-btn:active{background:rgba(255,255,255,.28);}
+#logo-file-input{display:none;}
+
+/* ── COVER SUMMARY TABLES (เว็บ) ── */
+.cover-summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+.cover-summary-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;}
+.cover-summary-head{background:#1e3a5f;color:white;font-size:11px;font-weight:700;padding:5px 10px;}
+
+/* ── LEGEND BAR ── */
+.legend-bar{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;margin-bottom:8px;}
+.legend-item{display:flex;align-items:center;gap:4px;font-weight:600;}
+/* ── CHART ── */
+.chart-wrap{background:white;border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:0 2px 8px rgba(30,58,95,.1);}
+.chart-title{font-size:12px;font-weight:800;color:var(--primary);margin-bottom:10px;display:flex;align-items:center;gap:5px;overflow:hidden;}
+.chart-title-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;}
+.chart-title::before{content:'';display:block;width:3px;height:13px;background:#f59e0b;border-radius:2px;flex-shrink:0;}
+/* grade chart: ขยาย */
+.chart-wrap.grade-chart-wrap{padding:18px 16px;}
+.chart-wrap.grade-chart-wrap .pie-canvas-wrap{flex-shrink:0;}
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;}
+.charts-grid .chart-wrap{margin-bottom:0;padding:8px 6px;overflow:hidden;}
+.charts-grid .chart-title{font-size:10px;margin-bottom:6px;}
+/* grade: pie left, legend right */
+.pie-row{display:flex;align-items:center;gap:10px;}
+.pie-canvas-wrap{flex-shrink:0;}
+.pie-legend-side{flex:1;display:flex;flex-direction:column;gap:5px;min-width:0;}
+/* small charts: pie center, legend below */
+.pie-col{display:flex;flex-direction:column;align-items:center;width:100%;}
+.pie-col canvas{max-width:100%;height:auto;}
+.pie-legend-below{width:100%;margin-top:6px;display:flex;flex-direction:column;gap:2px;}
+/* legend item shared */
+.pie-legend-item{display:block;min-width:0;}
+.pie-legend-dot{width:7px;height:7px;border-radius:2px;display:inline-block;flex-shrink:0;}
+.pie-legend-name{font-size:9px;font-weight:600;color:var(--text);white-space:nowrap;}
+.pie-legend-val{font-size:9px;font-weight:800;color:var(--primary);white-space:nowrap;}
+.pie-legend-tbl{border-collapse:collapse;width:100%;table-layout:auto;}
+.pie-legend-tbl td{padding:1px 2px;vertical-align:middle;font-size:9px;font-weight:700;color:var(--primary);border:none;background:transparent;}
+.plt-dot{width:11px;text-align:center;}
+.plt-name{text-align:left;font-weight:600;color:var(--text);white-space:nowrap;padding-right:4px;}
+.plt-num{width:16px;text-align:center;}
+.plt-dash{width:8px;text-align:center;}
+.plt-pct{width:28px;text-align:center;}
+</style>
+</head>
+<body>
+<div id="loading-overlay"><div class="spinner"></div><div style="color:white;font-size:13px" id="loading-text">กำลังโหลด...</div></div>
+<div class="app-wrap">
+<div class="status-bar"></div>
+<div class="topbar">
+  <div class="topbar-logo">📚</div>
+  <div class="topbar-title">
+    <h1 id="tb-title">สมุดบันทึกคุณภาพผู้เรียน (ปพ.5)</h1>
+    <p id="tb-sub"></p>
+  </div>
+  <div class="topbar-actions no-print">
+    <button class="tb-btn" onclick="openLauncher()" title="เลือก/เปลี่ยนรายวิชา">📂</button><button class="tb-btn" onclick="exportCurrentSlot()" title="ส่งออกข้อมูลเป็น .json">📤</button><button class="tb-btn accent" onclick="saveData()">💾 บันทึก</button>
+    <button class="tb-btn" onclick="openModal('report-modal')">📊</button>
+    <button class="tb-btn" onclick="printCurrentPage()">🖨️</button>
+  </div>
+</div>
+
+<div class="scroll-area" id="scroll-area">
+<div class="scroll-content">
+
+<!-- ══════════════════════════ PAGE: ปก ══════════════════════════ -->
+<div id="page-cover" class="page active">
+
+  <div class="xls-header">
+    <!-- โลโก้ + upload (เว็บ) -->
+    <div id="cover-logo-upload-ui" class="logo-wrap no-print" style="margin-bottom:8px">
+      <div class="logo-preview" id="logo-preview-box">🏫</div>
+      <div>
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:4px">โลโก้โรงเรียน</div>
+        <label class="logo-upload-btn">📁 อัพโหลดโลโก้ <input type="file" id="logo-file-input" accept="image/*" onchange="handleLogoUpload(this)"></label>
+        <button class="logo-upload-btn" style="margin-left:4px" onclick="clearLogo()">✕ ลบ</button>
+      </div>
+    </div>
+    <!-- print: โลโก้อยู่ซ้าย, ข้อมูลอยู่ขวา -->
+    <div class="xls-header-inner">
+      <div id="cover-logo-print-wrap" class="cover-logo-print-hide" style="flex-shrink:0;margin-right:10px">
+        <img id="cover-print-logo" src="" alt="โลโก้" style="width:56px;height:56px;object-fit:contain;border-radius:6px">
+      </div>
+      <div id="cover-logo-placeholder-print" class="cover-logo-print-hide" style="flex-shrink:0">🏫</div>
+      <div class="xls-header-content">
+        <div class="xls-header-title">📋 สมุดบันทึกการพัฒนาคุณภาพผู้เรียน (ปพ.5)</div>
+        <div class="xls-form">
+      <div class="xls-row">
+        <span class="xls-label">โรงเรียน</span>
+        <input class="xls-val" id="f-school" placeholder="ชื่อโรงเรียน" oninput="markDirty()">
+      </div>
+      <div class="xls-row">
+        <span class="xls-label">สังกัด</span>
+        <input class="xls-val" id="f-dept" placeholder="สำนักงานเขตพื้นที่การศึกษา..." oninput="markDirty()">
+      </div>
+      <div class="xls-row-2col">
+        <div class="xls-row">
+          <span class="xls-label">ชั้น</span>
+          <input class="xls-val" id="f-grade" placeholder="ป.2" oninput="markDirty();refreshSubtitle()">
+        </div>
+        <div class="xls-row">
+          <span class="xls-label">ภาคเรียน</span>
+          <select class="xls-val" id="f-sem" onchange="markDirty()">
+            <option value="1,2">1, 2</option><option value="1">1</option><option value="2">2</option>
+          </select>
+        </div>
+      </div>
+      <div class="xls-row-2col">
+        <div class="xls-row">
+          <span class="xls-label">รายวิชา</span>
+          <input class="xls-val" id="f-subject" placeholder="คณิตศาสตร์" oninput="markDirty();refreshSubtitle()">
+        </div>
+        <div class="xls-row">
+          <span class="xls-label">รหัสวิชา</span>
+          <input class="xls-val" id="f-subcode" placeholder="ค12101" oninput="markDirty()">
+        </div>
+      </div>
+      <div class="xls-row-2col">
+        <div class="xls-row">
+          <span class="xls-label">ปีการศึกษา</span>
+          <input class="xls-val" id="f-year" placeholder="2568" oninput="markDirty()">
+        </div>
+        <div class="xls-row">
+          <span class="xls-label">ชม./สัปดาห์</span>
+          <input class="xls-val" id="f-hours" type="number" placeholder="5" oninput="markDirty()">
+        </div>
+      </div>
+      <div class="xls-row" id="teacher-name-row">
+        <span class="xls-label">ครูผู้สอน</span>
+        <input class="xls-val" id="f-teacher" placeholder="ชื่อ-นามสกุล" oninput="markDirty()">
+      </div>
+      <div class="xls-row" id="teacher-pos-row">
+        <span class="xls-label">ตำแหน่ง</span>
+        <input class="xls-val" id="f-teacher-pos" placeholder="ตำแหน่ง/วิทยฐานะ" oninput="markDirty()">
+      </div>
+      <div class="xls-row" id="advisor-name-row">
+        <span class="xls-label">ครูที่ปรึกษา</span>
+        <input class="xls-val" id="f-advisor" placeholder="ชื่อ-นามสกุล" oninput="markDirty()">
+      </div>
+      <div class="xls-row" id="advisor-pos-row">
+        <span class="xls-label">ตำแหน่ง</span>
+        <input class="xls-val" id="f-advisor-pos" placeholder="ตำแหน่ง/วิทยฐานะ" oninput="markDirty()">
+      </div>
+      <div class="xls-row">
+        <span class="xls-label">ผู้อำนวยการ</span>
+        <input class="xls-val" id="f-director" placeholder="ชื่อ-นามสกุล" oninput="markDirty()">
+      </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- นักเรียนต้นปี -->
+  <div class="sec-box">
+    <div class="sec-head">
+      <div class="sec-head-title"><div class="sec-head-dot"></div>จำนวนนักเรียน</div>
+    </div>
+    <div class="sec-body">
+      <table class="xlt" style="min-width:0;width:100%;table-layout:fixed">
+        <colgroup>
+          <col style="width:52%">
+          <col style="width:16%">
+          <col style="width:16%">
+          <col style="width:16%">
+        </colgroup>
+        <thead><tr>
+          <th class="left">ประเภท</th><th>ชาย</th><th>หญิง</th><th>รวม</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="left">ต้นปีการศึกษา</td>
+            <td class="edit-cell"><input type="number" id="f-male" value="0" min="0" oninput="calcTotal()"></td>
+            <td class="edit-cell"><input type="number" id="f-female" value="0" min="0" oninput="calcTotal()"></td>
+            <td class="ac" id="f-total">0</td>
+          </tr>
+          <tr>
+            <td class="left">พิการเรียนร่วม</td>
+            <td class="edit-cell"><input type="number" id="f-dis-m" value="0" min="0"></td>
+            <td class="edit-cell"><input type="number" id="f-dis-f" value="0" min="0"></td>
+            <td class="ac" id="f-dis-t">0</td>
+          </tr>
+          <tr>
+            <td class="left">ออกระหว่างปี</td>
+            <td class="edit-cell"><input type="number" id="f-out-m" value="0" min="0"></td>
+            <td class="edit-cell"><input type="number" id="f-out-f" value="0" min="0"></td>
+            <td class="ac" id="f-out-t">0</td>
+          </tr>
+          <tr>
+            <td class="left">เข้าระหว่างปี</td>
+            <td class="edit-cell"><input type="number" id="f-in-m" value="0" min="0"></td>
+            <td class="edit-cell"><input type="number" id="f-in-f" value="0" min="0"></td>
+            <td class="ac" id="f-in-t">0</td>
+          </tr>
+          <tr style="font-weight:700">
+            <td class="left">รวมสิ้นปี</td>
+            <td class="ac" id="f-end-m">0</td>
+            <td class="ac" id="f-end-f">0</td>
+            <td class="ac" id="f-end-t">0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- อนุมัติผลการเรียน -->
+  <div class="sec-box">
+    <div class="sec-head">
+      <div class="sec-head-title"><div class="sec-head-dot"></div>การอนุมัติผลการเรียน</div>
+    </div>
+    <div class="sec-body" id="approval-body">
+      <div class="stats-row" id="cover-stats"></div>
+      <!-- grade distribution table rendered by JS -->
+      <div id="grade-dist-table"></div>
+    </div>
+  </div>
+
+  <!-- สรุปคุณลักษณะ + การอ่าน (เว็บ: 2 คอลัมน์, print: ใช้ #cover-summary-print) -->
+  <div class="cover-summary-grid no-print" id="cover-beh-read-web">
+    <div class="cover-summary-box">
+      <div class="cover-summary-head">⭐ สรุปคุณลักษณะอันพึงประสงค์</div>
+      <div id="cover-beh-table" style="overflow-x:auto"></div>
+    </div>
+    <div class="cover-summary-box">
+      <div class="cover-summary-head">📖 สรุปการอ่าน คิดวิเคราะห์ เขียน</div>
+      <div id="cover-read-table" style="overflow-x:auto"></div>
+    </div>
+  </div>
+  <!-- print version (สร้างโดย JS ก่อน print) -->
+  <div id="cover-summary-print" style="display:none"></div>
+
+  <button class="btn btn-success btn-full no-print" onclick="saveData()" style="margin-bottom:8px">✅ บันทึกข้อมูลปก</button>
+  <div style="height:60px"></div>
+</div>
+
+<!-- ══════════════════════════ PAGE: รายชื่อ ══════════════════════════ -->
+<div id="page-students" class="page">
+  <div class="sec-box">
+    <div class="sec-head">
+      <div class="sec-head-title"><div class="sec-head-dot"></div>รายชื่อนักเรียน</div>
+      <div class="no-print" style="display:flex;gap:6px">
+        <button class="btn btn-success btn-sm" onclick="addStudent()">➕ เพิ่ม</button>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table class="xlt" id="student-table">
+        <thead>
+          <tr>
+            <th style="width:36px">ที่</th>
+            <th style="min-width:80px">เลขประจำตัว</th>
+            <th style="min-width:180px" class="left">ชื่อ - สกุล</th>
+            <th style="min-width:60px">ชื่อเล่น</th>
+            <th style="min-width:70px">วัน/เดือน/ปีเกิด</th>
+            <th style="min-width:120px" class="left">ชื่อ-สกุล บิดา</th>
+            <th style="min-width:120px" class="left">ชื่อ-สกุล มารดา</th>
+            <th style="min-width:120px" class="left">ชื่อ-สกุล ผู้ปกครอง</th>
+            <th style="min-width:70px">ความสัมพันธ์</th>
+            <th style="min-width:80px">เบอร์โทร</th>
+            <th class="no-print" style="width:80px">แก้ไข / ลบ</th>
+          </tr>
+        </thead>
+        <tbody id="student-tbody"></tbody>
+      </table>
+    </div>
+    <div class="sec-body" style="padding-top:8px">
+      <div id="student-summary" style="font-size:12px;color:var(--text2);margin-bottom:8px"></div>
+    </div>
+  </div>
+
+  <button class="btn btn-success btn-full no-print" onclick="saveData()" style="margin-top:4px;margin-bottom:8px">💾 บันทึกข้อมูล</button>
+  <div style="height:60px"></div>
+</div>
+
+<!-- ══════════════════════════ PAGE: เวลาเรียน ══════════════════════════ -->
+<div id="page-att" class="page">
+  <!-- Month tabs -->
+  <div class="att-month-tabs no-print" id="att-month-tabs"></div>
+
+
+  <div id="att-grid-wrap">
+    <div class="sec-box" style="margin-bottom:8px">
+      <div class="sec-body" style="padding:10px 12px">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <span style="font-size:13px;font-weight:700;color:var(--primary)" id="att-month-label">เดือน</span>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font-size:12px;color:var(--text2)">วันเรียน (เต็ม)</span>
+            <input type="number" id="att-total-days" value="0" min="0" max="31" style="width:60px;padding:6px 8px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:14px;font-weight:700;text-align:center;" onchange="saveAttDays()">
+          </div>
+          <div class="legend-bar" style="margin:0">
+            <span class="legend-item"><span class="att-dot att-m" style="cursor:default">✓</span> มา</span>
+            <span class="legend-item"><span class="att-dot att-x" style="cursor:default">✗</span> ขาด</span>
+            <span class="legend-item"><span class="att-dot att-l" style="cursor:default">ส</span> สาย</span>
+            <span class="legend-item"><span class="att-dot att-lv" style="cursor:default">ล</span> ลา</span>
+          </div>
+          <span style="font-size:11px;color:var(--text2)">(กดเพื่อเปลี่ยน)</span>
+        </div>
+      </div>
+    </div>
+    <div class="sec-box">
+      <div class="sec-head">
+        <div class="sec-head-title"><div class="sec-head-dot"></div>บันทึกการมาเรียน <span id="att-month-title" style="opacity:.7;font-weight:400;font-size:11px"></span></div>
+      </div>
+      <div class="tbl-wrap" id="att-table-wrap"></div>
+    </div>
+  </div>
+
+  <div id="att-year-wrap" style="display:none">
+    <div class="sec-box">
+      <div class="sec-head">
+        <div class="sec-head-title"><div class="sec-head-dot"></div>สรุปเวลาเรียนตลอดปีการศึกษา</div>
+        <button class="btn btn-sm btn-outline no-print" onclick="calcYearlyAtt()">🔄 คำนวณ</button>
+      </div>
+      <div class="tbl-wrap" id="att-year-content"></div>
+    </div>
+  </div>
+
+  <button class="btn btn-success btn-full no-print" onclick="saveData()" style="margin-top:4px;margin-bottom:8px">💾 บันทึกข้อมูล</button>
+  <div style="height:60px"></div>
+</div>
+
+<!-- ══════════════════════════ PAGE: คะแนน ภาค 1 ══════════════════════════ -->
+<div id="page-s1" class="page">
+  <div class="sec-box">
+    <div class="sec-body" style="padding:10px 12px">
+      <div style="font-size:13px;font-weight:700;color:var(--primary);margin-bottom:10px">คะแนนหน่วยการเรียนรู้ตามมาตรฐานการเรียนรู้/ตัวชี้วัด ภาคเรียนที่ 1</div>
+      <div style="display:flex;justify-content:center;align-items:flex-end;gap:8px">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+          <span style="font-size:11px;color:var(--text2);font-weight:600">ระหว่างเรียน</span>
+          <input type="number" id="s1-bet" value="60" min="0" max="100" style="width:54px;padding:6px 4px;border:1.5px solid var(--border);border-radius:7px;font-family:inherit;font-size:14px;font-weight:700;text-align:center;" onchange="renderScore(1)">
+        </div>
+        <span style="font-weight:700;color:var(--text2);font-size:16px;padding-bottom:7px">:</span>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+          <span style="font-size:11px;color:var(--text2);font-weight:600">ปลายภาค</span>
+          <input type="number" id="s1-ex" value="40" min="0" max="100" style="width:54px;padding:6px 4px;border:1.5px solid var(--border);border-radius:7px;font-family:inherit;font-size:14px;font-weight:700;text-align:center;" onchange="renderScore(1)">
+        </div>
+        <button class="btn btn-outline btn-sm no-print" style="flex-shrink:0;white-space:nowrap;margin-bottom:1px" onclick="openUnitModal(1)">⚙️ จัดการหน่วย</button>
+      </div>
+    </div>
+  </div>
+  <div class="sec-box">
+    <div class="tbl-wrap" id="s1-wrap"></div>
+  </div>
+  <button class="btn btn-success btn-full no-print" onclick="saveData()" style="margin-top:4px;margin-bottom:8px">💾 บันทึกผลคะแนน</button>
+  <div style="height:60px"></div>
+</div>
+
+<!-- ══════════════════════════ PAGE: คะแนน ภาค 2 ══════════════════════════ -->
+<div id="page-s2" class="page">
+  <div class="sec-box">
+    <div class="sec-body" style="padding:10px 12px">
+      <div style="font-size:13px;font-weight:700;color:var(--primary);margin-bottom:10px">คะแนนหน่วยการเรียนรู้ตามมาตรฐานการเรียนรู้/ตัวชี้วัด ภาคเรียนที่ 2</div>
+      <div style="display:flex;justify-content:center;align-items:flex-end;gap:8px">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+          <span style="font-size:11px;color:var(--text2);font-weight:600">ระหว่างเรียน</span>
+          <input type="number" id="s2-bet" value="60" min="0" max="100" style="width:54px;padding:6px 4px;border:1.5px solid var(--border);border-radius:7px;font-family:inherit;font-size:14px;font-weight:700;text-align:center;" onchange="renderScore(2)">
+        </div>
+        <span style="font-weight:700;color:var(--text2);font-size:16px;padding-bottom:7px">:</span>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+          <span style="font-size:11px;color:var(--text2);font-weight:600">ปลายภาค</span>
+          <input type="number" id="s2-ex" value="40" min="0" max="100" style="width:54px;padding:6px 4px;border:1.5px solid var(--border);border-radius:7px;font-family:inherit;font-size:14px;font-weight:700;text-align:center;" onchange="renderScore(2)">
+        </div>
+        <button class="btn btn-outline btn-sm no-print" style="flex-shrink:0;white-space:nowrap;margin-bottom:1px" onclick="openUnitModal(2)">⚙️ จัดการหน่วย</button>
+      </div>
+    </div>
+  </div>
+  <div class="sec-box">
+    <div class="tbl-wrap" id="s2-wrap"></div>
+  </div>
+  <button class="btn btn-success btn-full no-print" onclick="saveData()" style="margin-top:4px;margin-bottom:8px">💾 บันทึกผลคะแนน</button>
+  <div style="height:60px"></div>
+</div>
+
+<!-- ══════════════════════════ PAGE: คะแนนรวม ══════════════════════════ -->
+<div id="page-total" class="page">
+  <div class="sec-box">
+    <div class="sec-head">
+      <div class="sec-head-title"><div class="sec-head-dot"></div>ผลสัมฤทธิ์ทางการเรียน</div>
+    </div>
+    <div class="tbl-wrap" id="total-wrap"></div>
+  </div>
+  <!-- กราฟเกรด (เต็มแถว) -->
+  <div class="chart-wrap grade-chart-wrap">
+    <div class="chart-title"><span class="chart-title-text">📊 ผลการประเมินระดับเกรด</span></div>
+    <div class="pie-row">
+      <div class="pie-canvas-wrap"><canvas id="grade-chart"></canvas></div>
+      <div class="pie-legend-side" id="grade-chart-legend"></div>
+    </div>
+  </div>
+  <!-- กราฟคุณลักษณะ + การอ่าน (2 คอลัมน์) -->
+  <div class="charts-grid">
+    <div class="chart-wrap">
+      <div class="chart-title"><span class="chart-title-text">⭐ คุณลักษณะอันพึงประสงค์</span></div>
+      <div class="pie-col">
+        <canvas id="beh-chart"></canvas>
+        <div class="pie-legend-below" id="beh-chart-legend"></div>
+      </div>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart-title"><span class="chart-title-text">📖 การอ่าน คิดวิเคราะห์ เขียน</span></div>
+      <div class="pie-col">
+        <canvas id="read-chart"></canvas>
+        <div class="pie-legend-below" id="read-chart-legend"></div>
+      </div>
+    </div>
+  </div>
+  <div style="height:60px"></div>
+</div>
+
+<!-- ══════════════════════════ PAGE: คุณลักษณะ ══════════════════════════ -->
+<div id="page-beh" class="page">
+  <div class="sec-box" style="margin-bottom:8px">
+    <div class="sec-body" style="padding:10px 12px">
+      <div style="display:flex;gap:6px;margin-bottom:6px">
+        <button id="beh-tab-1" class="btn btn-primary btn-sm" style="flex:1;text-align:center;justify-content:center" onclick="setBehSem('1')">ภาคเรียนที่ 1</button>
+        <button id="beh-tab-2" class="btn btn-outline btn-sm" style="flex:1;text-align:center;justify-content:center" onclick="setBehSem('2')">ภาคเรียนที่ 2</button>
+        <button id="beh-tab-all" class="btn btn-outline btn-sm" style="flex:1;text-align:center;justify-content:center" onclick="setBehSem('all')">รวมตลอดปีการศึกษา</button>
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:6px">
+        <button class="btn btn-sm no-print" style="flex:1;background:white;border:2px solid #27ae60;color:#27ae60;font-weight:700;border-radius:9px" onclick="openCriteriaModal('beh')">⚙️ แก้ไขคุณลักษณะฯ</button>
+        <button class="btn btn-sm no-print" style="flex:1;background:white;border:2px solid #f0a500;color:#b8800a;font-weight:700;border-radius:9px" onclick="openCriteriaModal('read')">⚙️ แก้ไขการอ่านฯ</button>
+      </div>
+      <div style="font-size:11px;color:var(--text2);text-align:center;margin-top:4px">ระดับ:  0 = ไม่ผ่าน  &nbsp; 1 = ผ่าน  &nbsp; 2 = ดี  &nbsp; 3 = ดีเยี่ยม</div>
+    </div>
+  </div>
+
+  <div class="sec-box">
+    <div class="sec-head"><div class="sec-head-title"><div class="sec-head-dot"></div>สรุปการประเมินคุณลักษณะอันพึงประสงค์</div></div>
+    <div class="tbl-wrap" id="beh-wrap"></div>
+  </div>
+  <div class="sec-box">
+    <div class="sec-head"><div class="sec-head-title"><div class="sec-head-dot"></div>การอ่าน คิดวิเคราะห์ และเขียนสื่อความ</div></div>
+    <div class="tbl-wrap" id="read-wrap"></div>
+  </div>
+
+  <button class="btn btn-success btn-full no-print" onclick="saveData()" style="margin-top:4px;margin-bottom:8px">💾 บันทึกข้อมูล</button>
+  <div style="height:60px"></div>
+</div>
+
+<!-- ══════════════════════════ PAGE: รายบุคคล ══════════════════════════ -->
+<div id="page-ind" class="page">
+  <div class="sec-box" style="margin-bottom:10px">
+    <div class="sec-body" style="padding:10px 12px">
+      <select id="ind-sel" class="field-input" onchange="renderIndividual()"></select>
+    </div>
+  </div>
+  <div id="ind-content"></div>
+  <div style="height:60px"></div>
+</div>
+
+</div><!-- scroll-content -->
+</div><!-- scroll-area -->
+
+<nav class="bottom-nav no-print">
+  <div class="nav-item active" id="nav-cover" onclick="goPage('cover',this)"><div class="nav-icon">📋</div><div class="nav-label">ปก</div></div>
+  <div class="nav-item" id="nav-students" onclick="goPage('students',this)"><div class="nav-icon">👥</div><div class="nav-label">รายชื่อ</div></div>
+  <div class="nav-item" id="nav-att" onclick="goPage('att',this)"><div class="nav-icon">📅</div><div class="nav-label">เวลาเรียน</div></div>
+  <div class="nav-item" id="nav-s1" onclick="goPage('s1',this)"><div class="nav-icon">✏️</div><div class="nav-label">คะแนน 1</div></div>
+  <div class="nav-item" id="nav-s2" onclick="goPage('s2',this)"><div class="nav-icon">📝</div><div class="nav-label">คะแนน 2</div></div>
+  <div class="nav-item" id="nav-beh" onclick="goPage('beh',this)"><div class="nav-icon">⭐</div><div class="nav-label">คุณลักษณะ</div></div>
+  <div class="nav-item" id="nav-total" onclick="goPage('total',this)"><div class="nav-icon">📊</div><div class="nav-label">รวม</div></div>
+  <div class="nav-item" id="nav-ind" onclick="goPage('ind',this)"><div class="nav-icon">📄</div><div class="nav-label">รายบุคคล</div></div>
+</nav>
+</div><!-- app-wrap -->
+
+<div class="toast" id="toast"></div>
+
+<!-- ══ STUDENT MODAL ══ -->
+<div class="modal-overlay" id="student-modal" onclick="closeModal('student-modal')">
+<div class="modal-sheet" onclick="event.stopPropagation()">
+  <div class="modal-handle"></div>
+  <div class="modal-title" id="sm-title">เพิ่มนักเรียน</div>
+  <div class="field-row2">
+    <div class="field-group"><div class="field-label">เลขที่</div><input class="field-input" id="sm-no" type="number" placeholder="1"></div>
+    <div class="field-group"><div class="field-label">เลขประจำตัว</div><input class="field-input" id="sm-id" placeholder="2068"></div>
+  </div>
+  <div class="field-group"><div class="field-label">ชื่อ - สกุล *</div><input class="field-input" id="sm-name" placeholder="เด็กชาย/เด็กหญิง..."></div>
+  <div class="field-row2">
+    <div class="field-group"><div class="field-label">ชื่อเล่น</div><input class="field-input" id="sm-nick"></div>
+    <div class="field-group"><div class="field-label">เพศ</div>
+      <select class="field-input" id="sm-gender"><option value="ชาย">ชาย</option><option value="หญิง">หญิง</option></select>
+    </div>
+  </div>
+  <div class="field-group"><div class="field-label">วัน/เดือน/ปีเกิด</div><input class="field-input" id="sm-dob" type="date"></div>
+  <div class="field-group"><div class="field-label">ชื่อ-นามสกุล บิดา</div><input class="field-input" id="sm-father"></div>
+  <div class="field-group"><div class="field-label">ชื่อ-นามสกุล มารดา</div><input class="field-input" id="sm-mother"></div>
+  <div class="field-row2">
+    <div class="field-group"><div class="field-label">ผู้ปกครอง</div><input class="field-input" id="sm-guardian"></div>
+    <div class="field-group"><div class="field-label">ความสัมพันธ์</div><input class="field-input" id="sm-relation"></div>
+  </div>
+  <div class="field-group"><div class="field-label">เบอร์โทรศัพท์</div><input class="field-input" id="sm-phone" type="tel"></div>
+  <div class="btn-row" style="margin-top:10px">
+    <button class="btn btn-success" style="flex:1" onclick="saveStudentModal()">✅ บันทึก</button>
+    <button class="btn btn-outline" onclick="closeModal('student-modal')">ยกเลิก</button>
+  </div>
+</div>
+</div>
+
+<!-- ══ UNIT1 DIALOG ══ -->
+<dialog class="unit-dialog" id="unit1-modal">
+<div class="unit-dialog-inner">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <div style="font-size:15px;font-weight:800;color:var(--primary)">⚙️ หน่วยการเรียนรู้ ภาคเรียนที่ 1</div>
+    <button class="btn btn-outline btn-sm" onclick="closeUnitModal(1)" style="font-size:16px;padding:4px 10px">✕</button>
+  </div>
+  <div style="background:#eff6ff;border-radius:10px;padding:12px;margin-bottom:12px;border:1.5px solid #bfdbfe">
+    <div style="font-size:12px;font-weight:700;color:var(--primary);margin-bottom:8px">📝 กำหนดคะแนนสอบปลายภาค</div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:12px;color:var(--text2);flex-shrink:0">คะแนนสอบปลายภาคเต็ม</span>
+      <input type="number" id="s1-examMax" class="field-input" min="1" max="999" style="width:80px;font-size:15px;font-weight:700;text-align:center;padding:6px 8px" value="100" oninput="readForm()">
+      <span style="font-size:12px;color:var(--text2)">คะแนน</span>
+    </div>
+    <div style="font-size:11px;color:var(--text2);margin-top:6px">⚡ ระบบจะแปลงคะแนนสอบให้เป็นสัดส่วนของคะแนนปลายภาค <strong id="u1-ex-preview">40</strong> คะแนนโดยอัตโนมัติ</div>
+  </div>
+  <div id="unit1-list"></div>
+  <button class="btn btn-outline btn-full" style="margin-bottom:8px" onclick="addUnit(1)">➕ เพิ่มหน่วย</button>
+  <button class="btn btn-success btn-full" onclick="saveUnits(1)">✅ บันทึกและปิด</button>
+</div>
+</dialog>
+
+<!-- ══ UNIT2 DIALOG ══ -->
+<dialog class="unit-dialog" id="unit2-modal">
+<div class="unit-dialog-inner">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <div style="font-size:15px;font-weight:800;color:var(--primary)">⚙️ หน่วยการเรียนรู้ ภาคเรียนที่ 2</div>
+    <button class="btn btn-outline btn-sm" onclick="closeUnitModal(2)" style="font-size:16px;padding:4px 10px">✕</button>
+  </div>
+  <div style="background:#eff6ff;border-radius:10px;padding:12px;margin-bottom:12px;border:1.5px solid #bfdbfe">
+    <div style="font-size:12px;font-weight:700;color:var(--primary);margin-bottom:8px">📝 กำหนดคะแนนสอบปลายภาค</div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:12px;color:var(--text2);flex-shrink:0">คะแนนสอบปลายภาคเต็ม</span>
+      <input type="number" id="s2-examMax" class="field-input" min="1" max="999" style="width:80px;font-size:15px;font-weight:700;text-align:center;padding:6px 8px" value="100" oninput="readForm()">
+      <span style="font-size:12px;color:var(--text2)">คะแนน</span>
+    </div>
+    <div style="font-size:11px;color:var(--text2);margin-top:6px">⚡ ระบบจะแปลงคะแนนสอบให้เป็นสัดส่วนของคะแนนปลายภาค <strong id="u2-ex-preview">40</strong> คะแนนโดยอัตโนมัติ</div>
+  </div>
+  <div id="unit2-list"></div>
+  <button class="btn btn-outline btn-full" style="margin-bottom:8px" onclick="addUnit(2)">➕ เพิ่มหน่วย</button>
+  <button class="btn btn-success btn-full" onclick="saveUnits(2)">✅ บันทึกและปิด</button>
+</div>
+</dialog>
+
+<!-- ══ REPORT MODAL ══ -->
+<div class="modal-overlay" id="report-modal" onclick="closeModal('report-modal')">
+<div class="modal-sheet" onclick="event.stopPropagation()">
+  <div class="modal-handle"></div>
+  <div class="modal-title">📊 สร้างรายงาน PDF</div>
+  <div style="font-size:13px;color:var(--text2);margin-bottom:10px">เลือกส่วนที่ต้องการรวมในรายงาน</div>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+    <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--light);border-radius:10px;cursor:pointer"><input type="checkbox" id="r-cover" checked style="width:18px;height:18px"><span>📋 ปก</span></label>
+    <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--light);border-radius:10px;cursor:pointer"><input type="checkbox" id="r-stu" checked style="width:18px;height:18px"><span>👥 รายชื่อนักเรียน</span></label>
+    <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--light);border-radius:10px;cursor:pointer"><input type="checkbox" id="r-att" checked style="width:18px;height:18px"><span>📅 เวลาเรียน</span></label>
+    <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--light);border-radius:10px;cursor:pointer"><input type="checkbox" id="r-s1" checked style="width:18px;height:18px"><span>✏️ คะแนนภาคเรียนที่ 1</span></label>
+    <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--light);border-radius:10px;cursor:pointer"><input type="checkbox" id="r-s2" checked style="width:18px;height:18px"><span>📝 คะแนนภาคเรียนที่ 2</span></label>
+    <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--light);border-radius:10px;cursor:pointer"><input type="checkbox" id="r-tot" checked style="width:18px;height:18px"><span>📊 ผลสัมฤทธิ์รวม</span></label>
+    <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--light);border-radius:10px;cursor:pointer"><input type="checkbox" id="r-beh" checked style="width:18px;height:18px"><span>⭐ คุณลักษณะ & การอ่าน</span></label>
+    <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--light);border-radius:10px;cursor:pointer"><input type="checkbox" id="r-ind" style="width:18px;height:18px"><span>📄 รายงานรายบุคคล</span></label>
+  </div>
+  <button class="btn btn-accent btn-full" style="margin-bottom:8px" onclick="generatePDF()">📑 สร้างไฟล์ PDF</button>
+  <button class="btn btn-outline btn-full" onclick="closeModal('report-modal')">ปิด</button>
+</div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════
+   DATA MODEL
+══════════════════════════════════════════════════ */
+const MONTHS=['พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม','มกราคม','กุมภาพันธ์','มีนาคม','เมษายน'];
+const MDAYS=[31,30,31,31,30,31,30,31,31,28,31,30];
+let BEH=['1.มีความรับผิดชอบ','2.มีความตั้งใจ','3.มีระเบียบวินัย','4.กล้าแสดงออก','5.ทำงานร่วมกับผู้อื่น','6.มีความซื่อสัตย์'];
+let READ=['1.อ่านโจทย์เข้าใจ','2.แยกแยะข้อมูล','3.เลือกวิธีแก้ปัญหา','4.อธิบายขั้นตอน','5.ตรวจสอบคำตอบ','6.เชื่อมโยงความรู้'];
+
+let D={
+  school:'บ้านยอดดอนชี',dept:'สำนักงานเขตพื้นที่การศึกษาประถมศึกษาอุบลราชธานี เขต 5',
+  grade:'ประถมศึกษาปีที่  2',sem:'1,2',year:'2568',subject:'คณิตศาสตร์',subcode:'ค12101',hours:5,
+  teacher:'นายปกรณ์  มั่นจิต',advisor:'',
+  male:3,female:2,disM:0,disF:0,outM:0,outF:0,inM:0,inF:0,
+  students:[
+    {no:1,id:'2068',name:'เด็กชายวราวุธ  อินมณี',nick:'เอ',gender:'ชาย',dob:'',father:'',mother:'',guardian:'',relation:'',phone:''},
+    {no:2,id:'2083',name:'เด็กชายธนกฤษ  ดิษฐลักษณ์',nick:'ทันเดอร์',gender:'ชาย',dob:'',father:'',mother:'',guardian:'',relation:'',phone:''},
+    {no:3,id:'2084',name:'เด็กชายจิรพงศ์  วิเศษไชยศรี',nick:'กอล์ฟ',gender:'ชาย',dob:'',father:'',mother:'',guardian:'',relation:'',phone:''},
+    {no:4,id:'2099',name:'เด็กหญิงปนัดดา  สมเทพ',nick:'พิ้งกี้',gender:'หญิง',dob:'',father:'',mother:'',guardian:'',relation:'',phone:''},
+    {no:5,id:'',name:'เด็กหญิงมีนา  นามผล',nick:'มายด์มิ้น',gender:'หญิง',dob:'',father:'',mother:'',guardian:'',relation:'',phone:''}
+  ],
+  units1:[
+    {name:'หน่วยที่ 1-3: จำนวน การบวกลบคูณ',items:['1.1 การเขียนตัวเลขฮินดูอารบิก','1.2 การอ่านตัวเลข','1.3 การนับเพิ่มและนับลด','1.4 จำนวนคู่และจำนวนคี่','1.5 หลักและค่าของเลขโดด','1.6 รูปกระจาย','1.7 การเปรียบเทียบจำนวน','1.8 การเรียงลำดับจำนวน','1.9 แบบรูปจำนวนเพิ่ม','1.10 แบบรูปจำนวนลด','1.11 แบบรูปรูปร่าง','2.1 การบวก การลบ','2.2 โจทย์ปัญหาการบวกลบ','3.1 ความหมายการคูณ','3.2 การคูณจำนวน','3.3 โจทย์ปัญหาการคูณ'],maxItems:[5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]},
+    {name:'หน่วยที่ 4-5: การวัดและการชั่ง',items:['4.1 การวัดความยาว','4.2 การเปรียบเทียบความยาว','4.3 โจทย์ปัญหาการวัด','5.1 การชั่งน้ำหนัก','5.2 การเปรียบเทียบน้ำหนัก','5.3 โจทย์ปัญหาการชั่ง'],maxItems:[5,5,5,5,5,5]}
+  ],
+  units2:[
+    {name:'หน่วยที่ 6-8: การตวง การหาร เวลา',items:['6.1 การตวง','6.2 การเปรียบเทียบปริมาตร','6.3 โจทย์ปัญหาการตวง','7.1 ความหมายการหาร','7.2 การหารจำนวน','7.3 โจทย์ปัญหาการหาร','8.1 การบอกเวลา','8.2 เดือนและปฏิทิน'],maxItems:[5,5,5,5,5,5,5,5]},
+    {name:'หน่วยที่ 9-10: เงินและรูปเรขาคณิต',items:['9.1 ชนิดและค่าของเงิน','9.2 การเปรียบเทียบเงิน','9.3 การบอกจำนวนเงิน','9.4 โจทย์ปัญหาเงิน(บวกลบ)','9.5 โจทย์ปัญหาเงิน(คูณหาร)','10.1 รูปเรขาคณิต 2 มิติ','10.2 รูปทรง 3 มิติ','10.3 แบบรูปและความสัมพันธ์'],maxItems:[5,5,5,5,5,5,5,5]}
+  ],
+  s1bet:60,s1ex:40,s1examMax:100,s2bet:60,s2ex:40,s2examMax:100,
+  scores1:[],scores2:[],exam1:[],exam2:[],
+  att:[],attDays:[],
+  beh1:[],beh2:[],read1:[],read2:[],
+  notes:[]
+};
+
+let currentPage='cover';
+let editStudentIdx=null;
+let attMonth=0;
+let showYearly=false;
+
+/* ══ INIT ══ */
+function initArrays(){
+  const n=D.students.length;
+  while(D.scores1.length<n)D.scores1.push([]);
+  while(D.scores2.length<n)D.scores2.push([]);
+  while(D.exam1.length<n)D.exam1.push(0);
+  while(D.exam2.length<n)D.exam2.push(0);
+  while(D.att.length<12)D.att.push([]);
+  while(D.attDays.length<12)D.attDays.push(0);
+  D.att.forEach((m,mi)=>{
+    while(m.length<n)m.push([]);
+    m.forEach(s=>{while(s.length<MDAYS[mi])s.push('');});
+  });
+  while(D.beh1.length<n)D.beh1.push(new Array(6).fill(0));
+  while(D.beh2.length<n)D.beh2.push(new Array(6).fill(0));
+  while(D.read1.length<n)D.read1.push(new Array(6).fill(0));
+  while(D.read2.length<n)D.read2.push(new Array(6).fill(0));
+}
+
+/* ── MULTI-SLOT STORAGE ── */
+const SLOT_PREFIX='pp5v3:';
+function getCurrentKey(){
+  const g=(D.grade||'').trim()||(gv('f-grade')||'').trim()||'ไม่ระบุชั้น';
+  const s=(D.subject||'').trim()||(gv('f-subject')||'').trim()||'ไม่ระบุวิชา';
+  return SLOT_PREFIX+g+'__'+s;
+}
+function getAllSlots(){
+  const slots=[];
+  const seen=new Set();
+  // โหลด pp5v3:* ทั้งหมด
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(k&&k.startsWith(SLOT_PREFIX)){
+      try{
+        const d=JSON.parse(localStorage.getItem(k));
+        slots.push({key:k,grade:d.grade||'',subject:d.subject||'',year:d.year||'',sem:d.sem||''});
+        seen.add(k);
+      }catch(e){}
+    }
+  }
+  // migrate pp5v2 เดิม → ถ้ายังไม่มีใน pp5v3
+  try{
+    const old=localStorage.getItem('pp5v2');
+    if(old){
+      const d=JSON.parse(old);
+      const g=(d.grade||'ไม่ระบุชั้น').trim();
+      const s=(d.subject||'ไม่ระบุวิชา').trim();
+      const mk=SLOT_PREFIX+g+'__'+s;
+      if(!seen.has(mk)){
+        localStorage.setItem(mk,old);
+        slots.push({key:mk,grade:g,subject:s,year:d.year||'',sem:d.sem||''});
+      }
+    }
+  }catch(e){}
+  slots.sort((a,b)=>(a.grade+a.subject).localeCompare(b.grade+b.subject,'th'));
+  return slots;
+}
+function saveData(){
+  readForm();
+  const key=getCurrentKey();
+  try{
+    localStorage.setItem(key,JSON.stringify(D));
+    showToast('✅ บันทึก: '+((D.grade||'')+' · '+(D.subject||'')));
+    refreshSubtitle();renderCoverStats();renderCoverBehRead();
+    // อัปเดต topbar subtitle ด้วย
+    document.getElementById('tb-sub').textContent=(D.grade||'')+((D.subject)?' · '+D.subject:'');
+  }catch(e){showToast('❌ '+e.message);}
+}
+function loadData(){
+  // โหลด slot ที่เลือกไว้ใน sessionStorage (เลือกจากหน้า launcher)
+  const selectedKey=sessionStorage.getItem('pp5_slot');
+  try{
+    const r=selectedKey?localStorage.getItem(selectedKey):null;
+    if(r){const p=JSON.parse(r);D=Object.assign({},D,p);}
+    else{
+      // fallback: โหลด pp5v2 เดิม (migration)
+      const old=localStorage.getItem('pp5v2');
+      if(old){const p=JSON.parse(old);D=Object.assign({},D,p);}
+    }
+  }catch(e){}
+  initArrays();
+}
+function loadSlot(key){
+  try{
+    const r=localStorage.getItem(key);
+    if(r){
+      D=Object.assign({},defaultD(),JSON.parse(r));
+      initArrays();fillForm();refreshSubtitle();renderCoverStats();renderCoverBehRead();applyLogo();
+      sessionStorage.setItem('pp5_slot',key);
+      showToast('✅ โหลด: '+D.grade+' · '+D.subject);
+    }
+  }catch(e){showToast('❌ '+e.message);}
+}
+function deleteSlot(key){
+  if(!confirm('ลบข้อมูลนี้?'))return;
+  localStorage.removeItem(key);
+  openLauncher();
+}
+function defaultD(){
+  return{school:'',dept:'',grade:'',sem:'1,2',year:'2568',subject:'',subcode:'',hours:0,
+    teacher:'',teacherPos:'',advisor:'',advisorPos:'',director:'',logoData:'',
+    male:0,female:0,disM:0,disF:0,outM:0,outF:0,inM:0,inF:0,
+    students:[],units1:[{name:'หน่วยที่ 1',items:['ตัวชี้วัด 1.1'],maxItems:[5]}],
+    units2:[{name:'หน่วยที่ 1',items:['ตัวชี้วัด 1.1'],maxItems:[5]}],
+    s1bet:60,s1ex:40,s1examMax:100,s2bet:60,s2ex:40,s2examMax:100,
+    scores1:[],scores2:[],exam1:[],exam2:[],att:[],attDays:[],
+    beh1:[],beh2:[],read1:[],read2:[],notes:[]};
+}
+function markDirty(){}
+
+/* ══ FORM READ ══ */
+function readForm(){
+  D.school=gv('f-school');D.dept=gv('f-dept');D.grade=gv('f-grade');
+  D.sem=gv('f-sem');D.year=gv('f-year');D.subject=gv('f-subject');
+  D.subcode=gv('f-subcode');D.hours=+gv('f-hours')||0;
+  D.teacher=gv('f-teacher');D.teacherPos=gv('f-teacher-pos');
+  D.advisor=gv('f-advisor');D.advisorPos=gv('f-advisor-pos');
+  D.director=gv('f-director');
+  D.male=+gv('f-male')||0;D.female=+gv('f-female')||0;
+  D.disM=+gv('f-dis-m')||0;D.disF=+gv('f-dis-f')||0;
+  D.outM=+gv('f-out-m')||0;D.outF=+gv('f-out-f')||0;
+  D.inM=+gv('f-in-m')||0;D.inF=+gv('f-in-f')||0;
+  D.s1bet=+gv('s1-bet')||60;D.s1ex=+gv('s1-ex')||40;D.s1examMax=+gv('s1-examMax')||100;
+  D.s2bet=+gv('s2-bet')||60;D.s2ex=+gv('s2-ex')||40;D.s2examMax=+gv('s2-examMax')||100;
+}
+function fillForm(){
+  sv('f-school',D.school);sv('f-dept',D.dept);sv('f-grade',D.grade);
+  sv('f-sem',D.sem);sv('f-year',D.year);sv('f-subject',D.subject);
+  sv('f-subcode',D.subcode);sv('f-hours',D.hours);
+  sv('f-teacher',D.teacher);sv('f-teacher-pos',D.teacherPos);
+  sv('f-advisor',D.advisor);sv('f-advisor-pos',D.advisorPos);
+  sv('f-director',D.director);
+  sv('f-male',D.male);sv('f-female',D.female);
+  sv('f-dis-m',D.disM);sv('f-dis-f',D.disF);
+  sv('f-out-m',D.outM);sv('f-out-f',D.outF);
+  sv('f-in-m',D.inM);sv('f-in-f',D.inF);
+  sv('s1-bet',D.s1bet);sv('s1-ex',D.s1ex);sv('s1-examMax',D.s1examMax||100);
+  sv('s2-bet',D.s2bet);sv('s2-ex',D.s2ex);sv('s2-examMax',D.s2examMax||100);
+  calcTotal();
+}
+const gv=id=>{const e=document.getElementById(id);return e?e.value||'':'';}
+const sv=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v||'';}
+
+function calcTotal(){
+  const m=+gv('f-male')||0,f=+gv('f-female')||0;
+  const dm=+gv('f-dis-m')||0,df=+gv('f-dis-f')||0;
+  const om=+gv('f-out-m')||0,of=+gv('f-out-f')||0;
+  const im=+gv('f-in-m')||0,if_=+gv('f-in-f')||0;
+  setText('f-total',m+f);
+  setText('f-dis-t',dm+df);
+  setText('f-out-t',om+of);
+  setText('f-in-t',im+if_);
+  setText('f-end-m',m-om+im);
+  setText('f-end-f',f-of+if_);
+  setText('f-end-t',m+f-om-of+im+if_);
+}
+const setText=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;}
+
+function refreshSubtitle(){
+  const g=gv('f-grade')||D.grade||'';
+  const s=gv('f-subject')||D.subject||'';
+  const sub_el=document.getElementById('tb-sub');
+  if(sub_el)sub_el.textContent=(g||'ยังไม่ระบุชั้น')+(s?' · '+s:'');
+}
+
+/* ══ NAVIGATION ══ */
+function goPage(name,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  el.classList.add('active');
+  document.getElementById('scroll-area').scrollTop=0;
+  currentPage=name;
+  if(name==='students')renderStudents();
+  if(name==='att')renderAttPage();
+  if(name==='s1')renderScore(1);
+  if(name==='s2')renderScore(2);
+  if(name==='total'){renderTotal();requestAnimationFrame(()=>requestAnimationFrame(drawCharts));}
+  if(name==='beh')renderBehavior();
+  if(name==='ind'){populateIndSel();renderIndividual();}
+  if(name==='cover'){renderCoverStats();renderCoverBehRead();}
+}
+
+/* ══ COVER STATS ══ */
+/* ══ LOGO ══ */
+function handleLogoUpload(input){
+  if(!input.files||!input.files[0])return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    D.logoData=e.target.result;
+    applyLogo();
+    markDirty();
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+function clearLogo(){
+  D.logoData='';
+  applyLogo();
+  markDirty();
+}
+function applyLogo(){
+  const box=document.getElementById('logo-preview-box');
+  if(D.logoData){
+    box.innerHTML='<img src="'+D.logoData+'" style="width:100%;height:100%;object-fit:contain;border-radius:8px">';
+  } else {
+    box.innerHTML='🏫';
+  }
+}
+
+/* ══ COVER BEH/READ SUMMARY ══ */
+function calcBehReadDist(){
+  const bDist={3:0,2:0,1:0,0:0};
+  const rDist={3:0,2:0,1:0,0:0};
+  D.students.filter(s=>s.name).forEach(s=>{
+    const si=D.students.indexOf(s);
+    // beh
+    const bv=BEH.map(function(_,i){const b1=D.beh1[si]?D.beh1[si][i]||0:0;const b2=D.beh2[si]?D.beh2[si][i]||0:0;return b1&&b2?Math.round((b1+b2)/2):b1||b2;});
+    const bnz=bv.filter(function(v){return v>0;});
+    const bavg=bnz.length?Math.round(bnz.reduce(function(a,b){return a+b;},0)/bnz.length):0;
+    bDist[bavg]=(bDist[bavg]||0)+1;
+    // read
+    const rv=READ.map(function(_,i){const r1=D.read1[si]?D.read1[si][i]||0:0;const r2=D.read2[si]?D.read2[si][i]||0:0;return r1&&r2?Math.round((r1+r2)/2):r1||r2;});
+    const rnz=rv.filter(function(v){return v>0;});
+    const ravg=rnz.length?Math.round(rnz.reduce(function(a,b){return a+b;},0)/rnz.length):0;
+    rDist[ravg]=(rDist[ravg]||0)+1;
+  });
+  return{bDist,rDist};
+}
+function makeSummaryTableHTML(dist,total,compact){
+  const labels=['ดีเยี่ยม','ดี','ผ่าน','ไม่ผ่าน'];
+  const keys=[3,2,1,0];
+  const colors=['#15803d','#1d4ed8','#a16207','#b91c1c'];
+  const fs=compact?'font-size:7pt':'font-size:11px';
+  const pd=compact?'padding:2px 4px':'padding:5px 8px';
+  const tblStyle=compact?'width:100%;border-collapse:collapse;table-layout:fixed;'+fs:'width:100%;border-collapse:collapse;'+fs;
+  let h='<table class="xlt" style="'+tblStyle+'">';
+  h+='<colgroup><col style="width:'+(compact?'50%':'52%')+'"><col style="width:'+(compact?'25%':'24%')+'"><col style="width:'+(compact?'25%':'24%')+'"></colgroup>';
+  h+='<thead><tr><th style="text-align:left;'+pd+'">ผลการประเมิน</th><th style="'+pd+'">จำนวน</th><th style="text-align:center;'+pd+'">ร้อยละ</th></tr></thead><tbody>';
+  keys.forEach(function(k,i){
+    const cnt=dist[k]||0;
+    const pct=total?Math.round(cnt/total*100):0;
+    h+='<tr style="background:'+(i%2===0?'#fff':'#f7fafd')+'">';
+    h+='<td style="color:'+colors[i]+';font-weight:700;'+pd+'">'+labels[i]+'</td>';
+    h+='<td class="ac" style="'+pd+'">'+cnt+'</td>';
+    h+='<td class="ac" style="'+pd+'">'+pct+'</td>';
+    h+='</tr>';
+  });
+  h+='</tbody></table>';
+  return h;
+}
+function renderCoverBehRead(){
+  const n=D.students.filter(s=>s.name).length;
+  if(!n)return;
+  const {bDist,rDist}=calcBehReadDist();
+  const bEl=document.getElementById('cover-beh-table');
+  const rEl=document.getElementById('cover-read-table');
+  if(bEl)bEl.innerHTML=makeSummaryTableHTML(bDist,n,false);
+  if(rEl)rEl.innerHTML=makeSummaryTableHTML(rDist,n,false);
+}
+
+function renderCoverStats(){
+  const n=D.students.filter(s=>s.name).length;
+  const grades=D.students.map((_,i)=>calcFinalGrade(i)).filter(g=>g!==null);
+  const avg=grades.length?(grades.reduce((a,b)=>a+b,0)/grades.length).toFixed(2):'0';
+  const pass=grades.filter(g=>g>=1).length;
+  document.getElementById('cover-stats').innerHTML=`
+    <div class="stat-tile"><div class="stat-num">${n}</div><div class="stat-lbl">นักเรียน</div></div>
+    <div class="stat-tile"><div class="stat-num">${pass}</div><div class="stat-lbl">ผ่านการประเมิน</div></div>
+    <div class="stat-tile"><div class="stat-num">${avg}</div><div class="stat-lbl">เกรดเฉลี่ย</div></div>
+    <div class="stat-tile"><div class="stat-num">${grades.length?Math.round(pass/grades.length*100):0}%</div><div class="stat-lbl">ร้อยละผ่าน</div></div>`;
+  // Grade distribution
+  const gradeKeys=[4,3.5,3,2.5,2,1.5,1,0];
+  const dist={};gradeKeys.forEach(k=>{dist[k]=0;});
+  grades.forEach(g=>{
+    const k=gradeKeys.find(k=>k===g)||0;
+    dist[k]=(dist[k]||0)+1;
+  });
+  let html=`<table class="xlt" style="min-width:0;margin-top:8px;table-layout:fixed;width:100%">
+    <thead><tr><th style="width:22%;text-align:left;padding-left:8px">ผลการเรียน</th>${gradeKeys.map(k=>`<th style="width:9.75%">${k}</th>`).join('')}</tr></thead>
+    <tbody>
+    <tr><td class="left">จำนวน</td>${gradeKeys.map(k=>`<td class="ac">${dist[k]||0}</td>`).join('')}</tr>
+    <tr><td class="left">ร้อยละ</td>${gradeKeys.map(k=>`<td>${grades.length&&dist[k]?Math.round(dist[k]/grades.length*100):'0'}</td>`).join('')}</tr>
+    </tbody></table>`;
+  document.getElementById('grade-dist-table').innerHTML=html;
+}
+
+/* ══ ROW HELPERS ══ */
+function rowBg(i){return i%2===0?'#ffffff':'#f7fafd';}
+function tdName(i,txt){const bg=rowBg(i);return `<td class="name-td" style="background:${bg}">${txt}</td>`;}
+function tdNo(i,txt){const bg=rowBg(i);return `<td class="no-td" style="background:${bg}">${txt}</td>`;}
+
+/* ══ STUDENTS ══ */
+function renderStudents(){
+  const tbody=document.getElementById('student-tbody');
+  tbody.innerHTML=D.students.map((s,i)=>`
+    <tr style="background:${i%2===0?'#fff':'#f7fafd'}">
+      <td>${s.no||i+1}</td>
+      <td>${s.id||''}</td>
+      ${tdName(i,s.name||'')}
+      <td>${s.nick||''}</td>
+      <td style="white-space:nowrap;font-size:11px">${s.dob||''}</td>
+      <td class="left" style="font-size:11px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.father||''}</td>
+      <td class="left" style="font-size:11px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.mother||''}</td>
+      <td class="left" style="font-size:11px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.guardian||''}</td>
+      <td style="font-size:11px">${s.relation||''}</td>
+      <td style="font-size:11px">${s.phone||''}</td>
+      <td class="no-print">
+        <div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" style="padding:4px 8px" onclick="editStudent(${i})">✏️</button><button class="btn btn-danger btn-sm" style="padding:4px 8px" onclick="delStudent(${i})">🗑️</button></div>
+      </td>
+    </tr>`).join('');
+  const n=D.students.filter(s=>s.name).length;
+  const m=D.students.filter(s=>s.gender==='ชาย'&&s.name).length;
+  const f=D.students.filter(s=>s.gender==='หญิง'&&s.name).length;
+  document.getElementById('student-summary').textContent=`จำนวนนักเรียน ${n} คน (ชาย ${m} คน หญิง ${f} คน)`;
+}
+function addStudent(){editStudentIdx=null;document.getElementById('sm-title').textContent='เพิ่มนักเรียน';['sm-no','sm-id','sm-name','sm-nick','sm-dob','sm-father','sm-mother','sm-guardian','sm-relation','sm-phone'].forEach(id=>sv(id,''));sv('sm-gender','ชาย');sv('sm-no',D.students.length+1);openModal('student-modal');}
+function editStudent(i){editStudentIdx=i;const s=D.students[i];document.getElementById('sm-title').textContent='แก้ไขนักเรียน';sv('sm-no',s.no);sv('sm-id',s.id);sv('sm-name',s.name);sv('sm-nick',s.nick);sv('sm-gender',s.gender);sv('sm-dob',s.dob);sv('sm-father',s.father);sv('sm-mother',s.mother);sv('sm-guardian',s.guardian);sv('sm-relation',s.relation);sv('sm-phone',s.phone);openModal('student-modal');}
+function saveStudentModal(){
+  const s={no:+gv('sm-no')||D.students.length+1,id:gv('sm-id'),name:gv('sm-name'),nick:gv('sm-nick'),gender:gv('sm-gender'),dob:gv('sm-dob'),father:gv('sm-father'),mother:gv('sm-mother'),guardian:gv('sm-guardian'),relation:gv('sm-relation'),phone:gv('sm-phone')};
+  if(!s.name){showToast('⚠️ กรุณากรอกชื่อ');return;}
+  if(editStudentIdx!==null){D.students[editStudentIdx]=s;}
+  else{D.students.push(s);initArrays();}
+  closeModal('student-modal');renderStudents();saveData();showToast(editStudentIdx!==null?'✅ แก้ไขแล้ว':'✅ เพิ่มนักเรียนแล้ว');
+}
+function delStudent(i){if(!confirm(`ลบ "${D.students[i].name}"?`))return;D.students.splice(i,1);D.scores1.splice(i,1);D.scores2.splice(i,1);D.exam1.splice(i,1);D.exam2.splice(i,1);D.beh1.splice(i,1);D.beh2.splice(i,1);D.read1.splice(i,1);D.read2.splice(i,1);D.att.forEach(m=>m.splice(i,1));D.students.forEach((s,j)=>s.no=j+1);renderStudents();saveData();}
+
+/* ══ ATTENDANCE ══ */
+function renderAttPage(){
+  const tabs=document.getElementById('att-month-tabs');
+  const monthTabs=MONTHS.map((m,i)=>`<div class="att-tab ${i===attMonth&&!showYearly?'active':''}" onclick="switchMonth(${i})">${m}</div>`).join('');
+  const sumTab=`<div class="att-tab${showYearly?' active':''}" onclick="switchToYearly()" style="background:${showYearly?'#f59e0b':'white'};border-color:${showYearly?'#f59e0b':'#cbd5e1'};color:${showYearly?'#1e293b':'#64748b'}">📈 เวลาเรียนรวม</div>`;
+  tabs.innerHTML=monthTabs+sumTab;
+  if(showYearly){
+    document.getElementById('att-grid-wrap').style.display='none';
+    document.getElementById('att-year-wrap').style.display='block';
+    calcYearlyAtt();
+  } else {
+    document.getElementById('att-grid-wrap').style.display='block';
+    document.getElementById('att-year-wrap').style.display='none';
+    renderAttGrid();
+  }
+}
+function switchMonth(i){attMonth=i;showYearly=false;renderAttPage();}
+function switchToYearly(){showYearly=true;renderAttPage();}
+function saveAttDays(){D.attDays[attMonth]=+gv('att-total-days')||0;}
+function renderAttGrid(){
+  sv('att-total-days',D.attDays[attMonth]||0);
+  document.getElementById('att-month-label').textContent=`เดือน${MONTHS[attMonth]}`;
+  document.getElementById('att-month-title').textContent=`(${MONTHS[attMonth]})`;
+  const n=D.students.filter(s=>s.name).length;
+  if(!n){document.getElementById('att-table-wrap').innerHTML='<div style="padding:16px;text-align:center;color:var(--text2)">ยังไม่มีนักเรียน</div>';return;}
+  const days=MDAYS[attMonth];
+  const dayNums=Array.from({length:days},(_,i)=>i+1);
+  const ATT_CYCLE={'':'m','m':'x','x':'l','l':'lv','lv':''};
+  const ATT_LABEL={'m':'✓','x':'✗','l':'ส','lv':'ล','':'·'};
+  const ATT_CLS={'m':'att-m','x':'att-x','l':'att-l','lv':'att-lv','':'att-empty'};
+  let html=`<table class="xlt" id="att-grid-table" style="width:100%;font-size:11px">
+    <thead><tr>
+      <th class="name-th">ชื่อ-สกุล</th>
+      <th class="no-th">ที่</th>
+      ${dayNums.map(d=>`<th class="att-day-th" style="padding:3px 1px">${d}</th>`).join('')}
+      <th class="att-sum-th">ม</th><th class="att-sum-th">ป</th><th class="att-sum-th">ล</th><th class="att-sum-th">ข</th>
+      <th class="att-pct-th">%มา</th>
+    </tr></thead><tbody>`;
+  D.students.forEach((s,si)=>{
+    if(!s.name)return;
+    const row=D.att[attMonth][si]||[];
+    const m=row.filter(c=>c==='m').length;
+    const x=row.filter(c=>c==='x').length;
+    const l=row.filter(c=>c==='l').length;
+    const lv=row.filter(c=>c==='lv').length;
+    const tot=D.attDays[attMonth]||days;
+    const pct=tot>0?Math.round(m/tot*100):0;
+    const ok=pct>=80;
+    html+=`<tr style="background:${si%2===0?'#fff':'#f7fafd'}">
+      ${tdName(si,s.name)}
+      ${tdNo(si,s.no)}
+      ${dayNums.map(d=>{
+        const v=row[d-1]||'';
+        return `<td style="padding:2px;cursor:pointer" onclick="toggleAtt(${si},${d-1},this)" title="${MONTHS[attMonth]} วันที่ ${d}"><span class="att-dot ${ATT_CLS[v]}" id="attd-${si}-${d-1}">${ATT_LABEL[v]}</span></td>`;
+      }).join('')}
+      <td class="ac" id="att-m-${si}">${m}</td>
+      <td class="ac" id="att-x-${si}">${x}</td>
+      <td class="ac" id="att-l-${si}">${l}</td>
+      <td class="ac" id="att-lv-${si}">${lv}</td>
+      <td class="ac" style="color:${ok?'var(--success)':'var(--danger)'};font-weight:800" id="att-pct-${si}">${pct}%</td>
+    </tr>`;
+  });
+  html+=`</tbody></table>`;
+  document.getElementById('att-table-wrap').innerHTML=html;
+}
+function toggleAtt(si,di,cell){
+  const cur=D.att[attMonth][si][di]||'';
+  const CYCLE={'':'m','m':'x','x':'l','l':'lv','lv':''};
+  const LBL={'m':'✓','x':'✗','l':'ส','lv':'ล','':'·'};
+  const CLS={'m':'att-m','x':'att-x','l':'att-l','lv':'att-lv','':'att-empty'};
+  const next=CYCLE[cur];
+  D.att[attMonth][si][di]=next;
+  const dot=document.getElementById(`attd-${si}-${di}`);
+  if(dot){dot.className=`att-dot ${CLS[next]}`;dot.textContent=LBL[next];}
+  // recalc row
+  const row=D.att[attMonth][si];
+  const days=MDAYS[attMonth];
+  const m=row.filter(c=>c==='m').length;
+  const x=row.filter(c=>c==='x').length;
+  const l=row.filter(c=>c==='l').length;
+  const lv=row.filter(c=>c==='lv').length;
+  const tot=D.attDays[attMonth]||days;
+  const pct=tot>0?Math.round(m/tot*100):0;
+  setText(`att-m-${si}`,m);setText(`att-x-${si}`,x);setText(`att-l-${si}`,l);setText(`att-lv-${si}`,lv);
+  const pe=document.getElementById(`att-pct-${si}`);
+  if(pe){pe.textContent=pct+'%';pe.style.color=pct>=80?'var(--success)':'var(--danger)';}
+}
+
+function calcYearlyAtt(){
+  const n=D.students.filter(s=>s.name).length;
+  if(!n){document.getElementById('att-year-content').innerHTML='<div style="padding:14px;text-align:center;color:var(--text2)">ไม่มีนักเรียน</div>';return;}
+  let html=`<table class="xlt" style="min-width:600px;font-size:11px">
+    <thead><tr>
+      <th class="name-th">ชื่อ-สกุล</th><th class="no-th">ที่</th>
+      ${MONTHS.map(m=>`<th style="font-size:10px">${m.slice(0,3)}</th>`).join('')}
+      <th>รวมมา</th><th>เต็ม</th><th style="min-width:50px">%เวลา</th>
+    </tr></thead><tbody>`;
+  D.students.forEach((s,si)=>{
+    if(!s.name)return;
+    let totM=0,totD=0;
+    const mCells=MONTHS.map((_,mi)=>{
+      const row=(D.att[mi]||[])[si]||[];
+      const m=row.filter(c=>c==='m').length;
+      const d=D.attDays[mi]||0;
+      totM+=m;totD+=d;
+      return `<td>${m}${d?`/${d}`:''}</td>`;
+    }).join('');
+    const pct=totD>0?Math.round(totM/totD*100):0;
+    const ok=pct>=80;
+    html+=`<tr style="background:${si%2===0?'#fff':'#f7fafd'}">
+      ${tdName(si,s.name)}${tdNo(si,s.no)}
+      ${mCells}
+      <td class="ac">${totM}</td><td class="ac">${totD}</td>
+      <td class="ac" style="color:${ok?'var(--success)':'var(--danger)'};font-weight:800">${pct}%</td>
+    </tr>`;
+  });
+  html+=`</tbody></table>`;
+  document.getElementById('att-year-content').innerHTML=html;
+}
+
+/* ══ SCORES ══ */
+function getItems(sem){
+  const units=sem===1?D.units1:D.units2;
+  const items=[];
+  units.forEach((u,ui)=>u.items.forEach((item,ii)=>{const mx=(u.maxItems&&u.maxItems[ii]!=null)?u.maxItems[ii]:(u.maxPer||5);items.push({label:`${ui+1}.${ii+1}`,name:item,max:mx,ui,ii});}));
+  return items;
+}
+function renderScore(sem){
+  const items=getItems(sem);
+  const scores=sem===1?D.scores1:D.scores2;
+  const exam=sem===1?D.exam1:D.exam2;
+  const bet=sem===1?D.s1bet:D.s2bet;
+  const ex=sem===1?D.s1ex:D.s2ex;
+  const examMax=sem===1?(D.s1examMax||100):(D.s2examMax||100);
+  const maxBet=items.reduce((s,it)=>s+it.max,0);
+  const wrapId=`s${sem}-wrap`;
+  const n=D.students.filter(s=>s.name).length;
+  if(!n||!items.length){document.getElementById(wrapId).innerHTML='<div style="padding:16px;text-align:center;color:var(--text2)">ไม่มีข้อมูล</div>';return;}
+
+  let html=`<table class="xlt" style="width:100%">
+    <thead>
+      <tr>
+        <th class="name-th" rowspan="2">ชื่อ-สกุล</th>
+        <th class="no-th" rowspan="2">ที่</th>
+        ${items.map(it=>`<th class="score-item-th" style="padding:4px 2px;vertical-align:middle;text-align:left;writing-mode:vertical-lr;transform:rotate(180deg);font-size:11px;font-weight:700;white-space:normal;line-height:1.4;word-break:break-all;height:160px;overflow:hidden">${it.name}</th>`).join('')}
+        <th rowspan="2" style="width:70px;border-left:2px solid white">รวม<br>ระหว่าง<br><small>${maxBet}</small><br><small>คะแนน</small></th>
+        <th rowspan="2" style="width:75px;background:#235a8e">ระหว่าง<br>เรียน<br><small>${bet}</small><br><small>คะแนน</small></th>
+        <th rowspan="2" style="width:70px">สอบ<br>ปลาย<br><small>${examMax}</small><br><small>คะแนน</small></th>
+        <th rowspan="2" style="width:75px;background:#235a8e">คะแนน<br>ปลายภาค<br><small>${ex}</small><br><small>คะแนน</small></th>
+        <th rowspan="2" style="width:100px;background:#154360">รวม<br><small>100</small><br><small>คะแนน</small></th>
+
+      </tr>
+      <tr>
+        ${items.map(it=>`<th style="width:36px;padding:3px 2px;font-size:12px;font-weight:800;color:white;text-align:center">${it.max}</th>`).join('')}
+      </tr>
+    </thead><tbody>`;
+
+  D.students.forEach((s,si)=>{
+    if(!s.name)return;
+    while(scores.length<=si)scores.push([]);
+    while(exam.length<=si)exam.push(0);
+    const srow=scores[si]||[];
+    let betTotal=0;
+    const cells=items.map(it=>{
+      while(srow.length<=it.ui)srow.push([]);
+      while(srow[it.ui].length<=it.ii)srow[it.ui].push(0);
+      const v=srow[it.ui][it.ii]||0;
+      betTotal+=v;
+      return `<td class="edit-cell" style="padding:2px;width:40px"><input type="number" min="0" max="${it.max}" value="${v}" style="width:36px" oninput="setScore(${sem},${si},${it.ui},${it.ii},this.value,this)"></td>`;
+    }).join('');
+    const betScaled=maxBet>0?parseFloat((betTotal/maxBet*bet).toFixed(2)):0;
+    const exv=exam[si]||0;
+    const exScaled=parseFloat((exv/examMax*ex).toFixed(2));
+    const total=parseFloat((betScaled+exScaled).toFixed(2));
+    const grade=scoreToGrade(total);
+    html+=`<tr style="background:${si%2===0?'#fff':'#f7fafd'}">
+      ${tdName(si,s.name)}
+      ${tdNo(si,s.no)}
+      ${cells}
+      <td class="ac" style="border-left:2px solid #8da4b8" id="bt-${sem}-${si}">${betTotal}</td>
+      <td class="ac" style="background:#d6eaf8;color:#1a5276" id="bs-${sem}-${si}">${betScaled.toFixed(2)}</td>
+      <td class="edit-cell" style="padding:2px"><input type="number" min="0" max="${examMax}" value="${exv}" style="width:62px" oninput="setExam(${sem},${si},this.value)"></td>
+      <td class="ac" style="background:#d6eaf8;color:#1a5276" id="es-${sem}-${si}">${exScaled.toFixed(2)}</td>
+      <td class="gc" style="min-width:100px" id="tot-${sem}-${si}">${total.toFixed(2)}</td>
+    </tr>`;
+  });
+  html+=`</tbody></table>`;
+  document.getElementById(wrapId).innerHTML=html;
+}
+
+function setScore(sem,si,ui,ii,val,inp){
+  const scores=sem===1?D.scores1:D.scores2;
+  const units=sem===1?D.units1:D.units2;
+  const u2=units[ui];const maxP=u2?(u2.maxItems&&u2.maxItems[ii]!=null?u2.maxItems[ii]:(u2.maxPer||5)):5;
+  const v=Math.max(0,Math.min(maxP,+val||0));
+  if(inp&&+inp.value!==v)inp.value=v;
+  while(scores.length<=si)scores.push([]);
+  while(scores[si].length<=ui)scores[si].push([]);
+  while(scores[si][ui].length<=ii)scores[si][ui].push(0);
+  scores[si][ui][ii]=v;
+  recalcScoreRow(sem,si);
+}
+function setExam(sem,si,val){
+  const examMax=sem===1?(D.s1examMax||100):(D.s2examMax||100);
+  const v=Math.max(0,Math.min(examMax,+val||0));
+  if(sem===1)D.exam1[si]=v;else D.exam2[si]=v;
+  recalcScoreRow(sem,si);
+}
+function recalcScoreRow(sem,si){
+  const items=getItems(sem);
+  const scores=sem===1?D.scores1:D.scores2;
+  const exam=sem===1?D.exam1:D.exam2;
+  const bet=sem===1?D.s1bet:D.s2bet;
+  const ex=sem===1?D.s1ex:D.s2ex;
+  const examMax=sem===1?(D.s1examMax||100):(D.s2examMax||100);
+  const maxBet=items.reduce((s,it)=>s+it.max,0);
+  const srow=scores[si]||[];
+  let betTotal=0;
+  items.forEach(it=>{betTotal+=((srow[it.ui]||[])[it.ii]||0);});
+  const betScaled=maxBet>0?parseFloat((betTotal/maxBet*bet).toFixed(2)):0;
+  const exv=exam[si]||0;
+  const exScaled=parseFloat((exv/examMax*ex).toFixed(2));
+  const total=parseFloat((betScaled+exScaled).toFixed(2));
+  const grade=scoreToGrade(total);
+  setText(`bt-${sem}-${si}`,betTotal);
+  setText(`bs-${sem}-${si}`,betScaled.toFixed(2));
+  setText(`es-${sem}-${si}`,exScaled.toFixed(2));
+  setText(`tot-${sem}-${si}`,total.toFixed(2));
+}
+
+function renderUnitList(sem){
+  const units=sem===1?D.units1:D.units2;
+  const listId=`unit${sem}-list`;
+  const container=document.getElementById(listId);
+  container.innerHTML=units.map((u,ui)=>{
+    if(!u.maxItems||u.maxItems.length!==u.items.length){
+      u.maxItems=u.items.map((_,ii)=>(u.maxItems&&u.maxItems[ii]!=null)?u.maxItems[ii]:(u.maxPer||5));
+    }
+    return `<div data-ui="${ui}" style="background:var(--light);border-radius:10px;padding:10px;margin-bottom:8px">
+      <div style="display:flex;gap:6px;align-items:center;margin-bottom:8px">
+        <input class="field-input" style="flex:1;font-size:13px" placeholder="ชื่อหน่วย" value="${u.name.replace(/"/g,'&quot;')}" data-field="uname" data-sem="${sem}" data-ui="${ui}">
+        <button class="btn btn-danger btn-sm" onclick="removeUnit(${sem},${ui})">🗑️</button>
+      </div>
+      ${u.items.map((item,ii)=>`
+        <div style="display:flex;gap:5px;margin-bottom:5px;align-items:center">
+          <input class="field-input" style="flex:1;font-size:12px" placeholder="ชื่อตัวชี้วัด" value="${item.replace(/"/g,'&quot;')}" data-field="item" data-sem="${sem}" data-ui="${ui}" data-ii="${ii}">
+          <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
+            <span style="font-size:9px;color:var(--text2);white-space:nowrap">คะแนนเต็ม</span>
+            <input class="field-input" type="number" min="1" style="width:52px;font-size:13px;text-align:center;padding:4px 6px" value="${u.maxItems[ii]}" data-field="max" data-sem="${sem}" data-ui="${ui}" data-ii="${ii}">
+          </div>
+          <button class="btn btn-danger btn-sm" onclick="removeUnitItem(${sem},${ui},${ii})">✕</button>
+        </div>`).join('')}
+      <button class="btn btn-outline btn-sm btn-full" onclick="addUnitItem(${sem},${ui})">+ เพิ่มตัวชี้วัด</button>
+    </div>`;
+  }).join('');
+  // single delegated listener — replace old one
+  container.oninput=function(e){
+    const t=e.target;
+    const field=t.dataset.field;
+    const s=+t.dataset.sem;
+    const ui=+t.dataset.ui;
+    const ii=+t.dataset.ii;
+    const arr=s===1?D.units1:D.units2;
+    if(field==='uname'){arr[ui].name=t.value;}
+    else if(field==='item'){arr[ui].items[ii]=t.value;}
+    else if(field==='max'){arr[ui].maxItems[ii]=Math.max(1,+t.value||1);}
+  };
+}
+function addUnit(sem){
+  const arr=sem===1?D.units1:D.units2;
+  arr.push({name:`หน่วยใหม่`,items:['ตัวชี้วัด 1'],maxItems:[5]});
+  renderUnitList(sem);
+}
+function removeUnit(sem,ui){const arr=sem===1?D.units1:D.units2;arr.splice(ui,1);renderUnitList(sem);}
+function addUnitItem(sem,ui){
+  const arr=sem===1?D.units1:D.units2;
+  arr[ui].items.push('ตัวชี้วัดใหม่');
+  if(!arr[ui].maxItems)arr[ui].maxItems=arr[ui].items.map(()=>arr[ui].maxPer||5);
+  else arr[ui].maxItems.push(arr[ui].maxPer||5);
+  renderUnitList(sem);
+}
+function removeUnitItem(sem,ui,ii){const arr=sem===1?D.units1:D.units2;arr[ui].items.splice(ii,1);if(arr[ui].maxItems)arr[ui].maxItems.splice(ii,1);renderUnitList(sem);}
+function setItemMax(sem,ui,ii,val){
+  const arr=sem===1?D.units1:D.units2;
+  if(!arr[ui].maxItems)arr[ui].maxItems=arr[ui].items.map(()=>arr[ui].maxPer||5);
+  arr[ui].maxItems[ii]=Math.max(1,val||1);
+}
+function saveUnits(sem){renderScore(sem);saveData();closeUnitModal(sem);}
+
+/* ══ TOTAL ══ */
+function calcSemScore(sem,si){
+  const items=getItems(sem);
+  const scores=sem===1?D.scores1:D.scores2;
+  const exam=sem===1?D.exam1:D.exam2;
+  const bet=sem===1?D.s1bet:D.s2bet;
+  const ex=sem===1?D.s1ex:D.s2ex;
+  const examMax=sem===1?(D.s1examMax||100):(D.s2examMax||100);
+  const maxBet=items.reduce((s,it)=>s+it.max,0);
+  const srow=(scores[si])||[];
+  let betTotal=0;
+  items.forEach(it=>{betTotal+=((srow[it.ui]||[])[it.ii]||0);});
+  const betScaled=maxBet>0?parseFloat((betTotal/maxBet*bet).toFixed(2)):0;
+  const exv=(exam[si])||0;
+  const exScaled=parseFloat((exv/examMax*ex).toFixed(2));
+  return{bet:betScaled,ex:exScaled,total:parseFloat((betScaled+exScaled).toFixed(2))};
+}
+function calcFinalGrade(si){
+  const s1=calcSemScore(1,si);const s2=calcSemScore(2,si);
+  if(!s1.total&&!s2.total)return null;
+  return scoreToGrade(Math.round((s1.total+s2.total)/2*10)/10);
+}
+function scoreToGrade(s){
+  if(s>=80)return 4;if(s>=75)return 3.5;if(s>=70)return 3;
+  if(s>=65)return 2.5;if(s>=60)return 2;if(s>=55)return 1.5;
+  if(s>=50)return 1;return 0;
+}
+function gradeChip(g){
+  return `<span style="color:white;font-weight:800">${g.toFixed(1)}</span>`;
+}
+function attPct(si){
+  let m=0,d=0;
+  D.att.forEach((mt,mi)=>{const row=(mt[si]||[]);m+=row.filter(c=>c==='m').length;d+=D.attDays[mi]||0;});
+  return d>0?Math.round(m/d*100):0;
+}
+function cycleNote(si){
+  const notes=['','ส่งงานไม่ครบตามกำหนด','เวลาเรียนไม่ถึงเกณฑ์'];
+  const cur=D.notes?D.notes[si]||0:0;
+  const next=(cur+1)%3;
+  if(!D.notes)D.notes=[];
+  D.notes[si]=next;
+  const el=document.getElementById(`note-${si}`);
+  if(el){
+    el.textContent=notes[next]||'';
+    el.style.color=next===0?'var(--text2)':next===1?'var(--accent)':'var(--danger)';
+    el.style.fontWeight=next===0?'400':'700';
+  }
+  // อัปเดตช่องเกรด
+  const ge=document.getElementById(`grd-tot-${si}`);
+  if(ge){
+    if(next===1){
+      ge.innerHTML=`<span style="color:#f59e0b;font-weight:800;display:block;text-align:center">ร</span>`;
+    } else if(next===2){
+      ge.innerHTML=`<span style="color:#ef4444;font-weight:800;display:block;text-align:center">มส</span>`;
+    } else {
+      const s1=calcSemScore(1,si),s2=calcSemScore(2,si);
+      const avg=Math.round((s1.total+s2.total)/2*10)/10;
+      ge.innerHTML=gradeChip(scoreToGrade(avg));
+    }
+  }
+}
+
+function renderTotal(){
+  if(!D.notes)D.notes=[];
+  const noteLabels=['','ส่งงานไม่ครบตามกำหนด','เวลาเรียนไม่ถึงเกณฑ์'];
+  let html=`<table class="xlt" style="min-width:600px">
+    <thead>
+      <tr>
+        <th class="name-th" rowspan="2">ชื่อ-สกุล</th><th class="no-th" rowspan="2">ที่</th>
+        <th colspan="3">ภาคเรียนที่ 1</th>
+        <th colspan="3">ภาคเรียนที่ 2</th>
+        <th rowspan="2">คะแนนเฉลี่ย</th>
+        <th rowspan="2" style="background:#154360">เกรด</th>
+        <th rowspan="2" style="min-width:160px;white-space:nowrap">หมายเหตุ</th>
+      </tr>
+      <tr>
+        <th style="font-weight:400">ระหว่างเรียน<br><small>${D.s1bet}</small><br><small>คะแนน</small></th><th style="font-weight:400">ปลายภาค<br><small>${D.s1ex}</small><br><small>คะแนน</small></th><th style="font-weight:400">รวม<br><small>100</small><br><small>คะแนน</small></th>
+        <th style="font-weight:400">ระหว่างเรียน<br><small>${D.s2bet}</small><br><small>คะแนน</small></th><th style="font-weight:400">ปลายภาค<br><small>${D.s2ex}</small><br><small>คะแนน</small></th><th style="font-weight:400">รวม<br><small>100</small><br><small>คะแนน</small></th>
+      </tr>
+    </thead><tbody>`;
+  D.students.forEach((s,si)=>{
+    if(!s.name)return;
+    const s1=calcSemScore(1,si),s2=calcSemScore(2,si);
+    const avg=parseFloat(((s1.total+s2.total)/2).toFixed(2));
+    const grade=scoreToGrade(avg);
+    const noteIdx=D.notes[si]||0;
+    const noteTxt=noteLabels[noteIdx];
+    const noteColor=noteIdx===0?'var(--text2)':noteIdx===1?'var(--accent)':'var(--danger)';
+    // เกรดตามหมายเหตุ
+    let gradeDisplay;
+    if(noteIdx===1){
+      gradeDisplay=`<span style="color:#f59e0b;font-weight:800;display:block;text-align:center">ร</span>`;
+    } else if(noteIdx===2){
+      gradeDisplay=`<span style="color:#ef4444;font-weight:800;display:block;text-align:center">มส</span>`;
+    } else {
+      gradeDisplay=gradeChip(grade);
+    }
+    html+=`<tr style="background:${si%2===0?'#fff':'#f7fafd'}">
+      ${tdName(si,s.name)}${tdNo(si,s.no)}
+      <td class="ac">${s1.bet.toFixed(2)}</td><td class="ac">${s1.ex.toFixed(2)}</td><td class="ac">${s1.total.toFixed(2)}</td>
+      <td class="ac">${s2.bet.toFixed(2)}</td><td class="ac">${s2.ex.toFixed(2)}</td><td class="ac">${s2.total.toFixed(2)}</td>
+      <td class="ac">${avg.toFixed(2)}</td>
+      <td class="gc" id="grd-tot-${si}" style="text-align:center">${gradeDisplay}</td>
+      <td style="text-align:center;cursor:pointer;padding:4px;font-size:11px;color:${noteColor};font-weight:${noteIdx===0?'400':'700'};white-space:nowrap" id="note-${si}" onclick="cycleNote(${si})">${noteTxt}</td>
+    </tr>`;
+  });
+  html+=`</tbody></table>`;
+  document.getElementById('total-wrap').innerHTML=html;
+}
+
+/* ══ CHARTS (PIE) ══ */
+function drawCharts(){drawGradeChart();drawBehChart();drawReadChart();}
+
+function drawPieChart(canvasId, legendId, slices, opts){
+  opts=opts||{};
+  const c=document.getElementById(canvasId);
+  const legendEl=document.getElementById(legendId);
+  if(!c)return;
+  const ctx=c.getContext('2d');
+  // ใช้ขนาดคงที่ตามประเภทกราฟ ไม่วัด offsetWidth (ซึ่งย่อลงเมื่อสลับ tab)
+  const sz=opts.small ? Math.min(160, (c.parentElement?.offsetWidth||160)-12) : 170;
+  c.width=sz;c.height=sz;
+  c.style.width=sz+'px';c.style.height=sz+'px';
+  c.style.display='block';
+  ctx.clearRect(0,0,sz,sz);
+  const total=slices.reduce((s,sl)=>s+sl.value,0);
+  if(!total){
+    ctx.fillStyle='#e2e8f0';ctx.beginPath();ctx.arc(sz/2,sz/2,sz/2-3,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#94a3b8';ctx.font=`10px Sarabun`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('ไม่มีข้อมูล',sz/2,sz/2);
+    if(legendEl)legendEl.innerHTML='';return;
+  }
+  const cx=sz/2,cy=sz/2,r=sz/2-2,ir=r*0.44;
+  let angle=-Math.PI/2;
+  slices.forEach(sl=>{
+    if(!sl.value)return;
+    const sweep=sl.value/total*Math.PI*2;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,angle,angle+sweep);ctx.closePath();
+    ctx.fillStyle=sl.color;ctx.fill();
+    ctx.strokeStyle='white';ctx.lineWidth=2;ctx.stroke();
+    if(sweep>0.3){
+      const mid=angle+sweep/2,dist=(r+ir)/2;
+      ctx.fillStyle='white';ctx.font=`bold ${Math.max(8,sz/12)}px Sarabun`;
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(Math.round(sl.value/total*100)+'%',cx+Math.cos(mid)*dist,cy+Math.sin(mid)*dist);
+    }
+    angle+=sweep;
+  });
+  ctx.beginPath();ctx.arc(cx,cy,ir,0,Math.PI*2);ctx.fillStyle='white';ctx.fill();
+  ctx.fillStyle='#1e3a5f';ctx.font=`bold ${Math.max(10,sz/9)}px Sarabun`;
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(total+'คน',cx,cy);
+  if(legendEl){
+    legendEl.innerHTML=slices.filter(sl=>sl.value>0).map(sl=>{
+      const pct=Math.round(sl.value/total*100);
+      return `<div class="pie-legend-item"><table class="pie-legend-tbl"><tr><td class="plt-dot"><span class="pie-legend-dot" style="background:${sl.color}"></span></td><td class="plt-name">${sl.label}</td><td class="plt-num">${sl.value}</td><td class="plt-dash">-</td><td class="plt-pct">${pct}%</td></tr></table></div>`;
+    }).join('');
+  }
+}
+
+function drawGradeChart(){
+  const students=D.students.filter(s=>s.name);
+  if(!students.length){drawPieChart('grade-chart','grade-chart-legend',[],{});return;}
+  const dist={4:0,3.5:0,3:0,2.5:0,2:0,1.5:0,1:0,0:0};
+  students.forEach(s=>{const g=calcFinalGrade(D.students.indexOf(s));if(g!=null)dist[g]=(dist[g]||0)+1;});
+  const slices=[
+    {label:'4',value:dist[4]||0,color:'#15803d'},
+    {label:'3.5',value:dist[3.5]||0,color:'#22c55e'},
+    {label:'3',value:dist[3]||0,color:'#3b82f6'},
+    {label:'2.5',value:dist[2.5]||0,color:'#60a5fa'},
+    {label:'2',value:dist[2]||0,color:'#f59e0b'},
+    {label:'1.5',value:dist[1.5]||0,color:'#f97316'},
+    {label:'1',value:dist[1]||0,color:'#ef4444'},
+    {label:'0 / ร / มส',value:dist[0]||0,color:'#94a3b8'},
+  ];
+  drawPieChart('grade-chart','grade-chart-legend',slices,{});
+}
+
+function drawReadChart(){
+  const students=D.students.filter(s=>s.name);
+  if(!students.length){drawPieChart('read-chart','read-chart-legend',[],{small:true});return;}
+  const dist={3:0,2:0,1:0,0:0};
+  students.forEach(s=>{
+    const si=D.students.indexOf(s);
+    const vals=READ.map((_,i)=>{
+      const r1=D.read1[si]?D.read1[si][i]||0:0;
+      const r2=D.read2[si]?D.read2[si][i]||0:0;
+      return r1&&r2?Math.round((r1+r2)/2):r1||r2;
+    });
+    const nonz=vals.filter(v=>v>0);
+    const avg=nonz.length?Math.round(nonz.reduce((a,b)=>a+b,0)/nonz.length):0;
+    dist[avg]=(dist[avg]||0)+1;
+  });
+  const slices=[
+    {label:'ดีเยี่ยม',value:dist[3]||0,color:'#16a34a'},
+    {label:'ดี',value:dist[2]||0,color:'#3b82f6'},
+    {label:'ผ่าน',value:dist[1]||0,color:'#f59e0b'},
+    {label:'ไม่ผ่าน',value:dist[0]||0,color:'#ef4444'},
+  ];
+  drawPieChart('read-chart','read-chart-legend',slices,{small:true});
+}
+
+function drawBehChart(){
+  const students=D.students.filter(s=>s.name);
+  if(!students.length){drawPieChart('beh-chart','beh-chart-legend',[],{small:true});return;}
+  const dist={3:0,2:0,1:0,0:0};
+  students.forEach((s)=>{
+    const si=D.students.indexOf(s);
+    const vals=BEH.map((_,i)=>{
+      const b1=D.beh1[si]?D.beh1[si][i]||0:0;
+      const b2=D.beh2[si]?D.beh2[si][i]||0:0;
+      return b1&&b2?Math.round((b1+b2)/2):b1||b2;
+    });
+    const nonz=vals.filter(v=>v>0);
+    const avg=nonz.length?Math.round(nonz.reduce((a,b)=>a+b,0)/nonz.length):0;
+    dist[avg]=(dist[avg]||0)+1;
+  });
+  const slices=[
+    {label:'ดีเยี่ยม',value:dist[3]||0,color:'#16a34a'},
+    {label:'ดี',value:dist[2]||0,color:'#3b82f6'},
+    {label:'ผ่าน',value:dist[1]||0,color:'#f59e0b'},
+    {label:'ไม่ผ่าน',value:dist[0]||0,color:'#ef4444'},
+  ];
+  drawPieChart('beh-chart','beh-chart-legend',slices,{small:true});
+}
+
+/* ══ BEHAVIOR ══ */
+let behSem='1';
+function setBehSem(v){
+  behSem=v;
+  ['1','2','all'].forEach(t=>{
+    const btn=document.getElementById('beh-tab-'+t);
+    if(btn)btn.className='btn btn-sm'+(v===t?' btn-primary':' btn-outline');
+    btn.style.flex='1';
+  });
+  renderBehTable(v);renderReadTable(v);
+}
+function renderBehavior(){setBehSem(behSem);}
+function openCriteriaModal(type){
+  const arr=type==='beh'?BEH:READ;
+  const title=type==='beh'?'คุณลักษณะอันพึงประสงค์':'การอ่าน คิดวิเคราะห์ เขียน';
+  document.getElementById('criteria-modal-title').textContent=title;
+  document.getElementById('criteria-type').value=type;
+  const list=document.getElementById('criteria-list');
+  list.innerHTML=arr.map((item,i)=>`
+    <div style="display:flex;gap:6px;margin-bottom:6px;align-items:center">
+      <input type="text" value="${item}" data-idx="${i}" style="flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px">
+      <button onclick="removeCriteriaItem(${i})" style="width:32px;height:32px;border:none;background:#fadbd8;color:#c0392b;border-radius:8px;cursor:pointer;font-size:16px">✕</button>
+    </div>`).join('');
+  document.getElementById('criteria-modal').classList.add('open');
+}
+function removeCriteriaItem(idx){
+  const type=document.getElementById('criteria-type').value;
+  const arr=type==='beh'?BEH:READ;
+  arr.splice(idx,1);
+  openCriteriaModal(type);
+}
+function saveCriteria(){
+  const type=document.getElementById('criteria-type').value;
+  const inputs=document.getElementById('criteria-list').querySelectorAll('input[type=text]');
+  const newArr=[];
+  inputs.forEach(inp=>{ if(inp.value.trim()) newArr.push(inp.value.trim()); });
+  if(type==='beh'){BEH.length=0;newArr.forEach(v=>BEH.push(v));}
+  else{READ.length=0;newArr.forEach(v=>READ.push(v));}
+  document.getElementById('criteria-modal').classList.remove('open');
+  renderBehavior();
+}
+function addCriteriaItem(){
+  const type=document.getElementById('criteria-type').value;
+  const arr=type==='beh'?BEH:READ;
+  arr.push('รายการใหม่');
+  openCriteriaModal(type);
+}
+function getBehData(arrKey,si,def){return D[arrKey][si]||new Array(def).fill(0);}
+function renderBehTable(sem){
+  const n=D.students.filter(s=>s.name).length;
+  if(!n){document.getElementById('beh-wrap').innerHTML='<div style="padding:14px;text-align:center;color:var(--text2)">ไม่มีนักเรียน</div>';return;}
+  const isAll=sem==='all';
+  let html=`<table class="xlt" style="min-width:${180+BEH.length*36+150}px;font-size:11px">
+    <thead><tr>
+      <th class="name-th">ชื่อ-สกุล</th><th class="no-th">ที่</th>
+      ${BEH.map(l=>`<th style="font-size:10px;width:36px;min-width:36px;white-space:normal;line-height:1.3">${l}</th>`).join('')}
+      <th style="width:38px;min-width:38px">เฉลี่ย</th>
+      <th style="width:56px;min-width:56px;white-space:nowrap">ผลการ<br>ประเมิน</th>
+    </tr></thead><tbody>`;
+  D.students.forEach((s,si)=>{
+    if(!s.name)return;
+    const getV=(i)=>{
+      if(sem==='1')return D.beh1[si]?D.beh1[si][i]||0:0;
+      if(sem==='2')return D.beh2[si]?D.beh2[si][i]||0:0;
+      const b1=D.beh1[si]?D.beh1[si][i]||0:0;
+      const b2=D.beh2[si]?D.beh2[si][i]||0:0;
+      return b1&&b2?Math.round((b1+b2)/2*10)/10:b1||b2;
+    };
+    const vals=BEH.map((_,i)=>getV(i));
+    const avg=vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length*10)/10:0;
+    const result=avg>=3?'ดีเยี่ยม':avg>=2?'ดี':avg>=1?'ผ่าน':'ไม่ผ่าน';
+    const resColor=avg>=3?'var(--success)':avg>=2?'var(--primary2)':avg>=1?'var(--accent)':'var(--danger)';
+    const cells=BEH.map((_,ii)=>{
+      if(isAll)return `<td class="ac">${vals[ii]}</td>`;
+      const arrKey=`beh${sem}`;
+      return `<td style="padding:3px;text-align:center">${ratingButtons(arrKey,si,ii,vals[ii])}</td>`;
+    }).join('');
+    html+=`<tr style="background:${si%2===0?'#fff':'#f7fafd'}">${tdName(si,s.name)}${tdNo(si,s.no)}${cells}<td class="ac">${avg}</td><td class="ac" style="color:${resColor};font-weight:700;white-space:nowrap">${result}</td></tr>`;
+  });
+  html+=`</tbody></table>`;
+  document.getElementById('beh-wrap').innerHTML=html;
+}
+function renderReadTable(sem){
+  const n=D.students.filter(s=>s.name).length;
+  if(!n){document.getElementById('read-wrap').innerHTML='';return;}
+  const isAll=sem==='all';
+  let html=`<table class="xlt" style="min-width:${180+READ.length*36+150}px;font-size:11px">
+    <thead><tr>
+      <th class="name-th">ชื่อ-สกุล</th><th class="no-th">ที่</th>
+      ${READ.map(l=>`<th style="font-size:10px;width:36px;min-width:36px;white-space:normal;line-height:1.3">${l}</th>`).join('')}
+      <th style="width:38px;min-width:38px">เฉลี่ย</th>
+      <th style="width:56px;min-width:56px;white-space:nowrap">ผลการ<br>ประเมิน</th>
+    </tr></thead><tbody>`;
+  D.students.forEach((s,si)=>{
+    if(!s.name)return;
+    const getV=(i)=>{
+      if(sem==='1')return D.read1[si]?D.read1[si][i]||0:0;
+      if(sem==='2')return D.read2[si]?D.read2[si][i]||0:0;
+      const r1=D.read1[si]?D.read1[si][i]||0:0;
+      const r2=D.read2[si]?D.read2[si][i]||0:0;
+      return r1&&r2?Math.round((r1+r2)/2*10)/10:r1||r2;
+    };
+    const vals=READ.map((_,i)=>getV(i));
+    const avg=vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length*10)/10:0;
+    const result=avg>=3?'ดีเยี่ยม':avg>=2?'ดี':avg>=1?'ผ่าน':'ไม่ผ่าน';
+    const resColor=avg>=3?'var(--success)':avg>=2?'var(--primary2)':avg>=1?'var(--accent)':'var(--danger)';
+    const cells=READ.map((_,ii)=>{
+      if(isAll)return `<td class="ac">${vals[ii]}</td>`;
+      const arrKey=`read${sem}`;
+      return `<td style="padding:3px;text-align:center">${ratingButtons(arrKey,si,ii,vals[ii])}</td>`;
+    }).join('');
+    html+=`<tr style="background:${si%2===0?'#fff':'#f7fafd'}">${tdName(si,s.name)}${tdNo(si,s.no)}${cells}<td class="ac">${avg}</td><td class="ac" style="color:${resColor};font-weight:700;white-space:nowrap">${result}</td></tr>`;
+  });
+  html+=`</tbody></table>`;
+  document.getElementById('read-wrap').innerHTML=html;
+}
+function ratingButtons(arrKey,si,ii,cur){
+  const cls='sel-'+cur;
+  return `<span class="rating-btn ${cls}" onclick="cycleRating('${arrKey}',${si},${ii},this)">${cur}</span>`;
+}
+function cycleRating(arrKey,si,ii,el){
+  if(!D[arrKey][si])D[arrKey][si]=new Array(6).fill(0);
+  const cur=D[arrKey][si][ii]||0;
+  const next=cur>=3?0:cur+1;
+  D[arrKey][si][ii]=next;
+  el.className='rating-btn sel-'+next;
+  el.textContent=next;
+}
+function setRating(arrKey,si,ii,val,el){}
+
+/* ══ INDIVIDUAL REPORT ══ */
+function populateIndSel(){
+  const sel=document.getElementById('ind-sel');
+  sel.innerHTML=D.students.filter(s=>s.name).map((s,_)=>{
+    const i=D.students.indexOf(s);
+    return `<option value="${i}">${s.no}. ${s.name}</option>`;
+  }).join('');
+}
+function renderIndividual(){
+  const si=+document.getElementById('ind-sel').value;
+  const s=D.students[si];
+  if(!s||!s.name){document.getElementById('ind-content').innerHTML='';return;}
+  const s1=calcSemScore(1,si),s2=calcSemScore(2,si);
+  const avg=Math.round((s1.total+s2.total)/2*10)/10;
+  const grade=scoreToGrade(avg);
+  const pct=attPct(si);
+  const b1=D.beh1[si]||new Array(6).fill(0);
+  const b2=D.beh2[si]||new Array(6).fill(0);
+  const r1=D.read1[si]||new Array(6).fill(0);
+  const r2=D.read2[si]||new Array(6).fill(0);
+  // เฉลี่ยรายข้อ 2 ภาค (ตรงกับ getV ในหน้าคุณลักษณะ)
+  const bItemAvg=BEH.map((_,ii)=>{const v1=b1[ii]||0,v2=b2[ii]||0;return v1&&v2?Math.round((v1+v2)/2*10)/10:v1||v2;});
+  const rItemAvg=READ.map((_,ii)=>{const v1=r1[ii]||0,v2=r2[ii]||0;return v1&&v2?Math.round((v1+v2)/2*10)/10:v1||v2;});
+  const bTotal=bItemAvg.length?Math.round(bItemAvg.reduce((a,b)=>a+b,0)/bItemAvg.length*10)/10:0;
+  const rTotal=rItemAvg.length?Math.round(rItemAvg.reduce((a,b)=>a+b,0)/rItemAvg.length*10)/10:0;
+  const bRes=(v)=>v>=2.5?'ดีเยี่ยม':v>=1.5?'ดี':v>=0.5?'ผ่าน':'ไม่ผ่าน';
+
+  document.getElementById('ind-content').innerHTML=`
+  <div class="ind-header">
+    <div class="ind-name">${s.name}</div>
+    <div class="ind-sub">เลขที่ ${s.no} · เลขประจำตัว ${s.id||''} · ${s.gender||''}</div>
+    <div class="ind-grade-big">${grade.toFixed(1)}</div>
+    <div style="font-size:12px;opacity:.7">เกรดเฉลี่ยตลอดปีการศึกษา</div>
+  </div>
+
+  <div class="sec-box">
+    <div class="sec-head"><div class="sec-head-title"><div class="sec-head-dot"></div>บันทึกการพัฒนาคุณภาพผู้เรียนรายบุคคล</div></div>
+    <div class="sec-body" style="padding:10px 12px">
+      <div style="font-size:12px;margin-bottom:6px"><strong>โรงเรียน</strong> ${D.school||''} &nbsp;|&nbsp; <strong>ชั้น</strong> ${D.grade||''} &nbsp;|&nbsp; <strong>ปีการศึกษา</strong> ${D.year||''}</div>
+      <div style="font-size:12px;margin-bottom:10px"><strong>รายวิชา</strong> ${D.subject||''} (${D.subcode||''}) &nbsp;|&nbsp; <strong>ครูผู้สอน</strong> ${D.teacher||''}</div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table class="xlt" style="width:100%;table-layout:fixed">
+        <colgroup>
+          <col style="width:90px">
+          <col style="width:34px">
+          <col style="width:38px">
+          <col style="width:34px">
+          <col style="width:38px">
+          <col style="width:34px">
+          <col style="width:38px">
+        </colgroup>
+        <thead>
+          <tr>
+            <th rowspan="2" style="font-size:11px;text-align:center">รายการ</th>
+            <th colspan="2" style="background:#235a8e;font-size:10px">ระหว่าง</th>
+            <th colspan="2" style="background:#1a5276;font-size:10px">ปลายภาค</th>
+            <th rowspan="2" style="font-size:10px">เต็ม</th>
+            <th rowspan="2" style="font-size:10px">รวม</th>
+          </tr>
+          <tr>
+            <th style="background:#235a8e;font-size:9px">เต็ม</th>
+            <th style="background:#235a8e;font-size:9px">ได้</th>
+            <th style="background:#1a5276;font-size:9px">เต็ม</th>
+            <th style="background:#1a5276;font-size:9px">ได้</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-size:11px;text-align:center;font-weight:600">ภาคเรียนที่ 1</td>
+            <td style="background:#e8f4fd;color:#1a5276;font-weight:700;font-size:11px">${D.s1bet}</td>
+            <td class="ac" style="font-size:11px">${s1.bet}</td>
+            <td style="background:#dce8f5;color:#1a3a5c;font-weight:700;font-size:11px">${D.s1ex}</td>
+            <td class="ac" style="font-size:11px">${s1.ex}</td>
+            <td style="font-size:11px">100</td>
+            <td class="ac" style="font-weight:800;font-size:11px">${s1.total}</td>
+          </tr>
+          <tr>
+            <td style="font-size:11px;text-align:center;font-weight:600">ภาคเรียนที่ 2</td>
+            <td style="background:#e8f4fd;color:#1a5276;font-weight:700;font-size:11px">${D.s2bet}</td>
+            <td class="ac" style="font-size:11px">${s2.bet}</td>
+            <td style="background:#dce8f5;color:#1a3a5c;font-weight:700;font-size:11px">${D.s2ex}</td>
+            <td class="ac" style="font-size:11px">${s2.ex}</td>
+            <td style="font-size:11px">100</td>
+            <td class="ac" style="font-weight:800;font-size:11px">${s2.total}</td>
+          </tr>
+          <tr style="background:#e8f4fd">
+            <td style="font-weight:700;font-size:11px;text-align:center">เฉลี่ยตลอดปี</td>
+            <td style="background:#e0eef8;color:#1a5276;font-weight:700;font-size:11px">${Math.round((D.s1bet+D.s2bet)/2)}</td>
+            <td class="ac" style="font-size:11px">${parseFloat(((s1.bet+s2.bet)/2).toFixed(2))}</td>
+            <td style="background:#d4e6f4;color:#1a3a5c;font-weight:700;font-size:11px">${Math.round((D.s1ex+D.s2ex)/2)}</td>
+            <td class="ac" style="font-size:11px">${parseFloat(((s1.ex+s2.ex)/2).toFixed(2))}</td>
+            <td style="font-size:11px">100</td>
+            <td class="ac" style="font-weight:800;font-size:11px;color:var(--primary)">${avg}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sec-body">
+      <div class="info-grid">
+        <div class="info-cell" style="text-align:center"><strong>เวลาเรียน</strong><span style="color:${pct>=80?'var(--success)':'var(--danger)'};font-size:18px">${pct}% ${pct>=80?'✅':'❌'}</span></div>
+        <div class="info-cell" style="text-align:center"><strong>ตัดสินผล</strong><span style="color:${grade>=1&&pct>=80?'var(--success)':'var(--danger)'};font-size:16px;font-weight:800">${grade>=1&&pct>=80?'ผ่าน':'ไม่ผ่าน'}</span></div>
+      </div>
+    </div>
+
+    <!-- Behavior Summary -->
+    <div class="sec-head" style="margin:0"><div class="sec-head-title"><div class="sec-head-dot"></div>สรุปผลการประเมิน</div></div>
+    <div class="sec-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
+        <div class="info-cell" style="text-align:center"><strong>คุณลักษณะ รวม</strong><span>${bTotal} (${bRes(bTotal)})</span></div>
+        <div class="info-cell" style="text-align:center"><strong>การอ่านฯ รวม</strong><span>${rTotal} (${bRes(rTotal)})</span></div>
+        <div class="info-cell" style="text-align:center"><strong>กิจกรรมพัฒนาผู้เรียน</strong><span></span></div>
+      </div>
+      <div class="chart-title" style="font-size:12px;margin-bottom:8px">คุณลักษณะอันพึงประสงค์</div>
+      ${BEH.map((l,ii)=>{const v=bItemAvg[ii]||0;const LABELS=['ไม่ผ่าน','ผ่าน','ดี','ดีเยี่ยม'];const lbl=LABELS[Math.round(v)]||'ไม่ผ่าน';const col=v===0?'#c0392b':v<1?'#e74c3c':v<2?'#f39c12':v<3?'#2d6a9f':'#27ae60';return`<div class="bar-row"><div class="bar-label">${l}</div><div class="bar-track"><div class="bar-fill" style="width:${v/3*100}%;background:${col}"></div></div><div class="bar-val" style="color:${col};font-weight:700">${lbl}</div></div>`}).join('')}
+      <div class="chart-title" style="font-size:12px;margin:10px 0 8px">การอ่าน คิดวิเคราะห์ เขียน</div>
+      ${READ.map((l,ii)=>{const v=rItemAvg[ii]||0;const LABELS=['ไม่ผ่าน','ผ่าน','ดี','ดีเยี่ยม'];const lbl=LABELS[Math.round(v)]||'ไม่ผ่าน';const col=v===0?'#c0392b':v<1?'#e74c3c':v<2?'#f39c12':v<3?'#2d6a9f':'#27ae60';return`<div class="bar-row"><div class="bar-label">${l}</div><div class="bar-track"><div class="bar-fill" style="width:${v/3*100}%;background:${col}"></div></div><div class="bar-val" style="color:${col};font-weight:700">${lbl}</div></div>`}).join('')}
+    </div>
+  </div>`;
+}
+
+/* ══ PDF ══ */
+async function generatePDF(){
+  closeModal('report-modal');
+  const pages=[
+    {id:'r-cover',page:'cover'},
+    {id:'r-stu',page:'students'},
+    {id:'r-att',page:'att'},
+    {id:'r-s1',page:'s1'},
+    {id:'r-s2',page:'s2'},
+    {id:'r-tot',page:'total'},
+    {id:'r-beh',page:'beh'},
+    {id:'r-ind',page:'ind'},
+  ].filter(p=>document.getElementById(p.id)?.checked);
+  if(!pages.length){showToast('⚠️ กรุณาเลือกอย่างน้อย 1 หน้า');return;}
+  showLoading('กำลังสร้าง PDF...');
+  const chunks=[];
+  for(const p of pages){
+    document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
+    const el=document.getElementById('page-'+p.page);
+    if(!el)continue;
+    el.classList.add('active');
+    if(p.page==='att'){renderAttPage();}
+    if(p.page==='s1')renderScore(1);
+    if(p.page==='s2')renderScore(2);
+    if(p.page==='total')renderTotal();
+    if(p.page==='beh')renderBehavior();
+    if(p.page==='ind'){populateIndSel();renderIndividual();}
+    await new Promise(r=>setTimeout(r,400));
+    try{
+      const canvas=await html2canvas(el,{scale:1.5,backgroundColor:'#ffffff',useCORS:true});
+      chunks.push(canvas.toDataURL('image/jpeg',.88));
+    }catch(e){console.error(e);}
+  }
+  hideLoading();
+  if(!chunks.length){showToast('❌ สร้าง PDF ไม่สำเร็จ');return;}
+  // Build simple PDF using html2canvas images
+  const link=document.createElement('a');
+  link.href=chunks[0];link.download=`ปพ5_${D.school||'โรงเรียน'}_${D.subject||'วิชา'}.jpg`;link.click();
+  showToast('✅ ดาวน์โหลดแล้ว (ใช้ print เพื่อสร้าง PDF)');
+  document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
+  document.getElementById('page-'+currentPage).classList.add('active');
+}
+
+/* ══ HELPERS ══ */
+const openModal=id=>document.getElementById(id).classList.add('open');
+const closeModal=id=>document.getElementById(id).classList.remove('open');
+function openUnitModal(sem){
+  const dlg=document.getElementById('unit'+sem+'-modal');
+  renderUnitList(sem);
+  // fill examMax field
+  const examMaxEl=document.getElementById('s'+sem+'-examMax');
+  if(examMaxEl){
+    const stored=sem===1?(D.s1examMax||100):(D.s2examMax||100);
+    examMaxEl.value=stored;
+    examMaxEl.oninput=function(){
+      if(sem===1)D.s1examMax=Math.max(1,+this.value||100);
+      else D.s2examMax=Math.max(1,+this.value||100);
+      const prev=document.getElementById('u'+sem+'-ex-preview');
+      if(prev)prev.textContent=sem===1?(D.s1ex||40):(D.s2ex||40);
+    };
+  }
+  const prev=document.getElementById('u'+sem+'-ex-preview');
+  if(prev)prev.textContent=sem===1?(D.s1ex||40):(D.s2ex||40);
+  dlg.showModal();
+}
+function closeUnitModal(sem){
+  const dlg=document.getElementById('unit'+sem+'-modal');
+  dlg.close();
+}
+const showToast=msg=>{const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);};
+const showLoading=msg=>{document.getElementById('loading-text').textContent=msg;document.getElementById('loading-overlay').classList.add('show');};
+const hideLoading=()=>document.getElementById('loading-overlay').classList.remove('show');
+
+/* ══ PRINT CURRENT PAGE ══ */
+function printCurrentPage(){
+  // render ข้อมูลปัจจุบันก่อน print
+  if(currentPage==='att')renderAttPage();
+  if(currentPage==='s1')renderScore(1);
+  if(currentPage==='s2')renderScore(2);
+  if(currentPage==='total'){renderTotal();drawCharts();}
+  if(currentPage==='beh')renderBehavior();
+  if(currentPage==='ind'){populateIndSel();renderIndividual();}
+  if(currentPage==='cover'){
+    renderCoverStats();renderCoverBehRead();
+    // สร้าง cover-summary-print (แสดงเฉพาะ print)
+    const n=D.students.filter(s=>s.name).length;
+    const {bDist,rDist}=calcBehReadDist();
+    const csp=document.getElementById('cover-summary-print');
+    // สร้างตารางเกรด distribution สำหรับ print
+    const gradeKeysPrint=[4,3.5,3,2.5,2,1.5,1,0];
+    const gradesPrint=D.students.map((_,i)=>calcFinalGrade(i)).filter(g=>g!==null);
+    const distPrint={};gradeKeysPrint.forEach(k=>{distPrint[k]=0;});
+    gradesPrint.forEach(g=>{const k=gradeKeysPrint.find(k=>k===g)||0;distPrint[k]=(distPrint[k]||0)+1;});
+    const avgPrint=gradesPrint.length?(gradesPrint.reduce((a,b)=>a+b,0)/gradesPrint.length).toFixed(2):'0';
+    const passPrint=gradesPrint.filter(g=>g>=1).length;
+    const passPct=gradesPrint.length?Math.round(passPrint/gradesPrint.length*100):0;
+    let gradeTableHTML='<table class="xlt" style="width:100%;border-collapse:collapse;font-size:7pt;table-layout:fixed">';
+    gradeTableHTML+='<thead><tr><th style="text-align:left;padding:3px 4px;font-size:7pt">เกรด</th><th style="padding:3px 2px;font-size:7pt">จำนวน</th><th style="padding:3px 2px;font-size:7pt">%</th></tr></thead><tbody>';
+    gradeKeysPrint.forEach(function(k){
+      const cnt=distPrint[k]||0;
+      const pct=gradesPrint.length&&cnt?Math.round(cnt/gradesPrint.length*100):0;
+      gradeTableHTML+='<tr><td style="text-align:center;padding:2px 3px;font-weight:700;font-size:7pt">'+k+'</td><td class="ac" style="padding:2px 3px;font-size:7pt">'+cnt+'</td><td class="ac" style="padding:2px 3px;font-size:7pt">'+pct+'</td></tr>';
+    });
+    gradeTableHTML+='</tbody></table>';
+    gradeTableHTML+='<div style="margin-top:4px;font-size:6.5pt;border-top:1px solid #ccc;padding-top:3px">';
+    gradeTableHTML+='<div>นักเรียน: <b>'+n+'</b> คน</div>';
+    gradeTableHTML+='<div>ผ่าน: <b>'+passPrint+'</b> คน ('+passPct+'%)</div>';
+    gradeTableHTML+='<div>เกรดเฉลี่ย: <b>'+avgPrint+'</b></div>';
+    gradeTableHTML+='</div>';
+    csp.innerHTML=
+      '<div class="csbox"><div class="cshead">📊 ผลการเรียน (เกรด)</div>'+gradeTableHTML+'</div>'+
+      '<div class="csbox"><div class="cshead">⭐ คุณลักษณะอันพึงประสงค์</div>'+makeSummaryTableHTML(bDist,n,true)+'</div>'+
+      '<div class="csbox"><div class="cshead">📖 การอ่าน คิดวิเคราะห์ เขียน</div>'+makeSummaryTableHTML(rDist,n,true)+'</div>';
+    // โลโก้ใน print header
+    const printLogoWrap=document.getElementById('cover-logo-print-wrap');
+    const printLogoImg=document.getElementById('cover-print-logo');
+    const printLogoPh=document.getElementById('cover-logo-placeholder-print');
+    if(D.logoData){
+      printLogoImg.src=D.logoData;
+      printLogoWrap.classList.add('cover-logo-show');
+      printLogoPh.classList.remove('cover-logo-show');
+    } else {
+      printLogoWrap.classList.remove('cover-logo-show');
+      printLogoPh.classList.add('cover-logo-show');
+    }
+  }renderCoverBehRead();
+
+  // หน้าคะแนน → landscape, อื่นๆ → portrait
+  const isLandscape = currentPage==='s1' || currentPage==='s2' || currentPage==='att';
+  let styleEl = document.getElementById('print-orientation-style');
+  if(!styleEl){styleEl=document.createElement('style');styleEl.id='print-orientation-style';document.head.appendChild(styleEl);}
+  styleEl.textContent = isLandscape
+    ? '@media print{@page{size:A4 landscape;margin:10mm 12mm;}}'
+    : '@media print{@page{size:A4 portrait;margin:12mm 14mm;}}';
+
+  // ── อัพเดตลายเซ็น ──
+  document.getElementById('sig-teacher').textContent = D.teacher ? '( '+D.teacher+' )' : '';
+  document.getElementById('sig-teacher-pos').textContent = D.teacherPos ? 'ตำแหน่ง'+D.teacherPos : '';
+  document.getElementById('sig-director').textContent = D.director ? '( '+D.director+' )' : '';
+  document.getElementById('sig-director-pos').textContent = D.school ? 'ตำแหน่งผู้อำนวยการโรงเรียน'+D.school : 'ตำแหน่งผู้อำนวยการโรงเรียน';
+
+  setTimeout(()=>{
+    // ── print-only: ชื่อ+ตำแหน่ง 2 คอลัมน์ (ครูผู้สอน) ──
+    const teacherNameRow = document.getElementById('teacher-name-row');
+    let pTeacher = document.getElementById('_p_teacher');
+    if(!pTeacher && teacherNameRow){
+      pTeacher = document.createElement('div');
+      pTeacher.id = '_p_teacher';
+      pTeacher.className = 'print-pos-combined';
+      pTeacher.innerHTML =
+        '<div class="xls-row"><span class="xls-label">ครูผู้สอน</span>'
+        +'<span class="xls-val">'+(document.getElementById('f-teacher').value||'')+'</span></div>'
+        +'<div class="xls-row"><span class="xls-label">ตำแหน่ง</span>'
+        +'<span class="xls-val">'+(document.getElementById('f-teacher-pos').value||'')+'</span></div>';
+      teacherNameRow.after(pTeacher);
+    }
+    // ── print-only: ชื่อ+ตำแหน่ง 2 คอลัมน์ (ครูที่ปรึกษา) ──
+    const advisorNameRow = document.getElementById('advisor-name-row');
+    let pAdvisor = document.getElementById('_p_advisor');
+    if(!pAdvisor && advisorNameRow){
+      pAdvisor = document.createElement('div');
+      pAdvisor.id = '_p_advisor';
+      pAdvisor.className = 'print-pos-combined';
+      pAdvisor.innerHTML =
+        '<div class="xls-row"><span class="xls-label">ครูที่ปรึกษา</span>'
+        +'<span class="xls-val">'+(document.getElementById('f-advisor').value||'')+'</span></div>'
+        +'<div class="xls-row"><span class="xls-label">ตำแหน่ง</span>'
+        +'<span class="xls-val">'+(document.getElementById('f-advisor-pos').value||'')+'</span></div>';
+      advisorNameRow.after(pAdvisor);
+    }
+    // ── ซ่อนแถวชื่อเดิม (แทนด้วย combined row) ──
+    if(teacherNameRow) teacherNameRow.style.display='none';
+    if(advisorNameRow) advisorNameRow.style.display='none';
+
+    window.print();
+
+    setTimeout(()=>{
+      if(pTeacher){ pTeacher.remove(); }
+      if(pAdvisor){ pAdvisor.remove(); }
+      if(teacherNameRow) teacherNameRow.style.display='';
+      if(advisorNameRow) advisorNameRow.style.display='';
+    }, 500);
+  },150);
+}
+
+/* ══ BOOT ══ */
+window.addEventListener('load',()=>{
+  // getAllSlots จะ migrate pp5v2→pp5v3 อัตโนมัติถ้ายังไม่ได้ migrate
+  const allSlots=getAllSlots();
+  const sessionSlot=sessionStorage.getItem('pp5_slot');
+
+  if(sessionSlot && localStorage.getItem(sessionSlot)){
+    // กรณี: reload หน้า / เคยเลือกวิชาแล้ว → โหลดต่อเนื่องเลย
+    D=Object.assign({},defaultD(),JSON.parse(localStorage.getItem(sessionSlot)));
+    initArrays();
+  } else if(allSlots.length===1){
+    // วิชาเดียว → โหลดเข้าแอปเลย ไม่ผ่าน launcher
+    D=Object.assign({},defaultD(),JSON.parse(localStorage.getItem(allSlots[0].key)));
+    initArrays();
+    sessionStorage.setItem('pp5_slot',allSlots[0].key);
+  } else if(allSlots.length>1){
+    // หลายวิชา → เปิด launcher ให้เลือก (โหลด D เปล่าไว้ก่อน)
+    initArrays();
+    fillForm();refreshSubtitle();renderCoverStats();renderCoverBehRead();applyLogo();
+    openLauncher();
+    return;
+  } else {
+    // ไม่มีข้อมูลเลย → launcher สร้างใหม่
+    initArrays();
+    fillForm();refreshSubtitle();renderCoverStats();renderCoverBehRead();applyLogo();
+    openLauncher();
+    return;
+  }
+
+  // โหลดข้อมูลสำเร็จ → render ทุกอย่าง
+  fillForm();
+  refreshSubtitle();
+  renderCoverStats();
+  renderCoverBehRead();
+  applyLogo();
+  ['unit1-modal','unit2-modal'].forEach(function(id){
+    document.getElementById(id).addEventListener('click',function(e){
+      const r=this.getBoundingClientRect();
+      if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom){
+        this.close();
+      }
+    });
+  });
+});
+
+// redraw กราฟทั้ง 3 เมื่อสลับ tab กลับมา
+document.addEventListener('visibilitychange',function(){
+  if(document.visibilityState==='visible'){
+    if(document.getElementById('page-total').classList.contains('active')){
+      setTimeout(drawCharts, 50);
+    }
+  }
+});
+
+/* ══ LAUNCHER ══ */
+function openLauncher(){
+  renderLauncherList();
+  document.getElementById('launcher').style.display='flex';
+}
+function closeLauncher(){
+  document.getElementById('launcher').style.display='none';
+}
+function renderLauncherList(){
+  const slots=getAllSlots();
+  const el=document.getElementById('launcher-list');
+  if(slots.length===0){
+    el.innerHTML='<div style="text-align:center;padding:30px 0;color:#94a3b8;font-size:13px">ยังไม่มีข้อมูล — กดเพิ่มรายวิชาด้านล่าง</div>';
+    return;
+  }
+  el.innerHTML=slots.map(s=>{
+    const label=(s.grade||'?')+' · '+(s.subject||'?');
+    const sub=(s.year?'ปีการศึกษา '+s.year:'')+(s.sem?' ภาคเรียนที่ '+s.sem:'');
+    return `<div style="
+      background:#fff;border-radius:12px;border:1.5px solid #e2e8f0;
+      margin-bottom:8px;overflow:hidden;display:flex;align-items:stretch;
+    ">
+      <div onclick="launcherOpen('${s.key}')" style="
+        flex:1;padding:14px 16px;cursor:pointer;
+      ">
+        <div style="font-size:14px;font-weight:700;color:#1e3a5f">${label}</div>
+        ${sub?`<div style="font-size:11px;color:#94a3b8;margin-top:2px">${sub}</div>`:''}
+      </div>
+      <button onclick="exportSlot('${s.key}')" title="ส่งออกไฟล์ .json" style="
+        width:44px;border:none;border-left:1.5px solid #e2e8f0;
+        background:#f0f9ff;color:#0369a1;font-size:16px;cursor:pointer;
+        flex-shrink:0;display:flex;align-items:center;justify-content:center;
+      ">📤</button>
+      <button onclick="deleteSlot('${s.key}')" style="
+        width:44px;border:none;border-left:1.5px solid #e2e8f0;
+        background:#fff8f8;color:#dc2626;font-size:16px;cursor:pointer;
+        flex-shrink:0;display:flex;align-items:center;justify-content:center;
+      ">🗑</button>
+    </div>`;
+  }).join('');
+}
+function launcherOpen(key){
+  sessionStorage.setItem('pp5_slot',key);
+  loadSlot(key);
+  closeLauncher();
+}
+function launcherNew(){
+  document.getElementById('launcher-form').style.display='block';
+  document.getElementById('launcher-form').scrollIntoView({behavior:'smooth'});
+  document.getElementById('lf-grade').focus();
+}
+function launcherCreate(){
+  const grade=document.getElementById('lf-grade').value.trim();
+  const subject=document.getElementById('lf-subject').value.trim();
+  const subcode=document.getElementById('lf-subcode').value.trim();
+  const year=document.getElementById('lf-year').value.trim()||'2568';
+  if(!grade||!subject){alert('กรุณากรอกชั้นเรียนและรายวิชา');return;}
+  D=defaultD();
+  D.grade=grade;D.subject=subject;D.subcode=subcode;D.year=year;
+  initArrays();
+  const key=getCurrentKey();
+  localStorage.setItem(key,JSON.stringify(D));
+  sessionStorage.setItem('pp5_slot',key);
+  fillForm();refreshSubtitle();renderCoverStats();renderCoverBehRead();applyLogo();
+  document.getElementById('launcher-form').style.display='none';
+  closeLauncher();
+  showToast('✅ สร้างรายวิชา: '+grade+' · '+subject);
+}
+
+/* ══ EXPORT / IMPORT ══ */
+function exportSlot(key){
+  try{
+    const raw=localStorage.getItem(key);
+    if(!raw){showToast('❌ ไม่พบข้อมูล');return;}
+    const d=JSON.parse(raw);
+    const filename='pp5_'+(d.grade||'').replace(/\s+/g,'_')+'_'+(d.subject||'').replace(/\s+/g,'_')+'_'+(d.year||'')+'.json';
+    const blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download=filename;
+    document.body.appendChild(a);a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('✅ ส่งออก: '+filename);
+  }catch(e){showToast('❌ '+e.message);}
+}
+function exportCurrentSlot(){
+  // export วิชาที่เปิดอยู่ตอนนี้
+  readForm();
+  const key=getCurrentKey();
+  saveData();
+  exportSlot(key);
+}
+function importData(){
+  document.getElementById('import-file-input').value='';
+  document.getElementById('import-file-input').click();
+}
+function handleImportFile(e){
+  const file=e.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    try{
+      const d=JSON.parse(ev.target.result);
+      if(!d.grade||!d.subject){
+        showToast('❌ ไฟล์ไม่ถูกต้อง (ต้องมี grade และ subject)');return;
+      }
+      const g=(d.grade||'').trim();
+      const s=(d.subject||'').trim();
+      const key='pp5v3:'+g+'__'+s;
+      // ถ้ามีข้อมูลเดิมถามก่อน
+      if(localStorage.getItem(key)){
+        if(!confirm('มีข้อมูล "'+g+' · '+s+'" อยู่แล้ว  ต้องการเขียนทับหรือไม่?'))return;
+      }
+      localStorage.setItem(key,JSON.stringify(d));
+      showToast('✅ นำเข้าสำเร็จ: '+g+' · '+s);
+      renderLauncherList();
+    }catch(err){showToast('❌ อ่านไฟล์ไม่ได้: '+err.message);}
+  };
+  reader.readAsText(file,'utf-8');
+}
+</script>
+
+
+<!-- ══ LAUNCHER OVERLAY ══ -->
+<div id="launcher" style="
+  position:fixed;inset:0;z-index:9999;
+  background:#f0f4f8;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  overflow-y:auto;padding:0 0 40px 0;
+">
+  <!-- header -->
+  <div style="width:100%;background:#1e3a5f;padding:18px 20px 14px;text-align:center;flex-shrink:0">
+    <div style="font-size:28px;margin-bottom:6px">📚</div>
+    <div style="font-size:16px;font-weight:800;color:#fff">สมุดบันทึกคุณภาพผู้เรียน</div>
+    <div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:2px">ปพ.5 — เลือกรายวิชาที่ต้องการ</div>
+  </div>
+
+  <!-- slot list -->
+  <div id="launcher-list" style="width:100%;max-width:500px;padding:16px 14px 0;"></div>
+
+  <!-- ปุ่มหลัก: เพิ่มวิชาใหม่ + import -->
+  <div style="width:100%;max-width:500px;padding:10px 14px 0;display:flex;gap:8px">
+    <button onclick="launcherNew()" style="
+      flex:1;padding:14px;border-radius:12px;border:2px dashed #94a3b8;
+      background:#fff;color:#1e3a5f;font-family:inherit;font-size:14px;
+      font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;
+    ">➕ เพิ่มรายวิชาใหม่</button>
+    <button onclick="importData()" title="นำเข้าข้อมูลจากไฟล์ .json" style="
+      padding:14px 16px;border-radius:12px;border:2px dashed #94a3b8;
+      background:#fff;color:#1e3a5f;font-family:inherit;font-size:14px;
+      font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;
+      white-space:nowrap;
+    ">📥 นำเข้า</button>
+  </div>
+  <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="handleImportFile(event)">
+
+  <!-- new slot form (ซ่อนไว้ก่อน) -->
+  <div id="launcher-form" style="display:none;width:100%;max-width:500px;padding:12px 14px 0">
+    <div style="background:#fff;border-radius:12px;border:1.5px solid #cbd5e1;padding:16px">
+      <div style="font-size:13px;font-weight:700;color:#1e3a5f;margin-bottom:12px">📋 รายวิชาใหม่</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:3px">ชั้นเรียน *</div>
+          <input id="lf-grade" placeholder="เช่น ประถมศึกษาปีที่ 2" style="
+            width:100%;padding:10px 12px;border:1.5px solid #cbd5e1;border-radius:8px;
+            font-family:inherit;font-size:13px;box-sizing:border-box;
+          ">
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:3px">รายวิชา *</div>
+          <input id="lf-subject" placeholder="เช่น คณิตศาสตร์" style="
+            width:100%;padding:10px 12px;border:1.5px solid #cbd5e1;border-radius:8px;
+            font-family:inherit;font-size:13px;box-sizing:border-box;
+          ">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:3px">รหัสวิชา</div>
+            <input id="lf-subcode" placeholder="ค12101" style="
+              width:100%;padding:10px 12px;border:1.5px solid #cbd5e1;border-radius:8px;
+              font-family:inherit;font-size:13px;box-sizing:border-box;
+            ">
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:3px">ปีการศึกษา</div>
+            <input id="lf-year" placeholder="2568" style="
+              width:100%;padding:10px 12px;border:1.5px solid #cbd5e1;border-radius:8px;
+              font-family:inherit;font-size:13px;box-sizing:border-box;
+            ">
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <button onclick="launcherCreate()" style="
+            flex:1;padding:12px;border-radius:10px;border:none;
+            background:#1e3a5f;color:#fff;font-family:inherit;font-size:13px;
+            font-weight:700;cursor:pointer;
+          ">✅ สร้างรายวิชา</button>
+          <button onclick="document.getElementById('launcher-form').style.display='none'" style="
+            padding:12px 16px;border-radius:10px;border:1.5px solid #cbd5e1;
+            background:#fff;color:#64748b;font-family:inherit;font-size:13px;
+            font-weight:600;cursor:pointer;
+          ">ยกเลิก</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SIGNATURE BLOCK (print only) ══ -->
+<div id="print-signature" style="display:none">
+  <div class="sig-box">
+    <div class="sig-role-line">ลงชื่อ<span class="sig-dots">.................................................</span>ครูผู้สอน</div>
+    <div class="sig-name" id="sig-teacher"></div>
+    <div class="sig-pos" id="sig-teacher-pos"></div>
+  </div>
+  <div class="sig-box">
+    <div class="sig-role-line">ลงชื่อ<span class="sig-dots">.................................................</span>ผู้อนุมัติ</div>
+    <div class="sig-name" id="sig-director"></div>
+    <div class="sig-pos" id="sig-director-pos"></div>
+  </div>
+</div>
+
+<!-- ══ CRITERIA MODAL ══ -->
+<div id="criteria-modal" class="modal-overlay center" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal-box" style="max-width:480px;width:92%">
+    <div class="modal-head">
+      <div class="modal-title2" id="criteria-modal-title">แก้ไขรายข้อ</div>
+      <button class="modal-close" onclick="document.getElementById('criteria-modal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="criteria-type">
+      <div id="criteria-list" style="max-height:60vh;overflow-y:auto"></div>
+      <button class="btn btn-outline btn-full" style="margin-top:8px" onclick="addCriteriaItem()">+ เพิ่มรายการ</button>
+    </div>
+    <div class="modal-footer" style="padding:12px;display:flex;gap:8px">
+      <button class="btn btn-outline" style="flex:1" onclick="document.getElementById('criteria-modal').classList.remove('open')">ยกเลิก</button>
+      <button class="btn btn-primary" style="flex:1" onclick="saveCriteria()">บันทึก</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>
