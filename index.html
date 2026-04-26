@@ -1169,6 +1169,21 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
       <div class="stats-row" id="cover-stats"></div>
       <!-- grade distribution table rendered by JS -->
       <div id="grade-dist-table"></div>
+      <!-- วันที่อนุมัติ -->
+      <div style="display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <span style="font-size:13px;font-weight:700;color:var(--text);white-space:nowrap">วันที่อนุมัติผลการเรียน</span>
+        <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
+          <span style="font-size:12px;color:var(--text2)">วันที่</span>
+          <input type="number" id="f-approve-day" min="1" max="31" placeholder="31" oninput="markDirty()"
+            style="width:52px;padding:6px 6px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;font-weight:700;text-align:center;">
+          <span style="font-size:12px;color:var(--text2)">เดือน</span>
+          <input type="text" id="f-approve-month" placeholder="มีนาคม" oninput="markDirty()"
+            style="width:90px;padding:6px 8px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;font-weight:700;text-align:center;">
+          <span style="font-size:12px;color:var(--text2)">พ.ศ.</span>
+          <input type="number" id="f-approve-year" placeholder="2569" oninput="markDirty()"
+            style="width:70px;padding:6px 6px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;font-weight:700;text-align:center;">
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1739,6 +1754,7 @@ function readForm(){
   D.teacher=gv('f-teacher');D.teacherPos=gv('f-teacher-pos');
   D.advisor=gv('f-advisor');D.advisorPos=gv('f-advisor-pos');
   D.director=gv('f-director');
+  D.approveDay=gv('f-approve-day');D.approveMonth=gv('f-approve-month');D.approveYear=gv('f-approve-year');
   D.male=+gv('f-male')||0;D.female=+gv('f-female')||0;
   D.disM=+gv('f-dis-m')||0;D.disF=+gv('f-dis-f')||0;
   D.outM=+gv('f-out-m')||0;D.outF=+gv('f-out-f')||0;
@@ -1753,6 +1769,7 @@ function fillForm(){
   sv('f-teacher',D.teacher);sv('f-teacher-pos',D.teacherPos);
   sv('f-advisor',D.advisor);sv('f-advisor-pos',D.advisorPos);
   sv('f-director',D.director);
+  sv('f-approve-day',D.approveDay);sv('f-approve-month',D.approveMonth);sv('f-approve-year',D.approveYear);
   sv('f-male',D.male);sv('f-female',D.female);
   sv('f-dis-m',D.disM);sv('f-dis-f',D.disF);
   sv('f-out-m',D.outM);sv('f-out-f',D.outF);
@@ -2836,6 +2853,14 @@ function printCurrentPage(){
       '<div class="csbox"><div class="cshead">📊 ผลการเรียน (เกรด)</div>'+gradeTableHTML+'</div>'+
       '<div class="csbox"><div class="cshead">⭐ คุณลักษณะอันพึงประสงค์</div>'+makeSummaryTableHTML(bDist,n,true)+'</div>'+
       '<div class="csbox"><div class="cshead">📖 การอ่าน คิดวิเคราะห์ เขียน</div>'+makeSummaryTableHTML(rDist,n,true)+'</div>';
+    // แถววันที่อนุมัติ (แสดงใต้ตาราง 3 คอลัมน์ใน print)
+    const approveDay=D.approveDay||gv('f-approve-day')||'';
+    const approveMonth=D.approveMonth||gv('f-approve-month')||'';
+    const approveYear=D.approveYear||gv('f-approve-year')||'';
+    const approveStr=approveDay||approveMonth||approveYear
+      ? 'วันที่ '+approveDay+' เดือน '+approveMonth+' พ.ศ. '+approveYear
+      : '..........';
+    csp.innerHTML += '<div id="approve-date-print" style="width:100%;margin-top:4px;text-align:right;font-size:8pt;font-weight:700">วันที่อนุมัติผลการเรียน: '+approveStr+'</div>';
     // โลโก้ใน print header
     const printLogoWrap=document.getElementById('cover-logo-print-wrap');
     const printLogoImg=document.getElementById('cover-print-logo');
