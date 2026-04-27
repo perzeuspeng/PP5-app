@@ -544,7 +544,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
     display:grid!important; grid-template-columns:1fr 1fr!important;
     gap:10px!important; align-items:start!important; margin-bottom:0!important;
   }
-  #page-cover.active #cover-row2 { display:contents!important; }
+  #page-cover.active #cover-row2 { display:block!important; }
   #page-cover.active #cover-row2 .sec-box,
   #page-cover.active .sec-box:has(#approval-body) { margin-bottom:0!important; }
 
@@ -1004,10 +1004,11 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
     </div>
   </div>
 
-  <!-- wrapper 2 คอลัมน์: นักเรียน + (ใช้ใน print) -->
-  <div id="cover-row2">
+  <!-- approval-wrap: grid 2col สำหรับ print (จำนวนนักเรียน | การอนุมัติ) -->
+  <div id="approval-wrap">
 
-  <!-- นักเรียนต้นปี -->
+  <!-- wrapper จำนวนนักเรียน -->
+  <div id="cover-row2">
   <div class="sec-box">
     <div class="sec-head">
       <div class="sec-head-title"><div class="sec-head-dot"></div>จำนวนนักเรียน</div>
@@ -1058,11 +1059,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
       </table>
     </div>
   </div>
-
   </div><!-- /#cover-row2 -->
-
-  <!-- approval-wrap: ครอบ cover-row2 + approval สำหรับ print 2col -->
-  <div id="approval-wrap">
 
   <!-- อนุมัติผลการเรียน -->
   <div class="sec-box">
