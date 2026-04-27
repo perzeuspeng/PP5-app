@@ -208,7 +208,8 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
 
   /* ═══ ซ่อน UI ═══ */
   #loading-overlay,.bottom-nav,.topbar,
-  .status-bar,.topbar-actions,.no-print{display:none!important;}
+  .status-bar,.topbar-actions,.no-print,
+  .toast,#launcher{display:none!important;}
   /* ยกเว้น: cover-beh-read-web แสดงใน print หน้าปก */
   #page-cover.active #cover-beh-read-web{display:grid!important;}
 
@@ -591,18 +592,19 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   #page-cover.active #cover-row2 .sec-box,
   #page-cover.active .sec-box:has(#approval-body) { margin-bottom:0!important; }
 
-  /* ── stat-tiles: แนวนอน 4 คอลัมน์ ขนาดกระทัดรัด ── */
+  /* ── stat-tiles: แนวนอน 4 คอลัมน์ ขนาดกระทัดรัด ไม่ตกขอบ ── */
   #page-cover.active .stats-row {
     display:grid!important; grid-template-columns:repeat(4,1fr)!important;
-    gap:5px!important; margin-bottom:8px!important;
+    gap:4px!important; margin-bottom:6px!important; width:100%!important;
   }
   #page-cover.active .stat-tile {
-    background:#fff!important; border-radius:8px!important; padding:5px 4px!important;
-    text-align:center!important; box-shadow:0 1px 4px rgba(30,58,95,.12)!important;
-    border-top:3px solid #f59e0b!important; border-left:none!important; border-right:none!important; border-bottom:none!important;
+    background:#fff!important; border-radius:6px!important; padding:4px 2px!important;
+    text-align:center!important; box-shadow:0 1px 3px rgba(30,58,95,.1)!important;
+    border-top:2.5px solid #f59e0b!important; border-left:none!important; border-right:none!important; border-bottom:none!important;
+    min-width:0!important; overflow:hidden!important;
   }
-  #page-cover.active .stat-num { font-size:12pt!important; color:#1e3a5f!important; font-weight:800!important; display:block!important; line-height:1.1!important; }
-  #page-cover.active .stat-lbl { font-size:6.5pt!important; color:#64748b!important; display:block!important; margin-top:1px!important; }
+  #page-cover.active .stat-num { font-size:10pt!important; color:#1e3a5f!important; font-weight:800!important; display:block!important; line-height:1.2!important; }
+  #page-cover.active .stat-lbl { font-size:6pt!important; color:#64748b!important; display:block!important; margin-top:1px!important; white-space:nowrap!important; overflow:hidden!important; text-overflow:ellipsis!important; }
 
   /* ── grade-dist-table ── */
   #page-cover.active #grade-dist-table table { width:100%!important; border-collapse:separate!important; border-spacing:0!important; font-size:8pt!important; }
