@@ -396,18 +396,37 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   .ind-grade-big{font-size:32pt!important;color:#000!important;font-weight:800!important;}
 
   /* ════════════════════════════════════════════════════
-     หน้าปก — เหมือนหน้าเว็บ 1:1
+     หน้าปก — เหมือนหน้าเว็บ 1:1 + ปรับตาม spec
   ════════════════════════════════════════════════════ */
   #page-cover.active{display:block!important;width:100%!important;font-size:9pt!important;}
   #cover-logo-upload-ui{display:none!important;}
 
-  /* xls-header: gradient น้ำเงินเหมือนเว็บ */
-  #page-cover.active .xls-header{
-    background:linear-gradient(135deg,#1e3a5f 0%,#2563a8 100%)!important;
-    border-radius:12px!important;padding:14px 16px!important;margin-bottom:10px!important;
-    border:none!important;overflow:visible!important;
+  /* ── โลโก้: แสดงกลางบนสุด ── */
+  #page-cover.active .xls-header-inner{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    gap:6px!important;
+    margin-bottom:8px!important;
   }
-  #page-cover.active .xls-header-inner{display:block!important;}
+  /* wrap โลโก้ที่มีรูป */
+  #page-cover.active #cover-logo-print-wrap{
+    display:flex!important;
+    align-items:center!important;justify-content:center!important;
+    width:72px!important;height:72px!important;flex-shrink:0!important;
+  }
+  /* emoji placeholder เมื่อไม่มีรูป */
+  #page-cover.active #cover-logo-placeholder-print{
+    display:block!important;
+    font-size:52px!important;
+    text-align:center!important;
+    line-height:1!important;
+  }
+  #cover-print-logo{
+    width:68px!important;height:68px!important;
+    object-fit:contain!important;border-radius:6px!important;display:block!important;
+  }
+  /* ชื่อเอกสาร ใต้โลโก้ */
   #page-cover.active .xls-header-content{display:block!important;width:100%!important;}
   #page-cover.active .xls-header-title{
     font-size:13pt!important;font-weight:800!important;color:#fff!important;
@@ -415,9 +434,12 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
     border-bottom:1.5px solid rgba(255,255,255,.3)!important;padding-bottom:6px!important;
   }
 
-  /* logo ซ่อนใน print เหมือนเว็บ (ไม่มีใน layout เว็บปกติ) */
-  #page-cover.active #cover-logo-print-wrap,
-  #page-cover.active #cover-logo-placeholder-print{display:none!important;}
+  /* xls-header: gradient น้ำเงินเหมือนเว็บ */
+  #page-cover.active .xls-header{
+    background:linear-gradient(135deg,#1e3a5f 0%,#2563a8 100%)!important;
+    border-radius:12px!important;padding:14px 16px!important;margin-bottom:10px!important;
+    border:none!important;overflow:visible!important;
+  }
 
   /* xls-form: grid เหมือนเว็บ */
   #page-cover.active .xls-form{
@@ -444,8 +466,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   /* label + val สีขาวเหมือนเว็บ */
   #page-cover.active .xls-label{
     font-size:9pt!important;font-weight:700!important;
-    color:rgba(255,255,255,.8)!important;
-    background:transparent!important;
+    color:rgba(255,255,255,.8)!important;background:transparent!important;
     padding:6px 10px!important;white-space:nowrap!important;
     min-width:80px!important;flex-shrink:0!important;
     border:none!important;display:flex!important;align-items:center!important;
@@ -457,16 +478,18 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
     border:none!important;outline:none!important;min-width:0!important;
   }
 
-  /* แสดง teacher-pos-row และ advisor-pos-row เหมือนเว็บ */
+  /* ── โรงเรียน: ซ่อน row เดิม แสดง combined row แทน ── */
+  /* ซ่อน row สังกัดแยก */
+  #page-cover.active .xls-form > .xls-row:has(#f-dept){display:none!important;}
+  /* ซ่อน teacher-pos-row และ advisor-pos-row (วงแดง) */
   #page-cover.active #teacher-pos-row,
-  #page-cover.active #advisor-pos-row{display:flex!important;}
+  #page-cover.active #advisor-pos-row{display:none!important;}
 
   /* sec-box: card ขาว shadow เหมือนเว็บ */
   #page-cover.active .sec-box{
     background:#fff!important;border-radius:12px!important;
     margin-bottom:10px!important;overflow:hidden!important;
-    box-shadow:0 2px 8px rgba(30,58,95,.15)!important;
-    border:none!important;
+    box-shadow:0 2px 8px rgba(30,58,95,.15)!important;border:none!important;
   }
   #page-cover.active .sec-head{
     background:linear-gradient(135deg,#1e3a5f,#2563a8)!important;
@@ -504,9 +527,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
     background:#fff!important;color:#000!important;
   }
   #page-cover.active table.xlt td.left{text-align:left!important;padding-left:8px!important;}
-  #page-cover.active table.xlt td.ac{
-    background:#dbeafe!important;color:#1e3a5f!important;font-weight:700!important;
-  }
+  #page-cover.active table.xlt td.ac{background:#dbeafe!important;color:#1e3a5f!important;font-weight:700!important;}
   #page-cover.active table.xlt td.edit-cell{background:#fefce8!important;}
   #page-cover.active table.xlt input[type=number]{
     font-size:9pt!important;width:100%!important;background:transparent!important;
@@ -519,34 +540,66 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
     gap:8px!important;margin-bottom:10px!important;
   }
   #page-cover.active .stat-tile{
-    background:#fff!important;border-radius:10px!important;
-    padding:10px 8px!important;text-align:center!important;
-    box-shadow:0 2px 6px rgba(30,58,95,.12)!important;
+    background:#fff!important;border-radius:10px!important;padding:10px 8px!important;
+    text-align:center!important;box-shadow:0 2px 6px rgba(30,58,95,.12)!important;
     border-top:3px solid #f59e0b!important;border-left:none!important;
     border-right:none!important;border-bottom:none!important;
   }
   #page-cover.active .stat-num{font-size:18pt!important;color:#1e3a5f!important;font-weight:800!important;}
   #page-cover.active .stat-lbl{font-size:8pt!important;color:#64748b!important;}
 
-  /* แสดง approval-body และ cover-beh-read-web เหมือนเว็บ */
+  /* approval-body + cover-beh-read-web */
   #page-cover.active .sec-box:has(#approval-body){display:block!important;}
   #page-cover.active #cover-beh-read-web{
     display:grid!important;grid-template-columns:1fr 1fr!important;
     gap:10px!important;margin-bottom:10px!important;
   }
 
-  /* cover-summary-print ซ่อน (ไม่ใช้แล้ว ใช้ web layout แทน) */
+  /* cover-summary-print ซ่อน */
   #cover-summary-print{display:none!important;}
 
-  /* cover-summary-grid เหมือนเว็บ */
+  /* cover-summary-box/head */
   .cover-summary-box{
     background:#fff!important;border-radius:12px!important;
     overflow:hidden!important;box-shadow:0 2px 8px rgba(30,58,95,.1)!important;
   }
   .cover-summary-head{
     background:linear-gradient(135deg,#1e3a5f,#2563a8)!important;
-    color:#fff!important;font-size:11pt!important;font-weight:700!important;
-    padding:10px 14px!important;
+    color:#fff!important;font-size:11pt!important;font-weight:700!important;padding:10px 14px!important;
+  }
+
+  /* ── print-combined: rows ที่ JS inject ก่อน print ── */
+  /* สำหรับ โรงเรียน+สังกัด, ครูผู้สอน+ตำแหน่ง, ครูที่ปรึกษา+ตำแหน่ง */
+  .print-combined-row{
+    display:flex!important;align-items:center!important;
+    background:rgba(255,255,255,.12)!important;
+    border-radius:8px!important;overflow:hidden!important;
+    min-height:0!important;padding:0!important;gap:0!important;
+  }
+  .print-combined-row .xls-label{
+    font-size:9pt!important;font-weight:700!important;
+    color:rgba(255,255,255,.8)!important;background:transparent!important;
+    padding:6px 10px!important;white-space:nowrap!important;
+    min-width:80px!important;flex-shrink:0!important;
+    border:none!important;display:flex!important;align-items:center!important;
+  }
+  .print-combined-row .print-combined-val{
+    flex:1!important;font-size:10pt!important;font-weight:600!important;
+    color:#fff!important;padding:6px 10px!important;
+    background:rgba(255,255,255,.14)!important;
+    border:none!important;outline:none!important;min-width:0!important;
+    display:flex!important;align-items:center!important;gap:6px!important;
+    flex-wrap:wrap!important;
+  }
+  .print-combined-row .print-sep{
+    color:rgba(255,255,255,.4)!important;font-size:9pt!important;margin:0 2px!important;
+  }
+  .print-combined-row .print-sub-label{
+    font-size:8pt!important;color:rgba(255,255,255,.6)!important;
+    font-weight:700!important;white-space:nowrap!important;
+  }
+  .print-combined-row .print-sub-val{
+    font-size:9pt!important;color:rgba(255,255,255,.9)!important;font-weight:500!important;
   }
 
   /* ════════════════════════════════════════════
@@ -2873,43 +2926,78 @@ function printCurrentPage(){
   document.getElementById('sig-director-pos').textContent = D.school ? 'ตำแหน่งผู้อำนวยการโรงเรียน'+D.school : 'ตำแหน่งผู้อำนวยการโรงเรียน';
 
   setTimeout(()=>{
-    // ── print-only: ชื่อ+ตำแหน่ง 2 คอลัมน์ (ครูผู้สอน) ──
+    const gv2 = id => (document.getElementById(id)||{}).value||'';
+
+    // ── 1. โรงเรียน + สังกัด รวมบรรทัดเดียว ──
+    const schoolRow = document.querySelector('#page-cover .xls-form > .xls-row:has(#f-school)');
+    let pSchool = document.getElementById('_p_school');
+    if(!pSchool && schoolRow){
+      pSchool = document.createElement('div');
+      pSchool.id = '_p_school';
+      pSchool.className = 'print-combined-row';
+      pSchool.innerHTML =
+        '<span class="xls-label">โรงเรียน</span>'
+        +'<span class="print-combined-val">'
+        +  (gv2('f-school')||'')
+        +  '<span class="print-sep">|</span>'
+        +  '<span class="print-sub-label">สังกัด</span>'
+        +  '<span class="print-sub-val">'+(gv2('f-dept')||'')+'</span>'
+        +'</span>';
+      schoolRow.after(pSchool);
+    }
+
+    // ── 2. ครูผู้สอน + ตำแหน่ง รวมบรรทัดเดียว ──
     const teacherNameRow = document.getElementById('teacher-name-row');
     let pTeacher = document.getElementById('_p_teacher');
     if(!pTeacher && teacherNameRow){
       pTeacher = document.createElement('div');
       pTeacher.id = '_p_teacher';
-      pTeacher.className = 'print-pos-combined';
+      pTeacher.className = 'print-combined-row';
       pTeacher.innerHTML =
-        '<div class="xls-row"><span class="xls-label">ครูผู้สอน</span>'
-        +'<span class="xls-val">'+(document.getElementById('f-teacher').value||'')+'</span></div>'
-        +'<div class="xls-row"><span class="xls-label">ตำแหน่ง</span>'
-        +'<span class="xls-val">'+(document.getElementById('f-teacher-pos').value||'')+'</span></div>';
+        '<span class="xls-label">ครูผู้สอน</span>'
+        +'<span class="print-combined-val">'
+        +  (gv2('f-teacher')||'')
+        +  (gv2('f-teacher-pos')
+            ? '<span class="print-sep">|</span>'
+              +'<span class="print-sub-label">ตำแหน่ง</span>'
+              +'<span class="print-sub-val">'+gv2('f-teacher-pos')+'</span>'
+            : '')
+        +'</span>';
       teacherNameRow.after(pTeacher);
     }
-    // ── print-only: ชื่อ+ตำแหน่ง 2 คอลัมน์ (ครูที่ปรึกษา) ──
+
+    // ── 3. ครูที่ปรึกษา + ตำแหน่ง รวมบรรทัดเดียว ──
     const advisorNameRow = document.getElementById('advisor-name-row');
     let pAdvisor = document.getElementById('_p_advisor');
     if(!pAdvisor && advisorNameRow){
       pAdvisor = document.createElement('div');
       pAdvisor.id = '_p_advisor';
-      pAdvisor.className = 'print-pos-combined';
+      pAdvisor.className = 'print-combined-row';
       pAdvisor.innerHTML =
-        '<div class="xls-row"><span class="xls-label">ครูที่ปรึกษา</span>'
-        +'<span class="xls-val">'+(document.getElementById('f-advisor').value||'')+'</span></div>'
-        +'<div class="xls-row"><span class="xls-label">ตำแหน่ง</span>'
-        +'<span class="xls-val">'+(document.getElementById('f-advisor-pos').value||'')+'</span></div>';
+        '<span class="xls-label">ครูที่ปรึกษา</span>'
+        +'<span class="print-combined-val">'
+        +  (gv2('f-advisor')||'')
+        +  (gv2('f-advisor-pos')
+            ? '<span class="print-sep">|</span>'
+              +'<span class="print-sub-label">ตำแหน่ง</span>'
+              +'<span class="print-sub-val">'+gv2('f-advisor-pos')+'</span>'
+            : '')
+        +'</span>';
       advisorNameRow.after(pAdvisor);
     }
-    // ── ซ่อนแถวชื่อเดิม (แทนด้วย combined row) ──
+
+    // ── ซ่อน original rows ──
+    if(schoolRow) schoolRow.style.display='none';
     if(teacherNameRow) teacherNameRow.style.display='none';
     if(advisorNameRow) advisorNameRow.style.display='none';
 
     window.print();
 
     setTimeout(()=>{
+      if(pSchool){ pSchool.remove(); }
       if(pTeacher){ pTeacher.remove(); }
       if(pAdvisor){ pAdvisor.remove(); }
+      if(schoolRow) schoolRow.style.display='';
       if(teacherNameRow) teacherNameRow.style.display='';
       if(advisorNameRow) advisorNameRow.style.display='';
     }, 500);
