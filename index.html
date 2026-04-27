@@ -475,8 +475,8 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   /* ── ซ่อน/แสดง rows ตามภาพต้นแบบ ── */
   /* โรงเรียน: JS inject combined-row แทน → ซ่อน original */
   #page-cover.active .xls-form > .xls-row:has(#f-school) { display:none!important; }
-  /* สังกัด: แสดงแยก row */
-  #page-cover.active .xls-form > .xls-row:has(#f-dept) { display:flex!important; }
+  /* สังกัด: ซ่อน (JS inject แยก row แล้ว) */
+  #page-cover.active .xls-form > .xls-row:has(#f-dept) { display:none!important; }
   /* ครูผู้สอน: JS inject 2col-row → ซ่อนทั้ง name-row และ pos-row */
   #page-cover.active #teacher-name-row { display:none!important; }
   #page-cover.active #teacher-pos-row  { display:none!important; }
@@ -585,8 +585,8 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
 
   /* ── approval-wrap: grid 2col (จำนวนนักเรียน | การอนุมัติ) ── */
   #page-cover.active #approval-wrap {
-    display:grid!important; grid-template-columns:1fr 1fr!important;
-    gap:10px!important; align-items:start!important; margin-bottom:0!important;
+    display:grid!important; grid-template-columns:48% 52%!important;
+    gap:8px!important; align-items:start!important; margin-bottom:0!important;
   }
   #page-cover.active #cover-row2 { display:block!important; }
   #page-cover.active #cover-row2 .sec-box,
@@ -595,16 +595,16 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   /* ── stat-tiles: แนวนอน 4 คอลัมน์ ขนาดกระทัดรัด ไม่ตกขอบ ── */
   #page-cover.active .stats-row {
     display:grid!important; grid-template-columns:repeat(4,1fr)!important;
-    gap:4px!important; margin-bottom:6px!important; width:100%!important;
+    gap:3px!important; margin-bottom:6px!important; width:100%!important; box-sizing:border-box!important;
   }
   #page-cover.active .stat-tile {
-    background:#fff!important; border-radius:6px!important; padding:4px 2px!important;
+    background:#fff!important; border-radius:5px!important; padding:3px 1px!important;
     text-align:center!important; box-shadow:0 1px 3px rgba(30,58,95,.1)!important;
-    border-top:2.5px solid #f59e0b!important; border-left:none!important; border-right:none!important; border-bottom:none!important;
-    min-width:0!important; overflow:hidden!important;
+    border-top:2px solid #f59e0b!important; border-left:none!important; border-right:none!important; border-bottom:none!important;
+    min-width:0!important; overflow:hidden!important; box-sizing:border-box!important;
   }
-  #page-cover.active .stat-num { font-size:10pt!important; color:#1e3a5f!important; font-weight:800!important; display:block!important; line-height:1.2!important; }
-  #page-cover.active .stat-lbl { font-size:6pt!important; color:#64748b!important; display:block!important; margin-top:1px!important; white-space:nowrap!important; overflow:hidden!important; text-overflow:ellipsis!important; }
+  #page-cover.active .stat-num { font-size:8.5pt!important; color:#1e3a5f!important; font-weight:800!important; display:block!important; line-height:1.2!important; }
+  #page-cover.active .stat-lbl { font-size:5.5pt!important; color:#64748b!important; display:block!important; margin-top:1px!important; white-space:nowrap!important; overflow:hidden!important; text-overflow:ellipsis!important; padding:0 1px!important; }
 
   /* ── grade-dist-table ── */
   #page-cover.active #grade-dist-table table { width:100%!important; border-collapse:separate!important; border-spacing:0!important; font-size:8pt!important; }
@@ -2969,13 +2969,16 @@ function printCurrentPage(){
     if(!pSchool && schoolRow){
       pSchool = document.createElement('div');
       pSchool.id = '_p_school';
-      pSchool.className = 'print-combined-row';
+      pSchool.style.cssText = 'display:grid;gap:5px;';
       pSchool.innerHTML =
-        '<span class="xls-label">โรงเรียน</span>'
-        +'<span class="print-combined-val">'+(gv2('f-school')||'')
-        +'<span class="print-sep"> | </span>'
-        +'<span class="print-sub-label">สังกัด</span>&nbsp;'
-        +'<span class="print-sub-val">'+(gv2('f-dept')||'')+'</span></span>';
+        '<div class="print-combined-row">'
+          +'<span class="xls-label">โรงเรียน</span>'
+          +'<span class="print-combined-val">'+(gv2('f-school')||'')+'</span>'
+        +'</div>'
+        +'<div class="print-combined-row">'
+          +'<span class="xls-label">สังกัด</span>'
+          +'<span class="print-combined-val">'+(gv2('f-dept')||'')+'</span>'
+        +'</div>';
       schoolRow.after(pSchool);
     }
 
