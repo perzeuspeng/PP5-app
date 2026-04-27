@@ -417,8 +417,12 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
     gap:0!important;
   }
 
-  /* ── โลโก้วงกลมขาว กลางบนสุด ล้ำออกมาเหนือ card ── */
-  #page-cover.active #cover-logo-print-wrap {
+  /* ── โลโก้วงกลมขาว กลางบนสุด — แสดงเฉพาะอันที่มี class cover-logo-show ── */
+  /* ซ่อนทั้งคู่ก่อน */
+  #page-cover.active #cover-logo-print-wrap          { display:none!important; }
+  #page-cover.active #cover-logo-placeholder-print   { display:none!important; }
+  /* แสดงเฉพาะอันที่ JS ใส่ class cover-logo-show */
+  #page-cover.active #cover-logo-print-wrap.cover-logo-show {
     display:flex!important; align-items:center!important; justify-content:center!important;
     width:100px!important; height:100px!important; flex-shrink:0!important;
     background:#fff!important; border-radius:50%!important;
@@ -429,7 +433,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
     width:80px!important; height:80px!important; object-fit:contain!important;
     border-radius:50%!important; display:block!important;
   }
-  #page-cover.active #cover-logo-placeholder-print {
+  #page-cover.active #cover-logo-placeholder-print.cover-logo-show {
     display:flex!important; align-items:center!important; justify-content:center!important;
     width:100px!important; height:100px!important; flex-shrink:0!important;
     background:#fff!important; border-radius:50%!important;
