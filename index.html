@@ -417,36 +417,36 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
     gap:0!important;
   }
 
-  /* ── โลโก้วงกลมขาว กลางบนสุด — แสดงเฉพาะอันที่มี class cover-logo-show ── */
+  /* ── โลโก้วงกลมขาว กลางบนสุด นอก card — ไม่ล้ำทับตัวหนังสือ ── */
   /* ซ่อนทั้งคู่ก่อน */
   #page-cover.active #cover-logo-print-wrap          { display:none!important; }
   #page-cover.active #cover-logo-placeholder-print   { display:none!important; }
   /* แสดงเฉพาะอันที่ JS ใส่ class cover-logo-show */
   #page-cover.active #cover-logo-print-wrap.cover-logo-show {
     display:flex!important; align-items:center!important; justify-content:center!important;
-    width:100px!important; height:100px!important; flex-shrink:0!important;
+    width:88px!important; height:88px!important; flex-shrink:0!important;
     background:#fff!important; border-radius:50%!important;
     box-shadow:0 3px 14px rgba(0,0,0,.22)!important;
-    margin-bottom:-28px!important; z-index:2!important; position:relative!important;
+    margin-bottom:8px!important; z-index:2!important; position:relative!important;
   }
   #cover-print-logo {
-    width:80px!important; height:80px!important; object-fit:contain!important;
+    width:72px!important; height:72px!important; object-fit:contain!important;
     border-radius:50%!important; display:block!important;
   }
   #page-cover.active #cover-logo-placeholder-print.cover-logo-show {
     display:flex!important; align-items:center!important; justify-content:center!important;
-    width:100px!important; height:100px!important; flex-shrink:0!important;
+    width:88px!important; height:88px!important; flex-shrink:0!important;
     background:#fff!important; border-radius:50%!important;
     box-shadow:0 3px 14px rgba(0,0,0,.22)!important;
-    font-size:52px!important; line-height:1!important;
-    margin-bottom:-28px!important; z-index:2!important; position:relative!important;
+    font-size:48px!important; line-height:1!important;
+    margin-bottom:8px!important; z-index:2!important; position:relative!important;
   }
 
   /* ── xls-header card น้ำเงิน ── */
   #page-cover.active .xls-header {
     background:linear-gradient(135deg,#1e3a5f 0%,#2563a8 100%)!important;
     border-radius:14px!important;
-    padding:36px 16px 14px!important;  /* top เผื่อโลโก้ล้ำ */
+    padding:16px 16px 14px!important;
     margin-bottom:10px!important; border:none!important; overflow:visible!important;
     width:100%!important;
   }
@@ -582,18 +582,18 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   #page-cover.active #cover-row2 .sec-box,
   #page-cover.active .sec-box:has(#approval-body) { margin-bottom:0!important; }
 
-  /* ── stat-tiles 2×2 ── */
+  /* ── stat-tiles: แนวนอน 4 คอลัมน์ ขนาดกระทัดรัด ── */
   #page-cover.active .stats-row {
-    display:grid!important; grid-template-columns:1fr 1fr!important;
-    gap:6px!important; margin-bottom:8px!important;
+    display:grid!important; grid-template-columns:repeat(4,1fr)!important;
+    gap:5px!important; margin-bottom:8px!important;
   }
   #page-cover.active .stat-tile {
-    background:#fff!important; border-radius:10px!important; padding:8px 6px!important;
-    text-align:center!important; box-shadow:0 2px 6px rgba(30,58,95,.12)!important;
+    background:#fff!important; border-radius:8px!important; padding:5px 4px!important;
+    text-align:center!important; box-shadow:0 1px 4px rgba(30,58,95,.12)!important;
     border-top:3px solid #f59e0b!important; border-left:none!important; border-right:none!important; border-bottom:none!important;
   }
-  #page-cover.active .stat-num { font-size:16pt!important; color:#1e3a5f!important; font-weight:800!important; display:block!important; }
-  #page-cover.active .stat-lbl { font-size:7.5pt!important; color:#64748b!important; display:block!important; }
+  #page-cover.active .stat-num { font-size:12pt!important; color:#1e3a5f!important; font-weight:800!important; display:block!important; line-height:1.1!important; }
+  #page-cover.active .stat-lbl { font-size:6.5pt!important; color:#64748b!important; display:block!important; margin-top:1px!important; }
 
   /* ── grade-dist-table ── */
   #page-cover.active #grade-dist-table table { width:100%!important; border-collapse:separate!important; border-spacing:0!important; font-size:8pt!important; }
