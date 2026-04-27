@@ -396,15 +396,14 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   .ind-grade-big{font-size:32pt!important;color:#000!important;font-weight:800!important;}
 
   /* ════════════════════════════════════════════════════
-     หน้าปก print — ตรงตามภาพ 100%
+     หน้าปก print — ตรงตามภาพต้นแบบทุกจุด
   ════════════════════════════════════════════════════ */
   #page-cover.active { display:block!important; width:100%!important; font-size:9pt!important; }
   #cover-logo-upload-ui { display:none!important; }
 
-  /* ══ โลโก้: วงกลมขาว กลางบนสุด นอก card ══ */
+  /* ── โลโก้วงกลมขาว กลางบนสุด นอก card ── */
   #page-cover.active .xls-header-inner {
-    display:flex!important; flex-direction:column!important;
-    align-items:center!important; gap:0!important; margin-bottom:0!important;
+    display:flex!important; flex-direction:column!important; align-items:center!important; gap:0!important;
   }
   #page-cover.active #cover-logo-print-wrap {
     display:flex!important; align-items:center!important; justify-content:center!important;
@@ -413,10 +412,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
     box-shadow:0 2px 12px rgba(0,0,0,.18)!important;
     margin-bottom:-20px!important; z-index:2!important; position:relative!important;
   }
-  #cover-print-logo {
-    width:72px!important; height:72px!important;
-    object-fit:contain!important; border-radius:50%!important; display:block!important;
-  }
+  #cover-print-logo { width:72px!important; height:72px!important; object-fit:contain!important; border-radius:50%!important; display:block!important; }
   #page-cover.active #cover-logo-placeholder-print {
     display:flex!important; align-items:center!important; justify-content:center!important;
     width:90px!important; height:90px!important; flex-shrink:0!important;
@@ -426,12 +422,11 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
     margin-bottom:-20px!important; z-index:2!important; position:relative!important;
   }
 
-  /* ══ xls-header card น้ำเงิน ══ */
+  /* ── xls-header card น้ำเงิน ── */
   #page-cover.active .xls-header {
     background:linear-gradient(135deg,#1e3a5f 0%,#2563a8 100%)!important;
     border-radius:14px!important; padding:28px 16px 14px!important;
     margin-bottom:10px!important; border:none!important; overflow:visible!important;
-    position:relative!important;
   }
   #page-cover.active .xls-header-content { display:block!important; width:100%!important; }
   #page-cover.active .xls-header-title {
@@ -440,86 +435,94 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
     border-bottom:1.5px solid rgba(255,255,255,.3)!important; padding-bottom:8px!important;
   }
 
-  /* ══ xls-form ══ */
-  #page-cover.active .xls-form {
-    display:grid!important; gap:5px!important; padding:0!important; border:none!important;
-  }
+  /* ── xls-form ── */
+  #page-cover.active .xls-form { display:grid!important; gap:5px!important; padding:0!important; border:none!important; }
   #page-cover.active .xls-form > .xls-row,
   #page-cover.active .xls-row-2col > .xls-row {
     display:flex!important; align-items:center!important;
-    background:rgba(255,255,255,.12)!important;
-    border-radius:8px!important; overflow:hidden!important;
-    border:none!important; min-height:0!important; padding:0!important;
+    background:rgba(255,255,255,.12)!important; border-radius:8px!important;
+    overflow:hidden!important; border:none!important; min-height:0!important; padding:0!important;
   }
   #page-cover.active .xls-form > .xls-row { width:100%!important; }
 
-  /* ซ่อน สังกัด row แยก (รวมอยู่ใน combined แล้ว) */
-  #page-cover.active .xls-form > .xls-row:has(#f-dept) { display:none!important; }
-  /* ซ่อน pos rows แยก */
-  #page-cover.active #teacher-pos-row,
-  #page-cover.active #advisor-pos-row { display:none!important; }
+  /* ── ซ่อน row เดิมที่ JS จะ inject combined แทน ── */
+  #page-cover.active .xls-form > .xls-row:has(#f-school) { display:none!important; }
+  #page-cover.active #teacher-name-row { display:none!important; }
+  #page-cover.active #advisor-name-row { display:none!important; }
+  #page-cover.active #teacher-pos-row  { display:none!important; }
+  #page-cover.active #advisor-pos-row  { display:none!important; }
+  /* แสดง f-dept ตามปกติ (ต้นแบบมี row สังกัดแยก) */
+  #page-cover.active .xls-form > .xls-row:has(#f-dept) { display:flex!important; }
 
-  /* 2col */
+  /* ── 2col ปกติ ── */
   #page-cover.active .xls-row-2col {
-    display:grid!important; grid-template-columns:1fr 1fr!important;
-    gap:5px!important; border:none!important;
+    display:grid!important; grid-template-columns:1fr 1fr!important; gap:5px!important; border:none!important;
   }
-  #page-cover.active .xls-row-2col > .xls-row { border-right:none!important; }
+  /* ── 3col: ชั้น|ภาคเรียน|ปีการศึกษา และ รายวิชา|รหัส|ชม. ──
+     row-2col:has(#f-sem)     → ชั้น + ภาคเรียน (JS เพิ่ม col ปีการศึกษา)
+     row-2col:has(#f-year)    → ซ่อน (JS inject เข้า row บน)
+     row-2col:has(#f-subject) → รายวิชา + รหัส (JS เพิ่ม col ชม.)
+     row-2col:has(#f-hours)   → ซ่อน (JS inject เข้า row บน) */
+  #page-cover.active .xls-row-2col:has(#f-sem)     { grid-template-columns:1fr 1fr 1fr!important; }
+  #page-cover.active .xls-row-2col:has(#f-year)    { display:none!important; }
+  #page-cover.active .xls-row-2col:has(#f-subject) { grid-template-columns:1fr 1fr 1fr!important; }
+  #page-cover.active .xls-row-2col:has(#f-hours)   { display:none!important; }
 
-  /* label + val */
+  /* ── label + val ── */
   #page-cover.active .xls-label {
-    font-size:8.5pt!important; font-weight:700!important;
-    color:rgba(255,255,255,.75)!important; background:transparent!important;
-    padding:5px 10px!important; white-space:nowrap!important;
-    min-width:76px!important; flex-shrink:0!important;
-    border:none!important; display:flex!important; align-items:center!important;
+    font-size:8.5pt!important; font-weight:700!important; color:rgba(255,255,255,.75)!important;
+    background:transparent!important; padding:5px 10px!important; white-space:nowrap!important;
+    min-width:70px!important; flex-shrink:0!important; border:none!important;
+    display:flex!important; align-items:center!important;
   }
   #page-cover.active .xls-val {
-    flex:1!important; font-size:9.5pt!important; font-weight:600!important;
-    color:#fff!important; padding:5px 10px!important;
-    background:rgba(255,255,255,.14)!important;
+    flex:1!important; font-size:9.5pt!important; font-weight:600!important; color:#fff!important;
+    padding:5px 10px!important; background:rgba(255,255,255,.14)!important;
     border:none!important; outline:none!important; min-width:0!important;
+    -webkit-appearance:none!important; appearance:none!important;
   }
 
-  /* ══ print-combined-row (inject โดย JS) ══ */
+  /* ── print-combined-row: inject โดย JS ── */
   .print-combined-row {
     display:flex!important; align-items:center!important;
-    background:rgba(255,255,255,.12)!important;
-    border-radius:8px!important; overflow:hidden!important;
-    min-height:0!important; padding:0!important; gap:0!important;
+    background:rgba(255,255,255,.12)!important; border-radius:8px!important;
+    overflow:hidden!important; padding:0!important; gap:0!important;
   }
   .print-combined-row .xls-label {
-    font-size:8.5pt!important; font-weight:700!important;
-    color:rgba(255,255,255,.75)!important; background:transparent!important;
-    padding:5px 10px!important; white-space:nowrap!important;
-    min-width:76px!important; flex-shrink:0!important;
-    border:none!important; display:flex!important; align-items:center!important;
+    font-size:8.5pt!important; font-weight:700!important; color:rgba(255,255,255,.75)!important;
+    padding:5px 10px!important; white-space:nowrap!important; min-width:70px!important;
+    flex-shrink:0!important; border:none!important; display:flex!important; align-items:center!important;
   }
-  .print-combined-row .print-combined-val {
-    flex:1!important; font-size:9.5pt!important; font-weight:600!important;
-    color:#fff!important; padding:5px 10px!important;
-    background:rgba(255,255,255,.14)!important;
+  .print-combined-val {
+    flex:1!important; display:flex!important; align-items:center!important; gap:5px!important;
+    font-size:9.5pt!important; font-weight:600!important; color:#fff!important;
+    padding:5px 10px!important; background:rgba(255,255,255,.14)!important; min-width:0!important;
+  }
+  .print-sep   { color:rgba(255,255,255,.35)!important; margin:0 2px!important; flex-shrink:0!important; }
+  .print-sub-label { font-size:8pt!important; color:rgba(255,255,255,.6)!important; font-weight:700!important; white-space:nowrap!important; }
+  .print-sub-val   { font-size:9pt!important; color:rgba(255,255,255,.9)!important; font-weight:500!important; }
+
+  /* ── print-3col-extra: div ที่ JS inject เป็น col ที่ 3 ── */
+  .print-3col-extra {
+    display:flex!important; align-items:center!important;
+    background:rgba(255,255,255,.12)!important; border-radius:8px!important;
+    overflow:hidden!important; padding:0!important;
+  }
+  .print-3col-extra .xls-label {
+    font-size:8.5pt!important; font-weight:700!important; color:rgba(255,255,255,.75)!important;
+    padding:5px 10px!important; white-space:nowrap!important; min-width:70px!important;
+    flex-shrink:0!important; border:none!important;
+  }
+  .print-3col-extra .xls-val {
+    flex:1!important; font-size:9.5pt!important; font-weight:600!important; color:#fff!important;
+    padding:5px 10px!important; background:rgba(255,255,255,.14)!important;
     border:none!important; min-width:0!important;
-    display:flex!important; align-items:center!important; gap:5px!important;
-    flex-wrap:nowrap!important;
-  }
-  .print-combined-row .print-sep {
-    color:rgba(255,255,255,.35)!important; font-size:9pt!important;
-    margin:0 2px!important; flex-shrink:0!important;
-  }
-  .print-combined-row .print-sub-label {
-    font-size:8pt!important; color:rgba(255,255,255,.6)!important;
-    font-weight:700!important; white-space:nowrap!important; flex-shrink:0!important;
-  }
-  .print-combined-row .print-sub-val {
-    font-size:9pt!important; color:rgba(255,255,255,.9)!important; font-weight:500!important;
   }
 
-  /* ══ sec-box card ══ */
+  /* ── sec-box card ── */
   #page-cover.active .sec-box {
-    background:#fff!important; border-radius:12px!important;
-    margin-bottom:10px!important; overflow:hidden!important;
-    box-shadow:0 2px 8px rgba(30,58,95,.12)!important; border:none!important;
+    background:#fff!important; border-radius:12px!important; margin-bottom:10px!important;
+    overflow:hidden!important; box-shadow:0 2px 8px rgba(30,58,95,.12)!important; border:none!important;
   }
   #page-cover.active .sec-head {
     background:linear-gradient(135deg,#1e3a5f,#2563a8)!important;
@@ -536,146 +539,55 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   }
   #page-cover.active .sec-body { padding:10px 12px!important; background:#fff!important; }
 
-  /* ══ cover-row2 + approval: 2-col layout ด้วย CSS ล้วน ══
-     HTML: #cover-row2 > .sec-box(นักเรียน)
-           .sec-box:has(#approval-body)   ← sibling ของ cover-row2
-     วิธี: ทำ #cover-row2 เป็น display:contents เพื่อให้ .sec-box(นักเรียน)
-           ขึ้นมาเป็น child ของ #page-cover แล้วใช้ subgrid หรือ
-           จับคู่ด้วย CSS grid บน wrapper ที่ครอบทั้งคู่
-     ─────────────────────────────────────────────────────
-     ง่ายกว่า: ทำ #cover-row2 = display:contents
-              แล้ว target .sec-box:has(#f-male) กับ .sec-box:has(#approval-body)
-              ด้วย adjacent sibling selector ผ่าน pseudo-grid wrapper ไม่ได้
-     ─────────────────────────────────────────────────────
-     วิธีที่ได้ผล 100%: ทำ #page-cover เป็น grid แล้วกำหนด
-     #cover-row2 และ .sec-box:has(#approval-body) ให้เป็น 2 grid items
-     อยู่ใน row เดียวกัน แต่ #cover-row2 ยังต้องเป็น block ด้วย
-     ─────────────────────────────────────────────────────
-     วิธีที่ง่ายที่สุด: ใช้ float หรือ inline-block บน 2 element นั้น
-  ══════════════════════════════════════════════════════ */
+  /* ── approval-wrap: grid 2col (จำนวนนักเรียน | การอนุมัติ) ── */
+  #page-cover.active #approval-wrap {
+    display:grid!important; grid-template-columns:1fr 1fr!important;
+    gap:10px!important; align-items:start!important; margin-bottom:0!important;
+  }
+  #page-cover.active #cover-row2 { display:contents!important; }
+  #page-cover.active #cover-row2 .sec-box,
+  #page-cover.active .sec-box:has(#approval-body) { margin-bottom:0!important; }
 
-  /* wrapper ครอบ cover-row2 + approval ด้วย grid */
-  #page-cover.active #cover-row2 {
-    display:inline-block!important;
-    width:calc(50% - 5px)!important;
-    vertical-align:top!important;
-    margin-bottom:10px!important;
-  }
-  #page-cover.active .sec-box:has(#approval-body) {
-    display:inline-block!important;
-    width:calc(50% - 5px)!important;
-    vertical-align:top!important;
-    margin-left:10px!important;
-    margin-bottom:10px!important;
-    box-sizing:border-box!important;
-  }
-  #page-cover.active #cover-row2 .sec-box {
-    width:100%!important;
-    margin-bottom:0!important;
-    box-sizing:border-box!important;
-  }
-
-  /* ══ ตารางนักเรียน ══ */
-  #page-cover.active table.xlt {
-    width:100%!important; font-size:8.5pt!important;
-    border-collapse:separate!important; border-spacing:0!important; table-layout:fixed!important;
-  }
-  #page-cover.active table.xlt th {
-    background:#1e3a5f!important; color:#fff!important;
-    font-size:8pt!important; padding:5px 4px!important;
-    font-weight:700!important; text-align:center!important;
-    border:1px solid rgba(255,255,255,.2)!important;
-  }
-  #page-cover.active table.xlt td {
-    font-size:8.5pt!important; padding:4px 4px!important;
-    border:1px solid #e2e8f0!important; text-align:center!important;
-    background:#fff!important; color:#000!important;
-  }
-  #page-cover.active table.xlt td.left { text-align:left!important; padding-left:8px!important; }
-  #page-cover.active table.xlt td.ac { background:#dbeafe!important; color:#1e3a5f!important; font-weight:700!important; }
-  #page-cover.active table.xlt td.edit-cell { background:#fefce8!important; }
-  #page-cover.active table.xlt input[type=number] {
-    font-size:8.5pt!important; width:100%!important; background:transparent!important;
-    border:none!important; text-align:center!important; color:#000!important;
-  }
-
-  /* ══ approval sec-box (อยู่นอก cover-row2 ในเว็บ แต่ print ย้ายเข้า) ══ */
-  #page-cover.active .sec-box:has(#approval-body) { display:block!important; }
-
-  /* ══ stat-tiles (2×2 grid ตามภาพ) ══ */
+  /* ── stat-tiles 2×2 ── */
   #page-cover.active .stats-row {
     display:grid!important; grid-template-columns:1fr 1fr!important;
     gap:6px!important; margin-bottom:8px!important;
   }
   #page-cover.active .stat-tile {
-    background:#fff!important; border-radius:10px!important;
-    padding:8px 6px!important; text-align:center!important;
-    box-shadow:0 2px 6px rgba(30,58,95,.12)!important;
-    border-top:3px solid #f59e0b!important;
-    border-left:none!important; border-right:none!important; border-bottom:none!important;
+    background:#fff!important; border-radius:10px!important; padding:8px 6px!important;
+    text-align:center!important; box-shadow:0 2px 6px rgba(30,58,95,.12)!important;
+    border-top:3px solid #f59e0b!important; border-left:none!important; border-right:none!important; border-bottom:none!important;
   }
-  #page-cover.active .stat-num { font-size:16pt!important; color:#1e3a5f!important; font-weight:800!important; }
-  #page-cover.active .stat-lbl { font-size:7.5pt!important; color:#64748b!important; }
+  #page-cover.active .stat-num { font-size:16pt!important; color:#1e3a5f!important; font-weight:800!important; display:block!important; }
+  #page-cover.active .stat-lbl { font-size:7.5pt!important; color:#64748b!important; display:block!important; }
 
-  /* ══ grade-dist-table: เต็มความกว้าง อยู่ใต้ 2-col ══ */
-  #page-cover.active #grade-dist-table {
-    width:100%!important; margin-top:10px!important;
-  }
-  #page-cover.active #grade-dist-table table {
-    width:100%!important; border-collapse:separate!important;
-    border-spacing:0!important; font-size:8pt!important;
-  }
-  #page-cover.active #grade-dist-table th {
-    background:#1e3a5f!important; color:#fff!important;
-    padding:4px 3px!important; text-align:center!important;
-    font-size:7.5pt!important; font-weight:700!important;
-    border:1px solid rgba(255,255,255,.15)!important;
-  }
-  #page-cover.active #grade-dist-table td {
-    padding:4px 3px!important; text-align:center!important;
-    border:1px solid #e2e8f0!important; font-size:8pt!important;
-    background:#fff!important; color:#000!important;
-  }
-  #page-cover.active #grade-dist-table td:first-child {
-    text-align:left!important; padding-left:8px!important;
-    background:#f8fafc!important; font-weight:700!important;
-  }
+  /* ── grade-dist-table ── */
+  #page-cover.active #grade-dist-table table { width:100%!important; border-collapse:separate!important; border-spacing:0!important; font-size:8pt!important; }
+  #page-cover.active #grade-dist-table th { background:#1e3a5f!important; color:#fff!important; padding:4px 3px!important; text-align:center!important; font-size:7.5pt!important; font-weight:700!important; border:1px solid rgba(255,255,255,.15)!important; }
+  #page-cover.active #grade-dist-table td { padding:4px 3px!important; text-align:center!important; border:1px solid #e2e8f0!important; font-size:8pt!important; background:#fff!important; color:#000!important; }
+  #page-cover.active #grade-dist-table td:first-child { text-align:left!important; padding-left:8px!important; background:#f8fafc!important; font-weight:700!important; }
 
-  /* ══ วันที่อนุมัติ (ซ่อน input เว็บ ใช้ print version แทน) ══ */
-  #page-cover.active #approval-body > div:last-child { display:none!important; }
+  /* ── ตารางนักเรียน ── */
+  #page-cover.active table.xlt { width:100%!important; font-size:8.5pt!important; border-collapse:separate!important; border-spacing:0!important; table-layout:fixed!important; }
+  #page-cover.active table.xlt th { background:#1e3a5f!important; color:#fff!important; font-size:8pt!important; padding:5px 4px!important; font-weight:700!important; text-align:center!important; border:1px solid rgba(255,255,255,.2)!important; }
+  #page-cover.active table.xlt td { font-size:8.5pt!important; padding:4px!important; border:1px solid #e2e8f0!important; text-align:center!important; background:#fff!important; color:#000!important; }
+  #page-cover.active table.xlt td.left { text-align:left!important; padding-left:8px!important; }
+  #page-cover.active table.xlt td.ac { background:#dbeafe!important; color:#1e3a5f!important; font-weight:700!important; }
+  #page-cover.active table.xlt td.edit-cell { background:#fefce8!important; }
+  #page-cover.active table.xlt input[type=number] { font-size:8.5pt!important; width:100%!important; background:transparent!important; border:none!important; text-align:center!important; color:#000!important; }
 
-  /* ══ cover-beh-read-web: 2col เหมือนเว็บ ══ */
+  /* ── วันที่อนุมัติ: ซ่อน input เว็บ ── */
+  #page-cover.active #approval-body > div:last-of-type { display:none!important; }
+
+  /* ── cover-beh-read-web 2col ── */
   #page-cover.active #cover-beh-read-web {
     display:grid!important; grid-template-columns:1fr 1fr!important;
     gap:10px!important; margin-bottom:10px!important;
   }
-  .cover-summary-box {
-    background:#fff!important; border-radius:12px!important;
-    overflow:hidden!important; box-shadow:0 2px 8px rgba(30,58,95,.1)!important;
-  }
-  .cover-summary-head {
-    background:linear-gradient(135deg,#1e3a5f,#2563a8)!important;
-    color:#fff!important; font-size:10pt!important; font-weight:700!important;
-    padding:8px 14px!important;
-  }
+  .cover-summary-box { background:#fff!important; border-radius:12px!important; overflow:hidden!important; box-shadow:0 2px 8px rgba(30,58,95,.1)!important; }
+  .cover-summary-head { background:linear-gradient(135deg,#1e3a5f,#2563a8)!important; color:#fff!important; font-size:10pt!important; font-weight:700!important; padding:8px 14px!important; }
 
-  /* ══ วันที่อนุมัติ print version ══ */
-  #page-cover.active #approve-date-print-block {
-    text-align:center!important; margin:10px 0 8px!important;
-    font-size:10pt!important; font-weight:700!important; color:#1e3a5f!important;
-  }
-  #page-cover.active #approve-date-print-block .apv-row {
-    display:flex!important; align-items:center!important;
-    justify-content:center!important; gap:8px!important; margin-top:4px!important;
-    font-size:10pt!important;
-  }
-  #page-cover.active #approve-date-print-block .apv-box {
-    border-bottom:2px solid #1e3a5f!important;
-    min-width:40px!important; padding:0 8px!important;
-    text-align:center!important; font-weight:700!important;
-  }
-
-  /* cover-summary-print ซ่อน (ไม่ใช้) */
+  /* cover-summary-print ซ่อน */
   #cover-summary-print { display:none!important; }
 
   /* ════════════════════════════════════════════
@@ -1149,6 +1061,9 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
 
   </div><!-- /#cover-row2 -->
 
+  <!-- approval-wrap: ครอบ cover-row2 + approval สำหรับ print 2col -->
+  <div id="approval-wrap">
+
   <!-- อนุมัติผลการเรียน -->
   <div class="sec-box">
     <div class="sec-head">
@@ -1175,6 +1090,8 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
       </div>
     </div>
   </div>
+
+  </div><!-- /#approval-wrap -->
 
   <!-- สรุปคุณลักษณะ + การอ่าน (เว็บ: 2 คอลัมน์, print: ใช้ #cover-summary-print) -->
   <div class="cover-summary-grid no-print" id="cover-beh-read-web">
@@ -3002,9 +2919,9 @@ function printCurrentPage(){
   document.getElementById('sig-director-pos').textContent = D.school ? 'ตำแหน่งผู้อำนวยการโรงเรียน'+D.school : 'ตำแหน่งผู้อำนวยการโรงเรียน';
 
   setTimeout(()=>{
-    const gv2 = id => (document.getElementById(id)||{}).value||'';
+    const gv2 = id => { const el=document.getElementById(id); return el ? (el.value||el.textContent||'') : ''; };
 
-    // ── 1. โรงเรียน + สังกัด รวมบรรทัดเดียว ──
+    // ── 1. inject โรงเรียน+สังกัด combined ──
     const schoolRow = document.querySelector('#page-cover .xls-form > .xls-row:has(#f-school)');
     let pSchool = document.getElementById('_p_school');
     if(!pSchool && schoolRow){
@@ -3013,59 +2930,68 @@ function printCurrentPage(){
       pSchool.className = 'print-combined-row';
       pSchool.innerHTML =
         '<span class="xls-label">โรงเรียน</span>'
-        +'<span class="print-combined-val">'
-        +  (gv2('f-school')||'')
-        +  '<span class="print-sep"> | </span>'
-        +  '<span class="print-sub-label">สังกัด</span>&nbsp;'
-        +  '<span class="print-sub-val">'+(gv2('f-dept')||'')+'</span>'
-        +'</span>';
+        +'<span class="print-combined-val">'+(gv2('f-school')||'')
+        +'<span class="print-sep"> | </span>'
+        +'<span class="print-sub-label">สังกัด</span>&nbsp;'
+        +'<span class="print-sub-val">'+(gv2('f-dept')||'')+'</span></span>';
       schoolRow.after(pSchool);
     }
 
-    // ── 2. ครูผู้สอน + ตำแหน่ง รวมบรรทัดเดียว ──
+    // ── 2. inject ปีการศึกษา เป็น col ที่ 3 ใน row-2col:has(#f-sem) ──
+    const semRow2col = document.querySelector('#page-cover .xls-row-2col:has(#f-sem)');
+    let pYear = document.getElementById('_p_year_col');
+    if(!pYear && semRow2col){
+      pYear = document.createElement('div');
+      pYear.id = '_p_year_col';
+      pYear.className = 'print-3col-extra';
+      pYear.innerHTML = '<span class="xls-label">ปีการศึกษา</span><span class="xls-val">'+(gv2('f-year')||'')+'</span>';
+      semRow2col.appendChild(pYear);
+    }
+
+    // ── 3. inject ชม./สัปดาห์ เป็น col ที่ 3 ใน row-2col:has(#f-subject) ──
+    const subjectRow2col = document.querySelector('#page-cover .xls-row-2col:has(#f-subject)');
+    let pHours = document.getElementById('_p_hours_col');
+    if(!pHours && subjectRow2col){
+      pHours = document.createElement('div');
+      pHours.id = '_p_hours_col';
+      pHours.className = 'print-3col-extra';
+      pHours.innerHTML = '<span class="xls-label">ชม./สัปดาห์</span><span class="xls-val">'+(gv2('f-hours')||'')+'</span>';
+      subjectRow2col.appendChild(pHours);
+    }
+
+    // ── 4. inject ครูผู้สอน+ตำแหน่ง combined ──
     const teacherNameRow = document.getElementById('teacher-name-row');
     let pTeacher = document.getElementById('_p_teacher');
     if(!pTeacher && teacherNameRow){
       pTeacher = document.createElement('div');
       pTeacher.id = '_p_teacher';
       pTeacher.className = 'print-combined-row';
+      const tPos = gv2('f-teacher-pos');
       pTeacher.innerHTML =
         '<span class="xls-label">ครูผู้สอน</span>'
-        +'<span class="print-combined-val">'
-        +  (gv2('f-teacher')||'')
-        +  (gv2('f-teacher-pos')
-            ? '<span class="print-sep"> | </span>'
-              +'<span class="print-sub-label">ตำแหน่ง</span>&nbsp;'
-              +'<span class="print-sub-val">'+gv2('f-teacher-pos')+'</span>'
-            : '')
+        +'<span class="print-combined-val">'+(gv2('f-teacher')||'')
+        +(tPos ? '<span class="print-sep"> | </span><span class="print-sub-label">ตำแหน่ง</span>&nbsp;<span class="print-sub-val">'+tPos+'</span>' : '')
         +'</span>';
       teacherNameRow.after(pTeacher);
     }
 
-    // ── 3. ครูที่ปรึกษา + ตำแหน่ง รวมบรรทัดเดียว ──
+    // ── 5. inject ครูที่ปรึกษา+ตำแหน่ง combined ──
     const advisorNameRow = document.getElementById('advisor-name-row');
     let pAdvisor = document.getElementById('_p_advisor');
     if(!pAdvisor && advisorNameRow){
       pAdvisor = document.createElement('div');
       pAdvisor.id = '_p_advisor';
       pAdvisor.className = 'print-combined-row';
+      const aPos = gv2('f-advisor-pos');
       pAdvisor.innerHTML =
         '<span class="xls-label">ครูที่ปรึกษา</span>'
-        +'<span class="print-combined-val">'
-        +  (gv2('f-advisor')||'')
-        +  (gv2('f-advisor-pos')
-            ? '<span class="print-sep"> | </span>'
-              +'<span class="print-sub-label">ตำแหน่ง</span>&nbsp;'
-              +'<span class="print-sub-val">'+gv2('f-advisor-pos')+'</span>'
-            : '')
+        +'<span class="print-combined-val">'+(gv2('f-advisor')||'')
+        +(aPos ? '<span class="print-sep"> | </span><span class="print-sub-label">ตำแหน่ง</span>&nbsp;<span class="print-sub-val">'+aPos+'</span>' : '')
         +'</span>';
       advisorNameRow.after(pAdvisor);
     }
 
-    // ── 4. inject วันที่อนุมัติ print version (ก่อน cover-beh-read-web) ──
-    const apvDay   = gv2('f-approve-day');
-    const apvMonth = gv2('f-approve-month');
-    const apvYear  = gv2('f-approve-year');
+    // ── 6. inject วันที่อนุมัติ print version ──
     const behReadWeb = document.getElementById('cover-beh-read-web');
     let pApvDate = document.getElementById('_p_apv_date');
     if(!pApvDate && behReadWeb){
@@ -3076,11 +3002,11 @@ function printCurrentPage(){
         '<div style="font-size:10pt;font-weight:700;color:#1e3a5f;margin-bottom:6px">วันที่อนุมัติผลการเรียน</div>'
         +'<div style="display:flex;align-items:center;justify-content:center;gap:8px;font-size:10pt">'
         +'<span>วันที่</span>'
-        +'<span style="border-bottom:2px solid #1e3a5f;min-width:36px;text-align:center;font-weight:700;padding:0 8px">'+(apvDay||'......')+'</span>'
+        +'<span style="border:1px solid #94a3b8;border-radius:4px;min-width:36px;text-align:center;font-weight:700;padding:2px 8px">'+(gv2('f-approve-day')||'...')+'</span>'
         +'<span>เดือน</span>'
-        +'<span style="border-bottom:2px solid #1e3a5f;min-width:80px;text-align:center;font-weight:700;padding:0 8px">'+(apvMonth||'...............')+'</span>'
+        +'<span style="border:1px solid #94a3b8;border-radius:4px;min-width:80px;text-align:center;font-weight:700;padding:2px 8px">'+(gv2('f-approve-month')||'............')+'</span>'
         +'<span>พ.ศ.</span>'
-        +'<span style="border-bottom:2px solid #1e3a5f;min-width:52px;text-align:center;font-weight:700;padding:0 8px">'+(apvYear||'........')+'</span>'
+        +'<span style="border:1px solid #94a3b8;border-radius:4px;min-width:52px;text-align:center;font-weight:700;padding:2px 8px">'+(gv2('f-approve-year')||'........')+'</span>'
         +'</div>';
       behReadWeb.after(pApvDate);
     }
@@ -3093,10 +3019,7 @@ function printCurrentPage(){
     window.print();
 
     setTimeout(()=>{
-      if(pSchool)  pSchool.remove();
-      if(pTeacher) pTeacher.remove();
-      if(pAdvisor) pAdvisor.remove();
-      if(pApvDate) pApvDate.remove();
+      [pSchool,pYear,pHours,pTeacher,pAdvisor,pApvDate].forEach(el=>{ if(el) el.remove(); });
       if(schoolRow)      schoolRow.style.display='';
       if(teacherNameRow) teacherNameRow.style.display='';
       if(advisorNameRow) advisorNameRow.style.display='';
