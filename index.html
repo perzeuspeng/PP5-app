@@ -474,16 +474,25 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   /* ── ซ่อน/แสดง rows ตามภาพต้นแบบ ── */
   /* โรงเรียน: JS inject combined-row แทน → ซ่อน original */
   #page-cover.active .xls-form > .xls-row:has(#f-school) { display:none!important; }
-  /* สังกัด: แสดงแยก row ── ตรงตามต้นแบบ */
+  /* สังกัด: แสดงแยก row */
   #page-cover.active .xls-form > .xls-row:has(#f-dept) { display:flex!important; }
-  /* ครูผู้สอน: JS inject combined-row แทน → ซ่อน name-row */
+  /* ครูผู้สอน: JS inject 2col-row → ซ่อนทั้ง name-row และ pos-row */
   #page-cover.active #teacher-name-row { display:none!important; }
-  /* ตำแหน่งครูผู้สอน: แสดงแยก row */
-  #page-cover.active #teacher-pos-row  { display:flex!important; }
-  /* ครูที่ปรึกษา: JS inject combined-row แทน → ซ่อน name-row */
+  #page-cover.active #teacher-pos-row  { display:none!important; }
+  /* ครูที่ปรึกษา: JS inject 2col-row → ซ่อนทั้ง name-row และ pos-row */
   #page-cover.active #advisor-name-row { display:none!important; }
-  /* ตำแหน่งครูที่ปรึกษา: แสดงแยก row */
-  #page-cover.active #advisor-pos-row  { display:flex!important; }
+  #page-cover.active #advisor-pos-row  { display:none!important; }
+
+  /* ── print-2col-row: ชื่อครู + ตำแหน่ง ในแถวเดียวกัน 2 กล่อง ── */
+  .print-2col-row {
+    display:grid!important; grid-template-columns:1fr 1fr!important;
+    gap:5px!important;
+  }
+  .print-2col-row .print-combined-row {
+    display:flex!important; align-items:stretch!important;
+    background:rgba(255,255,255,.12)!important; border-radius:8px!important;
+    overflow:hidden!important; padding:0!important;
+  }
 
   /* ── 2col: ชั้น+ภาคเรียน, รายวิชา+รหัส ── */
   #page-cover.active .xls-row-2col {
@@ -2990,29 +2999,41 @@ function printCurrentPage(){
       subjectRow2col.appendChild(pHours);
     }
 
-    // ── 4. inject ครูผู้สอน (แยก row ชื่อ และ row ตำแหน่ง ตรงแบบต้นแบบ) ──
+    // ── 4. inject ครูผู้สอน + ตำแหน่ง ในแถวเดียวกัน (2 กล่อง) ──
     const teacherNameRow = document.getElementById('teacher-name-row');
     let pTeacher = document.getElementById('_p_teacher');
     if(!pTeacher && teacherNameRow){
       pTeacher = document.createElement('div');
       pTeacher.id = '_p_teacher';
-      pTeacher.className = 'print-combined-row';
+      pTeacher.className = 'print-2col-row';
       pTeacher.innerHTML =
-        '<span class="xls-label">ครูผู้สอน</span>'
-        +'<span class="print-combined-val">'+(gv2('f-teacher')||'')+'</span>';
+        '<div class="print-combined-row">'
+          +'<span class="xls-label">ครูผู้สอน</span>'
+          +'<span class="print-combined-val">'+(gv2('f-teacher')||'')+'</span>'
+        +'</div>'
+        +'<div class="print-combined-row">'
+          +'<span class="xls-label">ตำแหน่ง</span>'
+          +'<span class="print-combined-val">'+(gv2('f-teacher-pos')||'')+'</span>'
+        +'</div>';
       teacherNameRow.after(pTeacher);
     }
 
-    // ── 5. inject ครูที่ปรึกษา (แยก row ชื่อ และ row ตำแหน่ง ตรงแบบต้นแบบ) ──
+    // ── 5. inject ครูที่ปรึกษา + ตำแหน่ง ในแถวเดียวกัน (2 กล่อง) ──
     const advisorNameRow = document.getElementById('advisor-name-row');
     let pAdvisor = document.getElementById('_p_advisor');
     if(!pAdvisor && advisorNameRow){
       pAdvisor = document.createElement('div');
       pAdvisor.id = '_p_advisor';
-      pAdvisor.className = 'print-combined-row';
+      pAdvisor.className = 'print-2col-row';
       pAdvisor.innerHTML =
-        '<span class="xls-label">ครูที่ปรึกษา</span>'
-        +'<span class="print-combined-val">'+(gv2('f-advisor')||'')+'</span>';
+        '<div class="print-combined-row">'
+          +'<span class="xls-label">ครูที่ปรึกษา</span>'
+          +'<span class="print-combined-val">'+(gv2('f-advisor')||'')+'</span>'
+        +'</div>'
+        +'<div class="print-combined-row">'
+          +'<span class="xls-label">ตำแหน่ง</span>'
+          +'<span class="print-combined-val">'+(gv2('f-advisor-pos')||'')+'</span>'
+        +'</div>';
       advisorNameRow.after(pAdvisor);
     }
 
