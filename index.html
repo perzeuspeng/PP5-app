@@ -600,11 +600,11 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   /* ── sec-body ของฝั่งอนุมัติ: padding น้อยลงเพื่อให้ stat ไม่ล้น ── */
   #page-cover.active #approval-body { padding:6px 8px!important; }
 
-  /* ── stat-tiles: แนวนอน 4 คอลัมน์ ขนาดกระทัดรัด ไม่ตกขอบ ── */
+  /* ── stat-tiles: 4 กล่อง รวมกว้าง 4/5 ของพื้นที่ ชิดซ้าย ── */
   #page-cover.active .stats-row {
     display:grid!important; grid-template-columns:repeat(4,minmax(0,1fr))!important;
     gap:3px!important; margin-bottom:5px!important;
-    width:100%!important; box-sizing:border-box!important;
+    width:80%!important; box-sizing:border-box!important;
   }
   #page-cover.active .stat-tile {
     background:#fff!important; border-radius:5px!important; padding:3px 0!important;
