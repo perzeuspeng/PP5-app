@@ -994,7 +994,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
       </div>
       <div id="cover-logo-placeholder-print" class="cover-logo-print-hide" style="flex-shrink:0">🏫</div>
       <div class="xls-header-content">
-        <div class="xls-header-title">📋 สมุดบันทึกการพัฒนาคุณภาพผู้เรียน (ปพ.5)</div>
+        <div class="xls-header-title">สมุดบันทึกการพัฒนาคุณภาพผู้เรียน (ปพ.5)</div>
         <div class="xls-form">
       <div class="xls-row">
         <span class="xls-label">โรงเรียน</span>
@@ -1150,11 +1150,11 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   <!-- สรุปคุณลักษณะ + การอ่าน (เว็บ: 2 คอลัมน์, print: ใช้ #cover-summary-print) -->
   <div class="cover-summary-grid no-print" id="cover-beh-read-web">
     <div class="cover-summary-box">
-      <div class="cover-summary-head">⭐ สรุปคุณลักษณะอันพึงประสงค์</div>
+      <div class="cover-summary-head">สรุปคุณลักษณะอันพึงประสงค์</div>
       <div id="cover-beh-table" style="overflow-x:auto"></div>
     </div>
     <div class="cover-summary-box">
-      <div class="cover-summary-head">📖 สรุปการอ่าน คิดวิเคราะห์ เขียน</div>
+      <div class="cover-summary-head">สรุปการอ่าน คิดวิเคราะห์ เขียน</div>
       <div id="cover-read-table" style="overflow-x:auto"></div>
     </div>
   </div>
@@ -1173,7 +1173,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
     box-shadow:0 4px 20px rgba(30,58,95,0.25);
   ">
     <!-- ไอคอน -->
-    <div style="font-size:38px;margin-bottom:10px">📋</div>
+    <div style="font-size:38px;margin-bottom:10px"></div>
     <!-- ชื่อระบบ -->
     <div style="font-size:17px;font-weight:800;color:#fff;margin-bottom:6px;line-height:1.4">
       ระบบบันทึกคุณภาพผู้เรียน (ปพ.5)
@@ -1435,7 +1435,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
 </div><!-- scroll-area -->
 
 <nav class="bottom-nav no-print">
-  <div class="nav-item active" id="nav-cover" onclick="goPage('cover',this)"><div class="nav-icon">📋</div><div class="nav-label">ปก</div></div>
+  <div class="nav-item active" id="nav-cover" onclick="goPage('cover',this)"><div class="nav-icon"></div><div class="nav-label">ปก</div></div>
   <div class="nav-item" id="nav-students" onclick="goPage('students',this)"><div class="nav-icon">👥</div><div class="nav-label">รายชื่อ</div></div>
   <div class="nav-item" id="nav-att" onclick="goPage('att',this)"><div class="nav-icon">📅</div><div class="nav-label">เวลาเรียน</div></div>
   <div class="nav-item" id="nav-s1" onclick="goPage('s1',this)"><div class="nav-icon">✏️</div><div class="nav-label">คะแนน 1</div></div>
@@ -1530,7 +1530,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   <div class="modal-title">📊 สร้างรายงาน PDF</div>
   <div style="font-size:13px;color:var(--text2);margin-bottom:10px">เลือกส่วนที่ต้องการรวมในรายงาน</div>
   <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
-    <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--light);border-radius:10px;cursor:pointer"><input type="checkbox" id="r-cover" checked style="width:18px;height:18px"><span>📋 ปก</span></label>
+    <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--light);border-radius:10px;cursor:pointer"><input type="checkbox" id="r-cover" checked style="width:18px;height:18px"><span> ปก</span></label>
     <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--light);border-radius:10px;cursor:pointer"><input type="checkbox" id="r-stu" checked style="width:18px;height:18px"><span>👥 รายชื่อนักเรียน</span></label>
     <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--light);border-radius:10px;cursor:pointer"><input type="checkbox" id="r-att" checked style="width:18px;height:18px"><span>📅 เวลาเรียน</span></label>
     <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--light);border-radius:10px;cursor:pointer"><input type="checkbox" id="r-s1" checked style="width:18px;height:18px"><span>✏️ คะแนนภาคเรียนที่ 1</span></label>
@@ -3778,7 +3778,7 @@ window.addEventListener('load', ()=>{
   <!-- new slot form (ซ่อนไว้ก่อน) -->
   <div id="launcher-form" style="display:none;width:100%;max-width:500px;padding:12px 14px 0">
     <div style="background:#fff;border-radius:12px;border:1.5px solid #cbd5e1;padding:16px">
-      <div style="font-size:13px;font-weight:700;color:#1e3a5f;margin-bottom:12px">📋 รายวิชาใหม่</div>
+      <div style="font-size:13px;font-weight:700;color:#1e3a5f;margin-bottom:12px"> รายวิชาใหม่</div>
       <div style="display:flex;flex-direction:column;gap:8px">
         <div>
           <div style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:3px">ชั้นเรียน *</div>
