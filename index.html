@@ -39,7 +39,7 @@ html,body{height:100%;font-family:'Sarabun',sans-serif;background:var(--bg);colo
 /* ── BOTTOM NAV ── */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #ebebeb;display:flex;padding-bottom:var(--safe-bottom);box-shadow:0 -3px 14px rgba(30,58,95,.12);z-index:100;height:calc(var(--nav-h)+var(--safe-bottom));}
 .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 2px 8px;cursor:pointer;color:var(--text2);transition:color .15s;position:relative;min-width:0;}
-.nav-item.active{color:#1f2937;}
+.nav-item.active{color:#f97316;}
 .nav-item.active::before{content:'';position:absolute;top:0;left:15%;right:15%;height:3px;background:#f97316;border-radius:0 0 3px 3px;}
 .nav-icon{font-size:17px;line-height:1;margin-bottom:2px;}
 .nav-label{font-size:9px;font-weight:700;white-space:nowrap;}
@@ -62,7 +62,7 @@ html,body{height:100%;font-family:'Sarabun',sans-serif;background:var(--bg);colo
 
 /* ── SECTION BOX ── */
 .sec-box{background:white;border-radius:12px;margin-bottom:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);border-top:3px solid #f97316;}
-.sec-head{background:#4b5563;color:#1f2937;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.sec-head{background:#f3f4f6;color:#1f2937;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
 .sec-head-title{font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px;color:#1f2937;}
 .sec-head-dot{width:3px;height:14px;background:#f97316;border-radius:2px;flex-shrink:0;}
 .sec-body{padding:12px;}
@@ -78,7 +78,7 @@ html,body{height:100%;font-family:'Sarabun',sans-serif;background:var(--bg);colo
 .btn:active{opacity:.7;}
 .btn-primary{background:#f97316;color:#fff;}
 .btn-success{background:#16a34a;color:#fff;}
-.btn-accent{background:#f97316;color:#1e293b;}
+.btn-accent{background:#f97316;color:#fff;}
 .btn-outline{background:white;color:#f97316;border:1.5px solid #f97316;}
 .btn-danger{background:#fee2e2;color:#dc2626;}
 .btn-sm{padding:6px 10px;font-size:12px;min-height:32px;border-radius:7px;}
@@ -127,7 +127,7 @@ table.xlt td.edit-cell{background:#fefce8!important;padding:3px;}
 .att-month-tabs{display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px;scrollbar-width:none;}
 .att-month-tabs::-webkit-scrollbar{display:none;}
 .att-tab{flex-shrink:0;padding:6px 12px;border-radius:18px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:white;color:var(--text2);transition:all .15s;}
-.att-tab.active{background:#4b5563;border-color:#4b5563;color:#1f2937;}
+.att-tab.active{background:#f97316;border-color:#f97316;color:#fff;}
 .att-dot{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:4px;font-size:11px;font-weight:800;cursor:pointer;transition:all .1s;user-select:none;}
 .att-dot:active{transform:scale(.85);}
 .att-m{background:#dcfce7;color:#15803d;}
@@ -445,7 +445,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
 
   /* ── xls-header card น้ำเงิน ── */
   #page-cover.active .xls-header {
-    background:#f3f4f6!important;
+    background:#f9fafb!important; border-top:3px solid #f97316!important;
     border-radius:14px!important;
     padding:16px 16px 14px!important;
     margin-bottom:10px!important; border:none!important; overflow:visible!important;
@@ -453,7 +453,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   }
   #page-cover.active .xls-header-content { display:block!important; width:100%!important; }
   #page-cover.active .xls-header-title {
-    font-size:13pt!important; font-weight:800!important; color:#fff!important;
+    font-size:13pt!important; font-weight:800!important; color:#1f2937!important;
     text-align:center!important; margin-bottom:10px!important;
     border-bottom:1.5px solid rgba(255,255,255,.3)!important; padding-bottom:8px!important;
   }
@@ -467,7 +467,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   #page-cover.active .xls-form > .xls-row,
   #page-cover.active .xls-row-2col > .xls-row {
     display:flex!important; align-items:stretch!important;
-    background:rgba(255,255,255,.12)!important; border-radius:8px!important;
+    background:#f3f4f6!important; border-radius:8px!important;
     overflow:hidden!important; border:none!important; min-height:0!important; padding:0!important;
   }
   #page-cover.active .xls-form > .xls-row { width:100%!important; }
@@ -491,7 +491,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   }
   .print-2col-row .print-combined-row {
     display:flex!important; align-items:stretch!important;
-    background:rgba(255,255,255,.12)!important; border-radius:8px!important;
+    background:#f3f4f6!important; border-radius:8px!important;
     overflow:hidden!important; padding:0!important;
   }
 
@@ -509,15 +509,15 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
 
   /* ── label ── */
   #page-cover.active .xls-label {
-    font-size:8.5pt!important; font-weight:700!important; color:rgba(255,255,255,.78)!important;
+    font-size:8.5pt!important; font-weight:700!important; color:#6b7280!important;
     background:transparent!important; padding:6px 10px!important; white-space:nowrap!important;
     min-width:72px!important; flex-shrink:0!important; border:none!important;
     display:flex!important; align-items:center!important;
   }
   /* ── val ── */
   #page-cover.active .xls-val {
-    flex:1!important; font-size:9.5pt!important; font-weight:600!important; color:#fff!important;
-    padding:6px 10px!important; background:rgba(255,255,255,.14)!important;
+    flex:1!important; font-size:9.5pt!important; font-weight:600!important; color:#1f2937!important;
+    padding:6px 10px!important; background:#fff!important;
     border:none!important; outline:none!important; min-width:0!important;
     -webkit-appearance:none!important; appearance:none!important;
     display:flex!important; align-items:center!important;
@@ -526,39 +526,39 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   /* ══ print-combined-row: inject โดย JS (โรงเรียน, ครูผู้สอน) ══ */
   .print-combined-row {
     display:flex!important; align-items:stretch!important;
-    background:rgba(255,255,255,.12)!important; border-radius:8px!important;
+    background:#f3f4f6!important; border-radius:8px!important;
     overflow:hidden!important; padding:0!important; gap:0!important;
   }
   .print-combined-row .xls-label {
-    font-size:8.5pt!important; font-weight:700!important; color:rgba(255,255,255,.78)!important;
+    font-size:8.5pt!important; font-weight:700!important; color:#6b7280!important;
     padding:6px 10px!important; white-space:nowrap!important; min-width:72px!important;
     flex-shrink:0!important; border:none!important;
     display:flex!important; align-items:center!important;
   }
   .print-combined-val {
     flex:1!important; display:flex!important; align-items:center!important; gap:6px!important;
-    font-size:9.5pt!important; font-weight:600!important; color:#fff!important;
-    padding:6px 10px!important; background:rgba(255,255,255,.14)!important; min-width:0!important;
+    font-size:9.5pt!important; font-weight:600!important; color:#1f2937!important;
+    padding:6px 10px!important; background:#fff!important; min-width:0!important;
   }
-  .print-sep        { color:rgba(255,255,255,.3)!important; margin:0 2px!important; flex-shrink:0!important; }
-  .print-sub-label  { font-size:8pt!important; color:rgba(255,255,255,.65)!important; font-weight:700!important; white-space:nowrap!important; }
-  .print-sub-val    { font-size:9pt!important; color:rgba(255,255,255,.9)!important; font-weight:500!important; }
+  .print-sep        { color:#d1d5db!important; margin:0 2px!important; flex-shrink:0!important; }
+  .print-sub-label  { font-size:8pt!important; color:#6b7280!important; font-weight:700!important; white-space:nowrap!important; }
+  .print-sub-val    { font-size:9pt!important; color:#1f2937!important; font-weight:500!important; }
 
   /* ══ print-3col-extra: div inject เป็น col ที่ 3 (ปีการศึกษา / ชม.) ══ */
   .print-3col-extra {
     display:flex!important; align-items:stretch!important;
-    background:rgba(255,255,255,.12)!important; border-radius:8px!important;
+    background:#f3f4f6!important; border-radius:8px!important;
     overflow:hidden!important; padding:0!important;
   }
   .print-3col-extra .xls-label {
-    font-size:8.5pt!important; font-weight:700!important; color:rgba(255,255,255,.78)!important;
+    font-size:8.5pt!important; font-weight:700!important; color:#6b7280!important;
     padding:6px 10px!important; white-space:nowrap!important; min-width:72px!important;
     flex-shrink:0!important; border:none!important;
     display:flex!important; align-items:center!important;
   }
   .print-3col-extra .xls-val {
-    flex:1!important; font-size:9.5pt!important; font-weight:600!important; color:#fff!important;
-    padding:6px 10px!important; background:rgba(255,255,255,.14)!important;
+    flex:1!important; font-size:9.5pt!important; font-weight:600!important; color:#1f2937!important;
+    padding:6px 10px!important; background:#fff!important;
     border:none!important; min-width:0!important;
     display:flex!important; align-items:center!important;
   }
@@ -779,7 +779,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   }
   #print-copyright-footer .pcf-left{
     font-size:7.5pt!important;
-    color:rgba(255,255,255,0.85)!important;
+    color:#6b7280!important;
   }
   #print-copyright-footer .pcf-center{
     font-size:8pt!important;
@@ -789,7 +789,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   }
   #print-copyright-footer .pcf-right{
     font-size:7pt!important;
-    color:rgba(255,255,255,0.6)!important;
+    color:#6b7280!important;
   }
 
   #print-signature{
