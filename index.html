@@ -633,8 +633,8 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   #page-cover.active table.xlt td.edit-cell { background:#fefce8!important; }
   #page-cover.active table.xlt input[type=number] { font-size:8.5pt!important; width:100%!important; background:transparent!important; border:none!important; text-align:center!important; color:#000!important; }
 
-  /* ── วันที่อนุมัติ: ซ่อน input เว็บ ── */
-  #page-cover.active #approval-body > div:last-of-type { display:none!important; }
+  /* ── วันที่อนุมัติ: ซ่อน input เว็บ (ใช้ JS inject แทน) ── */
+  #page-cover.active #approval-body > div:has(#f-approve-day) { display:none!important; }
 
   /* ── cover-beh-read-web 2col ── */
   #page-cover.active #cover-beh-read-web {
@@ -3054,24 +3054,24 @@ function printCurrentPage(){
       advisorNameRow.after(pAdvisor);
     }
 
-    // ── 6. inject วันที่อนุมัติ print version ──
-    const behReadWeb = document.getElementById('cover-beh-read-web');
+    // ── 6. inject วันที่อนุมัติ ใต้ grade-dist ใน approval-body ──
+    const gradeDistTable = document.getElementById('grade-dist-table');
     let pApvDate = document.getElementById('_p_apv_date');
-    if(!pApvDate && behReadWeb){
+    if(!pApvDate && gradeDistTable){
       pApvDate = document.createElement('div');
       pApvDate.id = '_p_apv_date';
-      pApvDate.style.cssText = 'text-align:center;margin:8px 0;font-family:inherit';
+      pApvDate.style.cssText = 'text-align:center;margin:8px 0 4px;font-family:inherit';
       pApvDate.innerHTML =
-        '<div style="font-size:10pt;font-weight:700;color:#1e3a5f;margin-bottom:6px">วันที่อนุมัติผลการเรียน</div>'
-        +'<div style="display:flex;align-items:center;justify-content:center;gap:8px;font-size:10pt">'
+        '<div style="font-size:9pt;font-weight:700;color:#1e3a5f;margin-bottom:5px">วันที่อนุมัติผลการเรียน</div>'
+        +'<div style="display:flex;align-items:center;justify-content:center;gap:6px;font-size:9pt">'
         +'<span>วันที่</span>'
-        +'<span style="border:1px solid #94a3b8;border-radius:4px;min-width:36px;text-align:center;font-weight:700;padding:2px 8px">'+(gv2('f-approve-day')||'...')+'</span>'
+        +'<span style="border:1px solid #94a3b8;border-radius:4px;min-width:32px;text-align:center;font-weight:700;padding:2px 6px">'+(gv2('f-approve-day')||'...')+'</span>'
         +'<span>เดือน</span>'
-        +'<span style="border:1px solid #94a3b8;border-radius:4px;min-width:80px;text-align:center;font-weight:700;padding:2px 8px">'+(gv2('f-approve-month')||'............')+'</span>'
+        +'<span style="border:1px solid #94a3b8;border-radius:4px;min-width:70px;text-align:center;font-weight:700;padding:2px 6px">'+(gv2('f-approve-month')||'............')+'</span>'
         +'<span>พ.ศ.</span>'
-        +'<span style="border:1px solid #94a3b8;border-radius:4px;min-width:52px;text-align:center;font-weight:700;padding:2px 8px">'+(gv2('f-approve-year')||'........')+'</span>'
+        +'<span style="border:1px solid #94a3b8;border-radius:4px;min-width:48px;text-align:center;font-weight:700;padding:2px 6px">'+(gv2('f-approve-year')||'........')+'</span>'
         +'</div>';
-      behReadWeb.after(pApvDate);
+      gradeDistTable.after(pApvDate);
     }
 
     // ── ซ่อน original rows ──
