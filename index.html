@@ -600,14 +600,17 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   /* ── sec-body ของฝั่งอนุมัติ: padding น้อยลงเพื่อให้ stat ไม่ล้น ── */
   #page-cover.active #approval-body { padding:6px 8px!important; }
 
-  /* ── stat-tiles: 4 กล่อง รวมกว้าง 4/5 ของพื้นที่ ชิดซ้าย ── */
+  /* ── stat-tiles: 4 กล่อง เรียงแถวเดียว แต่ละกล่องแคบลง ── */
   #page-cover.active .stats-row {
-    display:grid!important; grid-template-columns:repeat(4,minmax(0,1fr))!important;
-    gap:3px!important; margin-bottom:5px!important;
-    width:80%!important; box-sizing:border-box!important;
+    display:flex!important; flex-direction:row!important; flex-wrap:nowrap!important;
+    justify-content:center!important;
+    gap:6px!important; margin-bottom:5px!important;
+    width:100%!important; box-sizing:border-box!important;
   }
   #page-cover.active .stat-tile {
-    background:#fff!important; border-radius:5px!important; padding:3px 0!important;
+    flex:0 0 auto!important;
+    width:14%!important;
+    background:#fff!important; border-radius:5px!important; padding:3px 2px!important;
     text-align:center!important; box-shadow:0 1px 3px rgba(30,58,95,.1)!important;
     border-top:2px solid #f59e0b!important; border-left:none!important; border-right:none!important; border-bottom:none!important;
     min-width:0!important; overflow:hidden!important; box-sizing:border-box!important;
