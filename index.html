@@ -326,6 +326,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
     background:#e0e0e0!important;color:#000!important;
     font-weight:800!important;border:1px solid #555!important;
   }
+  table.xlt td.gc span{color:#000!important;}
   table.xlt td.edit-cell{background:#fff!important;}
   table.xlt td input[type=number],table.xlt td input[type=text]{
     font-size:9pt!important;width:100%!important;
@@ -750,6 +751,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
     background:#e0e0e0!important;color:#000!important;
     font-weight:800!important;border:1px solid #555!important;
   }
+  #page-s1.active table.xlt td.gc span,#page-s2.active table.xlt td.gc span{color:#000!important;}
   #page-s1.active table.xlt input,#page-s2.active table.xlt input{
     width:100%!important;font-size:6pt!important;padding:0!important;
     border:none!important;background:transparent!important;text-align:center!important;
@@ -2257,7 +2259,7 @@ function scoreToGrade(s){
   if(s>=50)return 1;return 0;
 }
 function gradeChip(g){
-  return `<span style="color:#1f2937;font-weight:800">${g.toFixed(1)}</span>`;
+  return `<span style="color:#fff;font-weight:800">${g.toFixed(1)}</span>`;
 }
 function attPct(si){
   let m=0,d=0;
