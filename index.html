@@ -7,6 +7,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>ปพ.5 สมุดบันทึกการพัฒนาคุณภาพผู้เรียน</title>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:'THSarabunNew';src:url('https://cdn.jsdelivr.net/npm/font-th-sarabun-new@1.0.0/fonts/THSarabunNew.woff') format('woff'),url('https://cdn.jsdelivr.net/npm/font-th-sarabun-new@1.0.0/fonts/THSarabunNew.ttf') format('truetype');font-weight:400;font-style:normal;}
+@font-face{font-family:'THSarabunNew';src:url('https://cdn.jsdelivr.net/npm/font-th-sarabun-new@1.0.0/fonts/THSarabunNew-Bold.woff') format('woff'),url('https://cdn.jsdelivr.net/npm/font-th-sarabun-new@1.0.0/fonts/THSarabunNew-Bold.ttf') format('truetype');font-weight:700;font-style:normal;}
+@font-face{font-family:'THSarabunNew';src:url('https://cdn.jsdelivr.net/npm/font-th-sarabun-new@1.0.0/fonts/THSarabunNew-Italic.woff') format('woff'),url('https://cdn.jsdelivr.net/npm/font-th-sarabun-new@1.0.0/fonts/THSarabunNew-Italic.ttf') format('truetype');font-weight:400;font-style:italic;}
+@font-face{font-family:'THSarabunNew';src:url('https://cdn.jsdelivr.net/npm/font-th-sarabun-new@1.0.0/fonts/THSarabunNew-BoldItalic.woff') format('woff'),url('https://cdn.jsdelivr.net/npm/font-th-sarabun-new@1.0.0/fonts/THSarabunNew-BoldItalic.ttf') format('truetype');font-weight:700;font-style:italic;}
+</style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://apis.google.com/js/api.js" async defer></script>
@@ -18,7 +24,7 @@
   --nav-h:56px;--safe-bottom:env(safe-area-inset-bottom,0px);--safe-top:env(safe-area-inset-top,0px);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);font-size:14px;overflow:hidden;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+html,body{height:100%;font-family:'THSarabunNew','Sarabun',sans-serif;background:var(--bg);color:var(--text);font-size:14px;overflow:hidden;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 
 /* ── APP SHELL ── */
 .app-wrap{display:flex;flex-direction:column;height:100%;overflow:hidden;}
@@ -218,7 +224,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   html,body{
     width:100%!important;margin:0!important;padding:0!important;
     overflow:visible!important;background:#fff!important;
-    font-family:'Sarabun',sans-serif!important;font-size:10pt!important;color:#000!important;
+    font-family:'THSarabunNew','Sarabun',sans-serif!important;font-size:10pt!important;color:#000!important;
   }
   .app-wrap,.scroll-area,.scroll-content{
     display:block!important;width:100%!important;height:auto!important;
@@ -772,7 +778,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
     justify-content:space-between!important;
     padding:0 14mm!important;
     font-size:7.5pt!important;
-    font-family:'Sarabun',sans-serif!important;
+    font-family:'THSarabunNew','Sarabun',sans-serif!important;
     z-index:9999!important;
     box-sizing:border-box!important;
     -webkit-print-color-adjust:exact!important;
@@ -914,26 +920,26 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   background:#fff;border-radius:20px;padding:32px 24px;
   width:100%;max-width:360px;text-align:center;
   box-shadow:0 4px 24px rgba(0,0,0,.08);border-top:3px solid #f97316;
-  font-family:'Sarabun',sans-serif;
+  font-family:'THSarabunNew','Sarabun',sans-serif;
   -webkit-text-size-adjust:100%;
   text-size-adjust:100%;
 }
 #auth-overlay .auth-logo{font-size:48px;margin-bottom:12px;}
 #auth-overlay .auth-title{
   font-size:20px;font-weight:800;color:#1f2937;margin-bottom:4px;
-  font-family:'Sarabun',sans-serif;
+  font-family:'THSarabunNew','Sarabun',sans-serif;
   letter-spacing:normal;word-spacing:normal;
   -webkit-text-size-adjust:100%;text-size-adjust:100%;
 }
 #auth-overlay .auth-sub{
   font-size:13px;color:#64748b;margin-bottom:24px;line-height:1.5;
-  font-family:'Sarabun',sans-serif;
+  font-family:'THSarabunNew','Sarabun',sans-serif;
   -webkit-text-size-adjust:100%;text-size-adjust:100%;
 }
 #auth-overlay .auth-divider{border:none;border-top:1px solid #e2e8f0;margin:20px 0;}
 #auth-overlay .auth-note{
   font-size:11px;color:#94a3b8;margin-top:16px;line-height:1.6;
-  font-family:'Sarabun',sans-serif;
+  font-family:'THSarabunNew','Sarabun',sans-serif;
   -webkit-text-size-adjust:100%;text-size-adjust:100%;
 }
 #auth-overlay #g_signin_btn{display:flex;justify-content:center;align-items:center;width:100%;}
@@ -2351,7 +2357,7 @@ function drawPieChart(canvasId, legendId, slices, opts){
   const total=slices.reduce((s,sl)=>s+sl.value,0);
   if(!total){
     ctx.fillStyle='#e2e8f0';ctx.beginPath();ctx.arc(sz/2,sz/2,sz/2-3,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle='#94a3b8';ctx.font=`10px Sarabun`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillStyle='#94a3b8';ctx.font=`10px THSarabunNew,Sarabun`;ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText('ไม่มีข้อมูล',sz/2,sz/2);
     if(legendEl)legendEl.innerHTML='';return;
   }
