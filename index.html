@@ -53,9 +53,10 @@ html,body{height:100%;font-family:'Sarabun',sans-serif;background:var(--bg);colo
 .xls-form{display:grid;gap:6px;}
 .xls-row{display:flex;align-items:center;gap:0;background:#ffffff;border-radius:8px;border:1px solid #e5e7eb;overflow:hidden;}
 .xls-label{font-size:11px;font-weight:700;color:#6b7280;padding:8px 10px;white-space:nowrap;min-width:90px;flex-shrink:0;}
-.xls-val{flex:1;font-size:13px;font-weight:600;color:#1f2937;padding:8px 10px;background:#ffffff;border:none;font-family:inherit;outline:none;min-width:0;}
+.xls-val{flex:1;font-size:13px;font-weight:600;color:#1f2937;padding:8px 10px;background:#ffffff;border:none;border-left:1px solid #e5e7eb;font-family:inherit;outline:none;min-width:0;}
 .xls-val::placeholder{color:#9ca3af;font-weight:400;}
-.xls-val:focus{background:#f9fafb;}
+.xls-val:focus{background:#f9fafb;border-left:1px solid #d1d5db;}
+select.xls-val{border-left:1px solid #e5e7eb;}
 .xls-row-2col{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
 .xls-row-3col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;}
 .xls-row-readonly .xls-val{background:rgba(255,255,255,.07);color:#6b7280;}
