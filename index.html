@@ -2710,47 +2710,225 @@ function renderIndividual(){
   </div>`;
 }
 
-/* ══ PDF ══ */
+/* ══ PDF — ใช้ print CSS ของแต่ละหน้า รวมเป็น PDF จริง ══ */
 async function generatePDF(){
   closeModal('report-modal');
-  const pages=[
-    {id:'r-cover',page:'cover'},
-    {id:'r-stu',page:'students'},
-    {id:'r-att',page:'att'},
-    {id:'r-s1',page:'s1'},
-    {id:'r-s2',page:'s2'},
-    {id:'r-tot',page:'total'},
-    {id:'r-beh',page:'beh'},
-    {id:'r-ind',page:'ind'},
+
+  const pageList=[
+    {id:'r-cover',  page:'cover'},
+    {id:'r-stu',    page:'students'},
+    {id:'r-att',    page:'att'},
+    {id:'r-s1',     page:'s1'},
+    {id:'r-s2',     page:'s2'},
+    {id:'r-tot',    page:'total'},
+    {id:'r-beh',    page:'beh'},
+    {id:'r-ind',    page:'ind'},
   ].filter(p=>document.getElementById(p.id)?.checked);
-  if(!pages.length){showToast('⚠️ กรุณาเลือกอย่างน้อย 1 หน้า');return;}
-  showLoading('กำลังสร้าง PDF...');
-  const chunks=[];
-  for(const p of pages){
-    document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
-    const el=document.getElementById('page-'+p.page);
-    if(!el)continue;
-    el.classList.add('active');
-    if(p.page==='att'){renderAttPage();}
-    if(p.page==='s1')renderScore(1);
-    if(p.page==='s2')renderScore(2);
-    if(p.page==='total')renderTotal();
-    if(p.page==='beh')renderBehavior();
-    if(p.page==='ind'){populateIndSel();renderIndividual();}
-    await new Promise(r=>setTimeout(r,400));
-    try{
-      const canvas=await html2canvas(el,{scale:1.5,backgroundColor:'#ffffff',useCORS:true});
-      chunks.push(canvas.toDataURL('image/jpeg',.88));
-    }catch(e){console.error(e);}
+
+  if(!pageList.length){showToast('⚠️ กรุณาเลือกอย่างน้อย 1 หน้า');return;}
+
+  showLoading('กำลังเตรียมข้อมูล...');
+
+  // ── 1. render ข้อมูลทุกหน้าที่เลือก ──
+  const needRender=new Set(pageList.map(p=>p.page));
+  if(needRender.has('att'))    renderAttPage();
+  if(needRender.has('s1'))     renderScore(1);
+  if(needRender.has('s2'))     renderScore(2);
+  if(needRender.has('total'))  {renderTotal();drawCharts();}
+  if(needRender.has('beh'))    renderBehavior();
+  if(needRender.has('ind'))    {populateIndSel();renderIndividual();}
+  if(needRender.has('cover'))  {
+    renderCoverStats();renderCoverBehRead();
+    // เรียก prepareCoverForPrint (เหมือนใน printCurrentPage)
+    _prepareCoverPrintElements();
   }
+
+  // ── 2. อัปเดตลายเซ็น ──
+  const sigT=document.getElementById('sig-teacher');
+  const sigTP=document.getElementById('sig-teacher-pos');
+  const sigD=document.getElementById('sig-director');
+  const sigDP=document.getElementById('sig-director-pos');
+  if(sigT)  sigT.textContent  = D.teacher||'';
+  if(sigTP) sigTP.textContent = D.teacherPos?'ตำแหน่ง'+D.teacherPos:'';
+  if(sigD)  sigD.textContent  = D.director||'';
+  if(sigDP) sigDP.textContent = D.school?'ตำแหน่งผู้อำนวยการโรงเรียน'+D.school:'ตำแหน่งผู้อำนวยการโรงเรียน';
+
+  await new Promise(r=>setTimeout(r,300));
+
+  // ── 3. ซ่อนทุกหน้า → แสดงเฉพาะหน้าที่เลือกตามลำดับ ──
+  const allPageEls=document.querySelectorAll('.page');
+  allPageEls.forEach(e=>{e.classList.remove('active');e.dataset.pdfVisible='0';});
+
+  // กำหนด orientation สำหรับแต่ละหน้า
+  const landscapePages=new Set(['att','s1','s2']);
+
+  // สร้าง dynamic print style สำหรับหลายหน้า
+  // ใช้ @page named pages เพื่อสลับ portrait/landscape
+  const orientations=pageList.map(p=>landscapePages.has(p.page)?'landscape':'portrait');
+  const hasLandscape=orientations.some(o=>o==='landscape');
+  const hasPortrait=orientations.some(o=>o==='portrait');
+
+  // inject style: แสดงเฉพาะหน้าที่เลือก + page-break ระหว่างหน้า
+  let styleEl=document.getElementById('pdf-export-style');
+  if(!styleEl){styleEl=document.createElement('style');styleEl.id='pdf-export-style';document.head.appendChild(styleEl);}
+
+  // สร้าง CSS ที่แสดงเฉพาะหน้าที่เลือก
+  const selectedIds=pageList.map(p=>`#page-${p.page}`).join(',');
+
+  // orientation: ถ้ามีทั้ง portrait+landscape → ใช้ portrait เป็น default แล้วแต่ละหน้าจัดการเอง
+  // ถ้า landscape ทั้งหมด → ใช้ landscape
+  let pageSize='A4 portrait';
+  if(hasLandscape&&!hasPortrait) pageSize='A4 landscape';
+
+  styleEl.textContent=`
+@media print{
+  @page{size:${pageSize};margin:12mm 14mm 20mm 14mm;}
+  body,html{overflow:visible!important;}
+  .bottom-nav,.topbar,.status-bar,.topbar-actions,.no-print,.toast,#launcher,#auth-overlay,#sync-status{display:none!important;}
+  .page{display:none!important;}
+  ${selectedIds}{display:block!important;}
+  /* page-break ระหว่างหน้าที่เลือก */
+  ${pageList.map((p,i)=>i<pageList.length-1?`#page-${p.page}{page-break-after:always!important;}`:'').filter(Boolean).join('\n  ')}
+  /* scroll wrappers */
+  .app-wrap,.scroll-area,.scroll-content{display:block!important;width:100%!important;height:auto!important;overflow:visible!important;position:static!important;padding:0!important;margin:0!important;background:#fff!important;}
+}`;
+
   hideLoading();
-  if(!chunks.length){showToast('❌ สร้าง PDF ไม่สำเร็จ');return;}
-  // Build simple PDF using html2canvas images
-  const link=document.createElement('a');
-  link.href=chunks[0];link.download=`ปพ5_${D.school||'โรงเรียน'}_${D.subject||'วิชา'}.jpg`;link.click();
-  showToast('✅ ดาวน์โหลดแล้ว (ใช้ print เพื่อสร้าง PDF)');
-  document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
-  document.getElementById('page-'+currentPage).classList.add('active');
+  await new Promise(r=>setTimeout(r,150));
+
+  // ── 4. เปิด print dialog ──
+  window.print();
+
+  // ── 5. คืนค่าหลัง print ──
+  setTimeout(()=>{
+    if(styleEl) styleEl.remove();
+    // คืน active page ปัจจุบัน
+    allPageEls.forEach(e=>e.classList.remove('active'));
+    const cur=document.getElementById('page-'+currentPage);
+    if(cur) cur.classList.add('active');
+    // ลบ cover print elements
+    ['_p_school','_p_year_hours','_p_teacher','_p_advisor','_p_apv_date'].forEach(id=>{
+      const el=document.getElementById(id);if(el)el.remove();
+    });
+    const schoolRow=document.querySelector('#page-cover .xls-form > .xls-row:has(#f-school)');
+    const teacherNameRow=document.getElementById('teacher-name-row');
+    const advisorNameRow=document.getElementById('advisor-name-row');
+    if(schoolRow)      schoolRow.style.display='';
+    if(teacherNameRow) teacherNameRow.style.display='';
+    if(advisorNameRow) advisorNameRow.style.display='';
+  },800);
+}
+
+/* ══ เตรียม cover print elements (ใช้ร่วมกับ printCurrentPage และ generatePDF) ══ */
+function _prepareCoverPrintElements(){
+  const gv2=id=>{const el=document.getElementById(id);return el?(el.value||el.textContent||''):''};
+
+  // โลโก้
+  const printLogoWrap=document.getElementById('cover-logo-print-wrap');
+  const printLogoImg=document.getElementById('cover-print-logo');
+  const printLogoPh=document.getElementById('cover-logo-placeholder-print');
+  if(D.logoData){
+    if(printLogoImg)printLogoImg.src=D.logoData;
+    if(printLogoWrap)printLogoWrap.classList.add('cover-logo-show');
+    if(printLogoPh)printLogoPh.classList.remove('cover-logo-show');
+  } else {
+    if(printLogoWrap)printLogoWrap.classList.remove('cover-logo-show');
+    if(printLogoPh)printLogoPh.classList.add('cover-logo-show');
+  }
+
+  // ── สร้าง cover-summary-print ──
+  const n=D.students.filter(s=>s.name).length;
+  const {bDist,rDist}=calcBehReadDist();
+  const csp=document.getElementById('cover-summary-print');
+  const gradeKeysPrint=[4,3.5,3,2.5,2,1.5,1,0];
+  const gradesPrint=D.students.map((_,i)=>calcFinalGrade(i)).filter(g=>g!==null);
+  const distPrint={};gradeKeysPrint.forEach(k=>{distPrint[k]=0;});
+  gradesPrint.forEach(g=>{const k=gradeKeysPrint.find(k=>k===g)||0;distPrint[k]=(distPrint[k]||0)+1;});
+  const approveDay=D.approveDay||gv2('f-approve-day')||'';
+  const approveMonth=D.approveMonth||gv2('f-approve-month')||'';
+  const approveYear=D.approveYear||gv2('f-approve-year')||'';
+  const dash=v=>(v===0||v===null||v===''||v===undefined)?'-':v;
+  const pct=(v,t)=>t?Math.round(v/t*100):'-';
+  const gradeKeys=[4,3.5,3,2.5,2,1.5,1,0];
+  const totalStu=n;
+  let achieveRow1='',achieveRow2='';
+  gradeKeys.forEach(k=>{const cnt=distPrint[k]||0;achieveRow1+='<td>'+dash(cnt)+'</td>';achieveRow2+='<td>'+dash(pct(cnt,gradesPrint.length))+'</td>';});
+  achieveRow1+='<td>-</td>';achieveRow2+='<td>-</td>';
+  const bKeys=[3,2,1,0];
+  let bRow='',rRow='';
+  bKeys.forEach(k=>{bRow+='<td>'+dash(bDist[k]||0)+'</td>';rRow+='<td>'+dash(rDist[k]||0)+'</td>';});
+  const actRow='<td>-</td><td>-</td><td>-</td><td>-</td>';
+  if(csp){
+    csp.innerHTML=`<table class="csp-outer" style="width:100%;border-collapse:collapse;font-size:7.5pt;"><thead><tr><th rowspan="3" style="width:9%;text-align:center;vertical-align:middle">จำนวนนักเรียน<br>ทั้งหมด</th><th colspan="10" style="text-align:center">สรุปผลสัมฤทธิ์ทางการเรียนรู้</th><th rowspan="3" style="width:8%;text-align:center;vertical-align:middle">หมายเหตุ</th></tr><tr><th colspan="9" style="text-align:center">จำนวนนักเรียนที่ได้ระดับผลการเรียน</th><th rowspan="2" style="text-align:center;vertical-align:middle">จำนวนนักเรียนที่ได้รับ<br>การแก้ไขผลการเรียนรู้ (0)</th></tr><tr><th>4</th><th>3.5</th><th>3</th><th>2.5</th><th>2</th><th>1.5</th><th>1</th><th>0</th><th></th></tr></thead><tbody><tr><td>${dash(totalStu)}</td>${achieveRow1}<td></td></tr><tr><td class="csp-label">ร้อยละ</td>${achieveRow2}<td></td></tr></tbody></table><table class="csp-outer" style="width:100%;border-collapse:collapse;font-size:7.5pt;margin-top:0;border-top:none;"><thead><tr><th rowspan="3" style="width:9%;vertical-align:middle;text-align:center">สรุปผล</th><th colspan="4" style="text-align:center">สรุปผลการประเมิน<br>คุณลักษณะอันพึงประสงค์</th><th colspan="4" style="text-align:center">สรุปผลการประเมิน<br>การอ่าน คิดวิเคราะห์และการเขียน</th><th colspan="4" style="text-align:center">สรุปผลการประเมิน<br>กิจกรรมพัฒนาผู้เรียน</th><th rowspan="3" style="width:8%;vertical-align:middle;text-align:center">หมายเหตุ</th></tr><tr><th>3<br><small>(ดีเยี่ยม)</small></th><th>2<br><small>(ดี)</small></th><th>1<br><small>(ผ่าน)</small></th><th>0<br><small>(ไม่ผ่าน)</small></th><th>3<br><small>(ดีเยี่ยม)</small></th><th>2<br><small>(ดี)</small></th><th>1<br><small>(ผ่าน)</small></th><th>0<br><small>(ไม่ผ่าน)</small></th><th>ผ่าน</th><th>ไม่ผ่าน</th><th colspan="2"></th></tr></thead><tbody><tr><td class="csp-label">ผลการประเมิน<br>จำนวนนักเรียน</td>${bRow}${rRow}${actRow}<td></td></tr></tbody></table><div class="csp-remark"><b>หมายเหตุ :</b> ไม่ได้นำผลการเรียนนักเรียนพิการเรียนร่วมมาคิดคำนวน</div><div style="text-align:center;font-size:8.5pt;font-weight:700;margin:6px 0 4px">การอนุมัติผลการเรียน</div><table class="csp-outer" style="width:100%;border-collapse:collapse;font-size:8pt;"><tr><td style="width:33%;text-align:center;padding:4px 8px;border:1px solid #000">ครูผู้สอน<br><div style="border-bottom:1px dotted #000;height:18px;margin:4px 10px 2px"></div><div>(${D.teacher||'................................'})</div></td><td style="width:33%;text-align:center;padding:4px 8px;border:1px solid #000">หัวหน้ากลุ่มสาระการเรียนรู้<br><div style="border-bottom:1px dotted #000;height:18px;margin:4px 10px 2px"></div><div>(................................)</div></td><td style="width:33%;text-align:center;padding:4px 8px;border:1px solid #000">หัวหน้างานวิชาการ<br><div style="border-bottom:1px dotted #000;height:18px;margin:4px 10px 2px"></div><div>(................................)</div></td></tr></table><table class="csp-outer" style="width:100%;border-collapse:collapse;font-size:8pt;margin-top:0;border-top:none;"><tr><td style="width:40%;padding:6px 8px;border:1px solid #000;vertical-align:middle"><span style="margin-right:16px">☐ อนุมัติ</span><span>☐ ไม่อนุมัติ</span></td><td style="width:60%;text-align:center;padding:6px 8px;border:1px solid #000"><div style="border-bottom:1px dotted #000;height:18px;margin:0 20px 2px"></div><div>(${D.director||'................................'})</div><div style="font-size:7.5pt">ผู้อำนวยการโรงเรียน${D.school||''}</div><div style="margin-top:4px;font-size:8pt">วันที่ <u>&nbsp;${approveDay||'......'}&nbsp;</u> เดือน <u>&nbsp;${approveMonth||'................'}&nbsp;</u> พ.ศ. <u>&nbsp;${approveYear||'........'}&nbsp;</u></div></td></tr></table>`;
+  }
+
+  // ── inject combined rows (เหมือน printCurrentPage) ──
+  const schoolRow=document.querySelector('#page-cover .xls-form > .xls-row:has(#f-school)');
+  const teacherNameRow=document.getElementById('teacher-name-row');
+  const advisorNameRow=document.getElementById('advisor-name-row');
+
+  // โรงเรียน+สังกัด
+  let pSchool=document.getElementById('_p_school');
+  if(!pSchool&&schoolRow){
+    pSchool=document.createElement('div');pSchool.id='_p_school';
+    pSchool.innerHTML='<div class="print-combined-row"><span class="xls-label">โรงเรียน</span><span class="print-combined-val">'+(gv2('f-school')||'')+'</span></div>'
+      +'<div class="print-combined-row" style="margin-top:3px"><span class="xls-label">สังกัด</span><span class="print-combined-val">'+(gv2('f-dept')||'')+'</span></div>';
+    schoolRow.parentNode.insertBefore(pSchool,schoolRow);
+  } else if(pSchool){
+    pSchool.innerHTML='<div class="print-combined-row"><span class="xls-label">โรงเรียน</span><span class="print-combined-val">'+(gv2('f-school')||'')+'</span></div>'
+      +'<div class="print-combined-row" style="margin-top:3px"><span class="xls-label">สังกัด</span><span class="print-combined-val">'+(gv2('f-dept')||'')+'</span></div>';
+  }
+
+  // ชั้น+ภาคเรียน+ปีการศึกษา+ชม
+  let pYearHours=document.getElementById('_p_year_hours');
+  const semRow=document.querySelector('#page-cover .xls-row-2col:has(#f-sem)');
+  if(!pYearHours&&semRow){
+    pYearHours=document.createElement('div');pYearHours.id='_p_year_hours';
+    pYearHours.className='print-3col-extra';
+    pYearHours.innerHTML='<div class="print-combined-row"><span class="xls-label">ปีการศึกษา</span><span class="xls-val">'+(gv2('f-year')||'')+'</span></div>'
+      +'<div class="print-combined-row"><span class="xls-label">ชม./สัปดาห์</span><span class="xls-val">'+(gv2('f-hours')||'')+'</span></div>';
+    semRow.after(pYearHours);
+  }
+
+  // ครูผู้สอน
+  let pTeacher=document.getElementById('_p_teacher');
+  if(!pTeacher&&teacherNameRow){
+    pTeacher=document.createElement('div');pTeacher.id='_p_teacher';
+    pTeacher.className='print-2col-row';
+    pTeacher.innerHTML='<div class="print-combined-row"><span class="xls-label">ครูผู้สอน</span><span class="print-combined-val">'+(gv2('f-teacher')||'')+'</span></div>'
+      +'<div class="print-combined-row"><span class="xls-label">ตำแหน่ง</span><span class="print-combined-val">'+(gv2('f-teacher-pos')||'')+'</span></div>';
+    teacherNameRow.after(pTeacher);
+  }
+
+  // ครูที่ปรึกษา
+  let pAdvisor=document.getElementById('_p_advisor');
+  if(!pAdvisor&&advisorNameRow){
+    pAdvisor=document.createElement('div');pAdvisor.id='_p_advisor';
+    pAdvisor.className='print-2col-row';
+    pAdvisor.innerHTML='<div class="print-combined-row"><span class="xls-label">ครูที่ปรึกษา</span><span class="print-combined-val">'+(gv2('f-advisor')||'')+'</span></div>'
+      +'<div class="print-combined-row"><span class="xls-label">ตำแหน่ง</span><span class="print-combined-val">'+(gv2('f-advisor-pos')||'')+'</span></div>';
+    advisorNameRow.after(pAdvisor);
+  }
+
+  // วันที่อนุมัติ
+  const gradeDistTable=document.getElementById('grade-dist-table');
+  let pApvDate=document.getElementById('_p_apv_date');
+  if(!pApvDate&&gradeDistTable){
+    pApvDate=document.createElement('div');pApvDate.id='_p_apv_date';
+    pApvDate.style.cssText='text-align:center;margin:8px 0 4px;font-family:inherit';
+    pApvDate.innerHTML='<div style="font-size:9pt;font-weight:700;color:#1f2937;margin-bottom:5px">วันที่อนุมัติผลการเรียน</div>'
+      +'<div style="display:flex;align-items:center;justify-content:center;gap:6px;font-size:9pt">'
+      +'<span>วันที่</span><span style="border:1px solid #94a3b8;border-radius:4px;min-width:32px;text-align:center;font-weight:700;padding:2px 6px">'+(gv2('f-approve-day')||'...')+'</span>'
+      +'<span>เดือน</span><span style="border:1px solid #94a3b8;border-radius:4px;min-width:70px;text-align:center;font-weight:700;padding:2px 6px">'+(gv2('f-approve-month')||'............')+'</span>'
+      +'<span>พ.ศ.</span><span style="border:1px solid #94a3b8;border-radius:4px;min-width:48px;text-align:center;font-weight:700;padding:2px 6px">'+(gv2('f-approve-year')||'........')+'</span>'
+      +'</div>';
+    gradeDistTable.after(pApvDate);
+  }
+
+  // ซ่อน original rows
+  if(schoolRow)      schoolRow.style.display='none';
+  if(teacherNameRow) teacherNameRow.style.display='none';
+  if(advisorNameRow) advisorNameRow.style.display='none';
 }
 
 /* ══ HELPERS ══ */
@@ -2786,318 +2964,52 @@ const hideLoading=()=>document.getElementById('loading-overlay').classList.remov
 /* ══ PRINT CURRENT PAGE ══ */
 function printCurrentPage(){
   // render ข้อมูลปัจจุบันก่อน print
-  if(currentPage==='att')renderAttPage();
-  if(currentPage==='s1')renderScore(1);
-  if(currentPage==='s2')renderScore(2);
-  if(currentPage==='total'){renderTotal();drawCharts();}
-  if(currentPage==='beh')renderBehavior();
-  if(currentPage==='ind'){populateIndSel();renderIndividual();}
-  if(currentPage==='cover'){
-    renderCoverStats();renderCoverBehRead();
-    // สร้าง cover-summary-print (แสดงเฉพาะ print)
-    const n=D.students.filter(s=>s.name).length;
-    const {bDist,rDist}=calcBehReadDist();
-    const csp=document.getElementById('cover-summary-print');
-    // สร้างตารางเกรด distribution สำหรับ print
-    const gradeKeysPrint=[4,3.5,3,2.5,2,1.5,1,0];
-    const gradesPrint=D.students.map((_,i)=>calcFinalGrade(i)).filter(g=>g!==null);
-    const distPrint={};gradeKeysPrint.forEach(k=>{distPrint[k]=0;});
-    gradesPrint.forEach(g=>{const k=gradeKeysPrint.find(k=>k===g)||0;distPrint[k]=(distPrint[k]||0)+1;});
-    const avgPrint=gradesPrint.length?(gradesPrint.reduce((a,b)=>a+b,0)/gradesPrint.length).toFixed(2):'0';
-    const passPrint=gradesPrint.filter(g=>g>=1).length;
-    const passPct=gradesPrint.length?Math.round(passPrint/gradesPrint.length*100):0;
-    // ══ สร้างตาราง cover-summary-print ตรงแบบฟอร์ม Excel ปพ.5 ══
+  if(currentPage==='att')    renderAttPage();
+  if(currentPage==='s1')     renderScore(1);
+  if(currentPage==='s2')     renderScore(2);
+  if(currentPage==='total')  {renderTotal();drawCharts();}
+  if(currentPage==='beh')    renderBehavior();
+  if(currentPage==='ind')    {populateIndSel();renderIndividual();}
+  if(currentPage==='cover')  {renderCoverStats();renderCoverBehRead();}
 
-    // ── ค่าวันที่อนุมัติ ──
-    const approveDay   = D.approveDay   || gv('f-approve-day')   || '';
-    const approveMonth = D.approveMonth || gv('f-approve-month') || '';
-    const approveYear  = D.approveYear  || gv('f-approve-year')  || '';
+  // อัพเดตลายเซ็น
+  const sigT=document.getElementById('sig-teacher');
+  const sigTP=document.getElementById('sig-teacher-pos');
+  const sigD=document.getElementById('sig-director');
+  const sigDP=document.getElementById('sig-director-pos');
+  if(sigT)  sigT.textContent  = D.teacher||'';
+  if(sigTP) sigTP.textContent = D.teacherPos?'ตำแหน่ง'+D.teacherPos:'';
+  if(sigD)  sigD.textContent  = D.director||'';
+  if(sigDP) sigDP.textContent = D.school?'ตำแหน่งผู้อำนวยการโรงเรียน'+D.school:'ตำแหน่งผู้อำนวยการโรงเรียน';
 
-    // ── helper: dash ถ้าเป็น 0 หรือ null ──
-    const dash = v => (v===0||v===null||v===''||v===undefined) ? '-' : v;
-    const pct  = (v,t) => t ? Math.round(v/t*100) : '-';
-
-    // ── สรุปผลสัมฤทธิ์ทางการเรียนรู้ ──
-    // แถว: จำนวนนักเรียนทั้งหมด, ร้อยละ
-    // คอลัมน์เกรด: 4, 3.5, 3, 2.5, 2, 1.5, 1, 0, แก้ไข(0)
-    const gradeKeys = [4,3.5,3,2.5,2,1.5,1,0];
-    const totalStu  = n; // นักเรียนมีเกรด
-    let achieveRow1 = '', achieveRow2 = '';
-    gradeKeys.forEach(k=>{
-      const cnt = distPrint[k]||0;
-      achieveRow1 += '<td>'+dash(cnt)+'</td>';
-      achieveRow2 += '<td>'+dash(pct(cnt,gradesPrint.length))+'</td>';
-    });
-    // แก้ไข(0) — ยังไม่มีข้อมูลในระบบ
-    achieveRow1 += '<td>-</td>';
-    achieveRow2 += '<td>-</td>';
-
-    // ── สรุปผลประเมินคุณลักษณะ ──
-    // bDist: {3:n,2:n,1:n,0:n}
-    const bKeys = [3,2,1,0];
-    let bRow = '';
-    bKeys.forEach(k=>{ bRow += '<td>'+dash(bDist[k]||0)+'</td>'; });
-
-    // ── สรุปผลประเมินการอ่านคิดวิเคราะห์ ──
-    // rDist: {3:n,2:n,1:n,0:n}
-    let rRow = '';
-    bKeys.forEach(k=>{ rRow += '<td>'+dash(rDist[k]||0)+'</td>'; });
-
-    // ── ผลประเมินกิจกรรมพัฒนาผู้เรียน ──
-    // ยังไม่มีข้อมูลในระบบ → แสดง -
-    let actRow = '<td>-</td><td>-</td><td>-</td><td>-</td>';
-
-    // ── HTML ──
-    csp.innerHTML = `
-<table class="csp-outer" style="width:100%;border-collapse:collapse;font-size:7.5pt;">
-  <!-- หัวสุด: จำนวนนักเรียนทั้งหมด + สรุปผลสัมฤทธิ์ -->
-  <thead>
-    <tr>
-      <th rowspan="3" style="width:9%;text-align:center;vertical-align:middle">จำนวนนักเรียน<br>ทั้งหมด</th>
-      <th colspan="10" style="text-align:center">สรุปผลสัมฤทธิ์ทางการเรียนรู้</th>
-      <th rowspan="3" style="width:8%;text-align:center;vertical-align:middle">หมายเหตุ</th>
-    </tr>
-    <tr>
-      <th colspan="9" style="text-align:center">จำนวนนักเรียนที่ได้ระดับผลการเรียน</th>
-      <th rowspan="2" style="text-align:center;vertical-align:middle">จำนวนนักเรียนที่ได้รับ<br>การแก้ไขผลการเรียนรู้ (0)</th>
-    </tr>
-    <tr>
-      <th>4</th><th>3.5</th><th>3</th><th>2.5</th><th>2</th><th>1.5</th><th>1</th><th>0</th><th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>${dash(totalStu)}</td>
-      ${achieveRow1}
-      <td></td>
-    </tr>
-    <tr>
-      <td class="csp-label">ร้อยละ</td>
-      ${achieveRow2}
-      <td></td>
-    </tr>
-  </tbody>
-</table>
-
-<!-- สรุปผลประเมิน 3 ส่วน -->
-<table class="csp-outer" style="width:100%;border-collapse:collapse;font-size:7.5pt;margin-top:0;border-top:none;">
-  <thead>
-    <tr>
-      <th rowspan="3" style="width:9%;vertical-align:middle;text-align:center">สรุปผล</th>
-      <th colspan="4" style="text-align:center">สรุปผลการประเมิน<br>คุณลักษณะอันพึงประสงค์</th>
-      <th colspan="4" style="text-align:center">สรุปผลการประเมิน<br>การอ่าน คิดวิเคราะห์และการเขียน</th>
-      <th colspan="4" style="text-align:center">สรุปผลการประเมิน<br>กิจกรรมพัฒนาผู้เรียน</th>
-      <th rowspan="3" style="width:8%;vertical-align:middle;text-align:center">หมายเหตุ</th>
-    </tr>
-    <tr>
-      <th>3<br><small>(ดีเยี่ยม)</small></th><th>2<br><small>(ดี)</small></th>
-      <th>1<br><small>(ผ่าน)</small></th><th>0<br><small>(ไม่ผ่าน)</small></th>
-      <th>3<br><small>(ดีเยี่ยม)</small></th><th>2<br><small>(ดี)</small></th>
-      <th>1<br><small>(ผ่าน)</small></th><th>0<br><small>(ไม่ผ่าน)</small></th>
-      <th>ผ่าน</th><th>ไม่ผ่าน</th><th colspan="2"></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td class="csp-label">ผลการประเมิน<br>จำนวนนักเรียน</td>
-      ${bRow}
-      ${rRow}
-      ${actRow}
-      <td></td>
-    </tr>
-  </tbody>
-</table>
-
-<!-- หมายเหตุ -->
-<div class="csp-remark">
-  <b>หมายเหตุ :</b> ไม่ได้นำผลการเรียนนักเรียนพิการเรียนร่วมมาคิดคำนวน (นักเรียนพิการเรียนร่วมจะแยกส่วนตามแผน IEP)
-</div>
-
-<!-- การอนุมัติผลการเรียน -->
-<div style="text-align:center;font-size:8.5pt;font-weight:700;margin:6px 0 4px">การอนุมัติผลการเรียน</div>
-<table class="csp-outer" style="width:100%;border-collapse:collapse;font-size:8pt;">
-  <tr>
-    <td style="width:33%;text-align:center;padding:4px 8px;border:1px solid #000">
-      ครูผู้สอน<br>
-      <div style="border-bottom:1px dotted #000;height:18px;margin:4px 10px 2px"></div>
-      <div style="font-size:8pt">(${D.teacher||'................................'})</div>
-    </td>
-    <td style="width:33%;text-align:center;padding:4px 8px;border:1px solid #000">
-      หัวหน้ากลุ่มสาระการเรียนรู้<br>
-      <div style="border-bottom:1px dotted #000;height:18px;margin:4px 10px 2px"></div>
-      <div style="font-size:8pt">(................................)</div>
-    </td>
-    <td style="width:33%;text-align:center;padding:4px 8px;border:1px solid #000">
-      หัวหน้างานวิชาการ<br>
-      <div style="border-bottom:1px dotted #000;height:18px;margin:4px 10px 2px"></div>
-      <div style="font-size:8pt">(................................)</div>
-    </td>
-  </tr>
-</table>
-
-<!-- อนุมัติ / ไม่อนุมัติ + ลายเซ็นผู้อำนวยการ -->
-<table class="csp-outer" style="width:100%;border-collapse:collapse;font-size:8pt;margin-top:0;border-top:none;">
-  <tr>
-    <td style="width:40%;padding:6px 8px;border:1px solid #000;vertical-align:middle">
-      <span style="margin-right:16px">☐ อนุมัติ</span>
-      <span>☐ ไม่อนุมัติ</span>
-    </td>
-    <td style="width:60%;text-align:center;padding:6px 8px;border:1px solid #000">
-      <div style="border-bottom:1px dotted #000;height:18px;margin:0 20px 2px"></div>
-      <div>(${D.director||'................................'})</div>
-      <div style="font-size:7.5pt">ผู้อำนวยการโรงเรียน${D.school||''}</div>
-      <div style="margin-top:4px;font-size:8pt">
-        วันที่ <u>&nbsp;${approveDay||'......'}&nbsp;</u>
-        เดือน <u>&nbsp;${approveMonth||'................'}&nbsp;</u>
-        พ.ศ. <u>&nbsp;${approveYear||'........'}&nbsp;</u>
-      </div>
-    </td>
-  </tr>
-</table>`;
-    // โลโก้ใน print header
-    const printLogoWrap=document.getElementById('cover-logo-print-wrap');
-    const printLogoImg=document.getElementById('cover-print-logo');
-    const printLogoPh=document.getElementById('cover-logo-placeholder-print');
-    if(D.logoData){
-      printLogoImg.src=D.logoData;
-      printLogoWrap.classList.add('cover-logo-show');
-      printLogoPh.classList.remove('cover-logo-show');
-    } else {
-      printLogoWrap.classList.remove('cover-logo-show');
-      printLogoPh.classList.add('cover-logo-show');
-    }
-  }renderCoverBehRead();
-
-  // หน้าคะแนน → landscape, อื่นๆ → portrait
-  const isLandscape = currentPage==='s1' || currentPage==='s2' || currentPage==='att';
-  let styleEl = document.getElementById('print-orientation-style');
+  // orientation
+  const isLandscape = currentPage==='s1'||currentPage==='s2'||currentPage==='att';
+  let styleEl=document.getElementById('print-orientation-style');
   if(!styleEl){styleEl=document.createElement('style');styleEl.id='print-orientation-style';document.head.appendChild(styleEl);}
-  styleEl.textContent = isLandscape
-    ? '@media print{@page{size:A4 landscape;margin:10mm 12mm;}}'
-    : '@media print{@page{size:A4 portrait;margin:12mm 14mm;}}';
+  styleEl.textContent=isLandscape
+    ?'@media print{@page{size:A4 landscape;margin:10mm 12mm;}}'
+    :'@media print{@page{size:A4 portrait;margin:12mm 14mm;}}';
 
-  // ── อัพเดตลายเซ็น ──
-  document.getElementById('sig-teacher').textContent = D.teacher || '';
-  document.getElementById('sig-teacher-pos').textContent = D.teacherPos ? 'ตำแหน่ง'+D.teacherPos : '';
-  document.getElementById('sig-director').textContent = D.director || '';
-  document.getElementById('sig-director-pos').textContent = D.school ? 'ตำแหน่งผู้อำนวยการโรงเรียน'+D.school : 'ตำแหน่งผู้อำนวยการโรงเรียน';
-
-  setTimeout(()=>{
-    const gv2 = id => { const el=document.getElementById(id); return el ? (el.value||el.textContent||'') : ''; };
-
-    // ── 1. inject โรงเรียน+สังกัด combined ──
-    const schoolRow = document.querySelector('#page-cover .xls-form > .xls-row:has(#f-school)');
-    let pSchool = document.getElementById('_p_school');
-    if(!pSchool && schoolRow){
-      pSchool = document.createElement('div');
-      pSchool.id = '_p_school';
-      pSchool.style.cssText = 'display:grid;gap:5px;';
-      pSchool.innerHTML =
-        '<div class="print-combined-row">'
-          +'<span class="xls-label">โรงเรียน</span>'
-          +'<span class="print-combined-val">'+(gv2('f-school')||'')+'</span>'
-        +'</div>'
-        +'<div class="print-combined-row">'
-          +'<span class="xls-label">สังกัด</span>'
-          +'<span class="print-combined-val">'+(gv2('f-dept')||'')+'</span>'
-        +'</div>';
-      schoolRow.after(pSchool);
-    }
-
-    // ── 2. inject ปีการศึกษา เป็น col ที่ 3 ใน row-2col:has(#f-sem) ──
-    const semRow2col = document.querySelector('#page-cover .xls-row-2col:has(#f-sem)');
-    let pYear = document.getElementById('_p_year_col');
-    if(!pYear && semRow2col){
-      pYear = document.createElement('div');
-      pYear.id = '_p_year_col';
-      pYear.className = 'print-3col-extra';
-      pYear.innerHTML = '<span class="xls-label">ปีการศึกษา</span><span class="xls-val">'+(gv2('f-year')||'')+'</span>';
-      semRow2col.appendChild(pYear);
-    }
-
-    // ── 3. inject ชม./สัปดาห์ เป็น col ที่ 3 ใน row-2col:has(#f-subject) ──
-    const subjectRow2col = document.querySelector('#page-cover .xls-row-2col:has(#f-subject)');
-    let pHours = document.getElementById('_p_hours_col');
-    if(!pHours && subjectRow2col){
-      pHours = document.createElement('div');
-      pHours.id = '_p_hours_col';
-      pHours.className = 'print-3col-extra';
-      pHours.innerHTML = '<span class="xls-label">ชม./สัปดาห์</span><span class="xls-val">'+(gv2('f-hours')||'')+'</span>';
-      subjectRow2col.appendChild(pHours);
-    }
-
-    // ── 4. inject ครูผู้สอน + ตำแหน่ง ในแถวเดียวกัน (2 กล่อง) ──
-    const teacherNameRow = document.getElementById('teacher-name-row');
-    let pTeacher = document.getElementById('_p_teacher');
-    if(!pTeacher && teacherNameRow){
-      pTeacher = document.createElement('div');
-      pTeacher.id = '_p_teacher';
-      pTeacher.className = 'print-2col-row';
-      pTeacher.innerHTML =
-        '<div class="print-combined-row">'
-          +'<span class="xls-label">ครูผู้สอน</span>'
-          +'<span class="print-combined-val">'+(gv2('f-teacher')||'')+'</span>'
-        +'</div>'
-        +'<div class="print-combined-row">'
-          +'<span class="xls-label">ตำแหน่ง</span>'
-          +'<span class="print-combined-val">'+(gv2('f-teacher-pos')||'')+'</span>'
-        +'</div>';
-      teacherNameRow.after(pTeacher);
-    }
-
-    // ── 5. inject ครูที่ปรึกษา + ตำแหน่ง ในแถวเดียวกัน (2 กล่อง) ──
-    const advisorNameRow = document.getElementById('advisor-name-row');
-    let pAdvisor = document.getElementById('_p_advisor');
-    if(!pAdvisor && advisorNameRow){
-      pAdvisor = document.createElement('div');
-      pAdvisor.id = '_p_advisor';
-      pAdvisor.className = 'print-2col-row';
-      pAdvisor.innerHTML =
-        '<div class="print-combined-row">'
-          +'<span class="xls-label">ครูที่ปรึกษา</span>'
-          +'<span class="print-combined-val">'+(gv2('f-advisor')||'')+'</span>'
-        +'</div>'
-        +'<div class="print-combined-row">'
-          +'<span class="xls-label">ตำแหน่ง</span>'
-          +'<span class="print-combined-val">'+(gv2('f-advisor-pos')||'')+'</span>'
-        +'</div>';
-      advisorNameRow.after(pAdvisor);
-    }
-
-    // ── 6. inject วันที่อนุมัติ ใต้ grade-dist ใน approval-body ──
-    const gradeDistTable = document.getElementById('grade-dist-table');
-    let pApvDate = document.getElementById('_p_apv_date');
-    if(!pApvDate && gradeDistTable){
-      pApvDate = document.createElement('div');
-      pApvDate.id = '_p_apv_date';
-      pApvDate.style.cssText = 'text-align:center;margin:8px 0 4px;font-family:inherit';
-      pApvDate.innerHTML =
-        '<div style="font-size:9pt;font-weight:700;color:#1f2937;margin-bottom:5px">วันที่อนุมัติผลการเรียน</div>'
-        +'<div style="display:flex;align-items:center;justify-content:center;gap:6px;font-size:9pt">'
-        +'<span>วันที่</span>'
-        +'<span style="border:1px solid #94a3b8;border-radius:4px;min-width:32px;text-align:center;font-weight:700;padding:2px 6px">'+(gv2('f-approve-day')||'...')+'</span>'
-        +'<span>เดือน</span>'
-        +'<span style="border:1px solid #94a3b8;border-radius:4px;min-width:70px;text-align:center;font-weight:700;padding:2px 6px">'+(gv2('f-approve-month')||'............')+'</span>'
-        +'<span>พ.ศ.</span>'
-        +'<span style="border:1px solid #94a3b8;border-radius:4px;min-width:48px;text-align:center;font-weight:700;padding:2px 6px">'+(gv2('f-approve-year')||'........')+'</span>'
-        +'</div>';
-      gradeDistTable.after(pApvDate);
-    }
-
-    // ── ซ่อน original rows ──
-    if(schoolRow)      schoolRow.style.display='none';
-    if(teacherNameRow) teacherNameRow.style.display='none';
-    if(advisorNameRow) advisorNameRow.style.display='none';
-
-    window.print();
-
+  if(currentPage==='cover'){
+    // เตรียม cover elements แล้ว print
+    _prepareCoverPrintElements();
     setTimeout(()=>{
-      [pSchool,pYear,pHours,pTeacher,pAdvisor,pApvDate].forEach(el=>{ if(el) el.remove(); });
-      if(schoolRow)      schoolRow.style.display='';
-      if(teacherNameRow) teacherNameRow.style.display='';
-      if(advisorNameRow) advisorNameRow.style.display='';
-    }, 500);
-  },150);
+      window.print();
+      setTimeout(()=>{
+        ['_p_school','_p_year_hours','_p_year_col','_p_hours_col','_p_teacher','_p_advisor','_p_apv_date'].forEach(id=>{
+          const el=document.getElementById(id);if(el)el.remove();
+        });
+        const schoolRow=document.querySelector('#page-cover .xls-form > .xls-row:has(#f-school)');
+        const teacherNameRow=document.getElementById('teacher-name-row');
+        const advisorNameRow=document.getElementById('advisor-name-row');
+        if(schoolRow)      schoolRow.style.display='';
+        if(teacherNameRow) teacherNameRow.style.display='';
+        if(advisorNameRow) advisorNameRow.style.display='';
+      },500);
+    },200);
+  } else {
+    setTimeout(()=>{ window.print(); },150);
+  }
 }
 
 /* ══ BOOT ══ */
