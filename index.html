@@ -2720,23 +2720,44 @@ async function generatePDF(){
   closeModal('report-modal');
 
   const PAGE_META=[
-    {id:'r-cover', page:'cover'},
-    {id:'r-stu',   page:'students'},
-    {id:'r-att',   page:'att'},
-    {id:'r-s1',    page:'s1'},
-    {id:'r-s2',    page:'s2'},
-    {id:'r-tot',   page:'total'},
-    {id:'r-beh',   page:'beh'},
-    {id:'r-ind',   page:'ind'},
+    {id:'r-cover', page:'cover',    landscape:false},
+    {id:'r-stu',   page:'students', landscape:false},
+    {id:'r-att',   page:'att',      landscape:true},
+    {id:'r-s1',    page:'s1',       landscape:true},
+    {id:'r-s2',    page:'s2',       landscape:true},
+    {id:'r-tot',   page:'total',    landscape:false},
+    {id:'r-beh',   page:'beh',      landscape:false},
+    {id:'r-ind',   page:'ind',      landscape:false},
   ];
 
   const pageList=PAGE_META.filter(p=>document.getElementById(p.id)?.checked);
   if(!pageList.length){showToast('⚠️ กรุณาเลือกอย่างน้อย 1 หน้า');return;}
 
+  /* ── โหลด jsPDF ถ้ายังไม่มี ── */
+  if(!window._jsPDFLoaded){
+    showLoading('กำลังโหลด PDF library...');
+    await new Promise((res,rej)=>{
+      const s1=document.createElement('script');
+      s1.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+      s1.onload=()=>{
+        const s2=document.createElement('script');
+        s2.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+        s2.onload=()=>{window._jsPDFLoaded=true;res();};
+        s2.onerror=rej;
+        document.head.appendChild(s2);
+      };
+      s1.onerror=rej;
+      document.head.appendChild(s1);
+    });
+  }
+
+  const jsPDFLib=(window.jspdf&&window.jspdf.jsPDF)||window.jsPDF;
+  if(!jsPDFLib||!window.html2canvas){showToast('❌ โหลด library ไม่สำเร็จ');hideLoading();return;}
+
   showLoading('กำลังเตรียมข้อมูล...');
   await new Promise(r=>setTimeout(r,80));
 
-  // ── 1. render ข้อมูลทุกหน้าที่เลือก ──
+  /* ── 1. render ทุกหน้าที่เลือกใน DOM จริง ── */
   const needRender=new Set(pageList.map(p=>p.page));
   if(needRender.has('att'))   renderAttPage();
   if(needRender.has('s1'))    renderScore(1);
@@ -2746,82 +2767,120 @@ async function generatePDF(){
   if(needRender.has('ind'))   {populateIndSel();renderIndividual();}
   if(needRender.has('cover')) {renderCoverStats();renderCoverBehRead();}
 
-  // อัปเดตลายเซ็น
   ['sig-teacher','sig-teacher-pos','sig-director','sig-director-pos'].forEach(id=>{
-    const el=document.getElementById(id); if(!el) return;
+    const el=document.getElementById(id);if(!el)return;
     if(id==='sig-teacher')     el.textContent=D.teacher||'';
     if(id==='sig-teacher-pos') el.textContent=D.teacherPos?'ตำแหน่ง'+D.teacherPos:'';
     if(id==='sig-director')    el.textContent=D.director||'';
     if(id==='sig-director-pos')el.textContent=D.school?'ตำแหน่งผู้อำนวยการโรงเรียน'+D.school:'ตำแหน่งผู้อำนวยการโรงเรียน';
   });
   if(needRender.has('cover')) _prepareCoverPrintElements();
-
   await new Promise(r=>setTimeout(r,300));
 
-  // ── 2. จัดการ CSS สำหรับ PDF ──
-  // เพิ่ม style: แสดงทุกหน้าที่เลือก + page-break ระหว่างหน้า
-  const selectedIds=pageList.map(p=>'#page-'+p.page);
+  /* ── 2. ดึง print CSS ทั้งหมดออกมา (stripped จาก @media print wrapper) ── */
+  let printCSS='';
+  for(const sheet of document.styleSheets){
+    try{
+      for(const rule of sheet.cssRules){
+        if(rule.type===CSSRule.MEDIA_RULE && rule.conditionText==='print'){
+          /* ลอก rule ข้างใน stripped wrapper */
+          for(const inner of rule.cssRules) printCSS+=inner.cssText+'\n';
+        }
+        if(rule.type===CSSRule.FONT_FACE_RULE) printCSS+=rule.cssText+'\n';
+      }
+    }catch(e){}
+  }
 
-  // page-break-after สำหรับทุกหน้า ยกเว้นหน้าสุดท้าย
-  const breakRules=pageList.slice(0,-1).map(p=>
-    `#page-${p.page}.active{page-break-after:always;}`
-  ).join('\n');
+  /* ── 3. ขนาด A4 เป็น px ที่ 96dpi ── */
+  const MM=96/25.4;
+  const A4p={w:Math.round(210*MM),h:Math.round(297*MM),wmm:210,hmm:297}; // portrait
+  const A4l={w:Math.round(297*MM),h:Math.round(210*MM),wmm:297,hmm:210}; // landscape
 
-  // orientation override: ถ้า PDF มีทั้ง portrait+landscape ต้องให้ @page landscape ทำงาน
-  // print CSS เดิมมี: #page-att.active{page:landscape;} และ @page landscape{size:A4 landscape;}
-  // → ใช้ได้เลยไม่ต้อง override
-
-  let pdfStyle=document.getElementById('_pdf_style');
-  if(!pdfStyle){pdfStyle=document.createElement('style');pdfStyle.id='_pdf_style';document.head.appendChild(pdfStyle);}
-  pdfStyle.textContent=`
-    @media print{
-      /* แสดงทุกหน้าที่เลือกพร้อมกัน */
-      ${selectedIds.join(',')}{display:block!important;width:100%!important;overflow:visible!important;}
-      /* page-break ระหว่างหน้า */
-      ${breakRules}
-    }
-  `;
-
-  // ── 3. ทำให้ทุกหน้าที่เลือก active ใน DOM ──
-  // บันทึกสถานะเดิม
-  const allPages=document.querySelectorAll('.page');
-  const prevActive=[...allPages].filter(el=>el.classList.contains('active')).map(el=>el.id);
-
-  // ตั้งค่า: แสดงเฉพาะหน้าที่เลือก
-  allPages.forEach(el=>el.classList.remove('active'));
-  pageList.forEach(p=>{
-    const el=document.getElementById('page-'+p.page);
-    if(el) el.classList.add('active');
+  /* ── 4. สร้าง PDF ── */
+  const firstPage=pageList[0];
+  const firstSz=firstPage.landscape?A4l:A4p;
+  const pdf=new jsPDFLib({
+    orientation:firstPage.landscape?'landscape':'portrait',
+    unit:'mm',format:[firstSz.wmm,firstSz.hmm]
   });
 
-  // scroll area ต้องไม่ clip content
-  const scrollArea=document.getElementById('scroll-area');
-  const prevOverflow=scrollArea?scrollArea.style.overflow:'';
-  if(scrollArea) scrollArea.style.overflow='visible';
+  for(let i=0;i<pageList.length;i++){
+    const p=pageList[i];
+    const sz=p.landscape?A4l:A4p;
+    showLoading(`กำลังสร้าง PDF... หน้า ${i+1}/${pageList.length}`);
 
-  await new Promise(r=>setTimeout(r,200));
+    /* สร้าง iframe ที่ขนาด A4 จริง แล้วใส่ print CSS + HTML ของหน้านั้น */
+    const iframe=document.createElement('iframe');
+    iframe.style.cssText=`position:fixed;left:0;top:0;width:${sz.w}px;height:${sz.h}px;`+
+      `border:none;opacity:0;pointer-events:none;z-index:-1;`;
+    document.body.appendChild(iframe);
+    const idoc=iframe.contentDocument;
+
+    /* HTML ของหน้านั้น — ใช้ DOM จริง outerHTML หลัง render แล้ว */
+    const pageEl=document.getElementById('page-'+p.page);
+    if(!pageEl){iframe.remove();continue;}
+
+    /* inject เข้า iframe */
+    idoc.open();
+    idoc.write(`<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8">
+<style>
+/* ── reset ── */
+*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+html,body{
+  width:${sz.w}px;margin:0;padding:0;background:#fff;overflow:visible;
+  font-family:'THSarabunNew','Sarabun',sans-serif;font-size:10pt;color:#000;
+}
+/* ── โครงสร้าง app ── */
+.app-wrap,.scroll-area,.scroll-content{display:block;width:100%;height:auto;overflow:visible;position:static;padding:0;margin:0;background:#fff;}
+/* ── ซ่อน UI ── */
+.bottom-nav,.topbar,.status-bar,.topbar-actions,.no-print,
+.toast,#launcher,#auth-overlay,#loading-overlay,
+#print-signature,#print-copyright-footer{display:none!important;}
+/* ── page active ── */
+.page{display:none;}.page.active{display:block;width:100%;overflow:visible;}
+/* ── Print CSS จริงทั้งหมด (stripped @media print) ── */
+${printCSS}
+/* ── margin เป็น px แทน mm ── */
+body{padding:${p.landscape?Math.round(12*MM):Math.round(15*MM)}px ${p.landscape?Math.round(12*MM):Math.round(14*MM)}px;}
+</style></head><body>
+<div class="app-wrap"><div class="scroll-area"><div class="scroll-content" style="padding:0;padding-bottom:0;">
+${pageEl.outerHTML.replace(/class="page([^"]*)"/, 'class="page$1 active"')}
+</div></div></div>
+</body></html>`);
+    idoc.close();
+
+    /* รอ render + font */
+    await new Promise(r=>setTimeout(r,700));
+
+    /* html2canvas จาก body ของ iframe */
+    let canvas;
+    try{
+      canvas=await html2canvas(idoc.body,{
+        scale:2,useCORS:true,allowTaint:true,
+        backgroundColor:'#ffffff',
+        width:sz.w,height:idoc.body.scrollHeight||sz.h,
+        windowWidth:sz.w,windowHeight:sz.h,
+        scrollX:0,scrollY:0,logging:false,
+      });
+    }catch(e){console.error('html2canvas',p.page,e);iframe.remove();continue;}
+    iframe.remove();
+
+    /* ครอป/scale ให้พอดี A4 */
+    const imgW=sz.wmm;
+    const imgH=Math.min(sz.hmm, (canvas.height/canvas.width)*sz.wmm);
+    const imgData=canvas.toDataURL('image/jpeg',0.92);
+
+    if(i>0) pdf.addPage([sz.wmm,sz.hmm], p.landscape?'landscape':'portrait');
+    pdf.addImage(imgData,'JPEG',0,0,imgW,sz.hmm,'','FAST');
+  }
+
+  /* ── 5. cleanup & download ── */
+  _cleanupCoverPrintElements();
   hideLoading();
 
-  // ── 4. print ──
-  window.print();
-
-  // ── 5. คืนสถานะ DOM หลัง print dialog ปิด ──
-  // ใช้ afterprint event
-  const restore=()=>{
-    allPages.forEach(el=>el.classList.remove('active'));
-    prevActive.forEach(id=>{
-      const el=document.getElementById(id);
-      if(el) el.classList.add('active');
-    });
-    if(scrollArea) scrollArea.style.overflow=prevOverflow;
-    const ps=document.getElementById('_pdf_style');
-    if(ps) ps.remove();
-    _cleanupCoverPrintElements();
-    window.removeEventListener('afterprint',restore);
-  };
-  window.addEventListener('afterprint',restore);
-  // fallback timeout (Safari/ระบบที่ afterprint ไม่ fire)
-  setTimeout(restore, 5000);
+  const fname=`ปพ5_${(D.school||'รร').replace(/\s/g,'_')}_${(D.subject||'วิชา').replace(/\s/g,'_')}_${D.year||''}.pdf`;
+  pdf.save(fname);
+  showToast('✅ ดาวน์โหลด PDF สำเร็จ');
 }
 
 /* ── ล้าง cover print elements ที่ inject ไว้ ── */
