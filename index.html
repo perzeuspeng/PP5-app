@@ -666,8 +666,19 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   /* ════════════════════════════════════════════
      หน้าเวลาเรียน (Landscape)
   ════════════════════════════════════════════ */
-  #page-att.active{page:att-page;size:A4 landscape;}
-  #page-att.active .tbl-wrap{overflow:visible!important;width:auto!important;max-width:100%!important;}
+  #page-att.active{}
+  /* ── web view: ซ่อน att-print-all ── */
+  #att-print-all{display:none!important;}
+  /* ── print: แสดง att-print-all ซ่อน grid/year wraps ── */
+  #page-att.active #att-print-all{display:block!important;}
+  #page-att.active #att-grid-wrap{display:none!important;}
+  #page-att.active #att-year-wrap{display:none!important;}
+  #page-att.active .att-month-tabs{display:none!important;}
+  /* แต่ละ block เดือนแยกหน้า */
+  .att-print-month{page-break-after:always!important;break-after:page!important;padding-bottom:4mm!important;}
+  .att-print-month:last-child{page-break-after:auto!important;break-after:auto!important;}
+  .att-print-month-title{font-size:10pt!important;font-weight:800!important;text-align:center!important;padding:4px 0!important;border-bottom:2px solid #000!important;margin-bottom:5px!important;}
+  #page-att.active .tbl-wrap{overflow:visible!important;width:100%!important;max-width:100%!important;}
   #page-att.active #att-grid-table{
     width:auto!important;max-width:100%!important;min-width:0!important;
     table-layout:fixed!important;font-size:5.5pt!important;border-collapse:collapse!important;
@@ -759,11 +770,12 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   #page-s1.active table.xlt thead th.score-item-th,
   #page-s2.active table.xlt thead th.score-item-th{
     width:3%!important;min-width:0!important;height:80px!important;
-    font-size:6pt!important;padding:2px 1px!important;
-    vertical-align:bottom!important;text-align:left!important;
+    font-size:6pt!important;padding:0 1px 2px 1px!important;
+    vertical-align:bottom!important;text-align:center!important;
     writing-mode:vertical-lr!important;transform:rotate(180deg)!important;
     overflow:hidden!important;border:1px solid #000!important;
     background:#f0f0f0!important;color:#000!important;
+    display:table-cell!important;
   }
   /* แถว max score */
   #page-s1.active table.xlt thead tr:nth-child(2) th,
@@ -1429,6 +1441,9 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
       <div class="tbl-wrap" id="att-table-wrap"></div>
     </div>
   </div>
+
+  <!-- ── โหมดพิมพ์: แสดงทุกเดือนเรียงกัน ── -->
+  <div id="att-print-all" style="display:none"></div>
 
   <div id="att-year-wrap" style="display:none">
     <div class="sec-box">
@@ -2176,6 +2191,50 @@ function renderAttGrid(){
   html+=`</tbody></table>`;
   document.getElementById('att-table-wrap').innerHTML=html;
 }
+function _buildAttPrintAll(){
+  const wrap=document.getElementById('att-print-all');
+  if(!wrap)return;
+  const n=D.students.filter(s=>s.name).length;
+  if(!n){wrap.innerHTML='';return;}
+  const ATT_LABEL={'m':'✓','x':'✗','l':'ส','lv':'ล','':''};
+  const ATT_CLS={'m':'att-m','x':'att-x','l':'att-l','lv':'att-lv','':'att-empty'};
+  let html='';
+  MONTHS.forEach((mName,mi)=>{
+    const days=MDAYS[mi];
+    const dayNums=Array.from({length:days},(_,i)=>i+1);
+    let tbl=`<table class="xlt" id="att-grid-table" style="width:100%;font-size:11px">
+      <thead><tr>
+        <th class="name-th">ชื่อ-สกุล</th><th class="no-th">ที่</th>
+        ${dayNums.map(d=>`<th class="att-day-th" style="padding:3px 1px">${d}</th>`).join('')}
+        <th class="att-sum-th">ม</th><th class="att-sum-th">ป</th><th class="att-sum-th">ล</th><th class="att-sum-th">ข</th>
+        <th class="att-pct-th">%มา</th>
+      </tr></thead><tbody>`;
+    D.students.forEach((s,si)=>{
+      if(!s.name)return;
+      const row=D.att[mi][si]||[];
+      const m=row.filter(c=>c==='m').length;
+      const x=row.filter(c=>c==='x').length;
+      const l=row.filter(c=>c==='l').length;
+      const lv=row.filter(c=>c==='lv').length;
+      const tot=D.attDays[mi]||days;
+      const pct=tot>0?Math.round(m/tot*100):0;
+      const ok=pct>=80;
+      tbl+=`<tr style="background:${si%2===0?'#fff':'#f9fafb'}">
+        ${tdName(si,s.name)}${tdNo(si,s.no)}
+        ${dayNums.map(d=>{const v=row[d-1]||'';return `<td style="padding:1px;text-align:center"><span class="att-dot ${ATT_CLS[v]}">${ATT_LABEL[v]}</span></td>`;}).join('')}
+        <td class="ac">${m}</td><td class="ac">${x}</td><td class="ac">${l}</td><td class="ac">${lv}</td>
+        <td class="ac" style="color:${ok?'#166534':'#991b1b'};font-weight:800">${pct}%</td>
+      </tr>`;
+    });
+    tbl+=`</tbody></table>`;
+    html+=`<div class="att-print-month">
+      <div class="att-print-month-title">บันทึกการมาเรียน — เดือน${mName} (วันเรียนเต็ม ${D.attDays[mi]||days} วัน)</div>
+      <div class="tbl-wrap">${tbl}</div>
+    </div>`;
+  });
+  wrap.innerHTML=html;
+}
+
 function toggleAtt(si,di,cell){
   const cur=D.att[attMonth][si][di]||'';
   const CYCLE={'':'m','m':'x','x':'l','l':'lv','lv':''};
@@ -2962,7 +3021,7 @@ async function generatePDF(){
 
   // ── 1. render ข้อมูลทุกหน้า ──
   const needRender=new Set(pageList.map(p=>p.page));
-  if(needRender.has('att'))   renderAttPage();
+  if(needRender.has('att'))   {renderAttPage();_buildAttPrintAll();}
   if(needRender.has('s1'))    renderScore(1);
   if(needRender.has('s2'))    renderScore(2);
   if(needRender.has('total')) {renderTotal();drawCharts();}
@@ -3444,7 +3503,7 @@ async function generatePDF(){
   /* ════════════════════════════════════════════
      หน้าเวลาเรียน (Landscape)
   ════════════════════════════════════════════ */
-  #page-att.active{page:att-page;}
+  #page-att.active{}
   #page-att.active .tbl-wrap{overflow:visible!important;width:auto!important;max-width:100%!important;}
   #page-att.active #att-grid-table{
     width:auto!important;max-width:100%!important;min-width:0!important;
@@ -3525,11 +3584,12 @@ async function generatePDF(){
   #page-s1.active table.xlt thead th.score-item-th,
   #page-s2.active table.xlt thead th.score-item-th{
     width:3%!important;min-width:0!important;height:80px!important;
-    font-size:6pt!important;padding:2px 1px!important;
-    vertical-align:bottom!important;text-align:left!important;
+    font-size:6pt!important;padding:0 1px 2px 1px!important;
+    vertical-align:bottom!important;text-align:center!important;
     writing-mode:vertical-lr!important;transform:rotate(180deg)!important;
     overflow:hidden!important;border:1px solid #000!important;
     background:#f0f0f0!important;color:#000!important;
+    display:table-cell!important;
   }
   /* แถว max score ด้านล่าง header */
   #page-s1.active table.xlt thead tr:nth-child(2) th,
@@ -3941,7 +4001,7 @@ const hideLoading=()=>document.getElementById('loading-overlay').classList.remov
 /* ══ PRINT CURRENT PAGE ══ */
 function printCurrentPage(){
   // render ข้อมูลปัจจุบันก่อน print
-  if(currentPage==='att')    renderAttPage();
+  if(currentPage==='att')    {renderAttPage();_buildAttPrintAll();}
   if(currentPage==='s1')     renderScore(1);
   if(currentPage==='s2')     renderScore(2);
   if(currentPage==='total')  {renderTotal();drawCharts();}
@@ -3964,7 +4024,7 @@ function printCurrentPage(){
   let styleEl=document.getElementById('print-orientation-style');
   if(!styleEl){styleEl=document.createElement('style');styleEl.id='print-orientation-style';document.head.appendChild(styleEl);}
   styleEl.textContent=isLandscape
-    ?'@media print{@page{size:A4 landscape!important;margin:12mm 12mm 18mm 12mm!important;}}'
+    ?'@media print{@page{size:A4 landscape!important;margin:12mm 12mm 18mm 12mm!important;} html,body{size:A4 landscape!important;}}'
     :'@media print{@page{size:A4 portrait!important;margin:15mm 14mm 20mm 14mm!important;}}';
 
   if(currentPage==='cover'){
