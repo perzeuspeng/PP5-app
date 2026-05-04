@@ -2729,9 +2729,9 @@ async function generatePDF(){
   if(!pageList.length){showToast('⚠️ กรุณาเลือกอย่างน้อย 1 หน้า');return;}
 
   const jsPDFLib=(window.jspdf&&window.jspdf.jsPDF)||window.jsPDF;
-  if(!jsPDFLib){showToast('❌ โหลด jsPDF ไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต');return;}
+  if(!jsPDFLib){showToast('❌ โหลด jsPDF ไม่สำเร็จ');return;}
 
-  showLoading('กำลังเตรียมข้อมูล... (1/'+pageList.length+')');
+  showLoading('กำลังเตรียมข้อมูล...');
   await new Promise(r=>setTimeout(r,100));
 
   // ── 1. render ข้อมูลทุกหน้าที่เลือก ──
@@ -2743,6 +2743,7 @@ async function generatePDF(){
   if(needRender.has('beh'))   renderBehavior();
   if(needRender.has('ind'))   {populateIndSel();renderIndividual();}
   if(needRender.has('cover')) {renderCoverStats();renderCoverBehRead();}
+
   // อัปเดตลายเซ็น
   const sigT=document.getElementById('sig-teacher');
   const sigTP=document.getElementById('sig-teacher-pos');
@@ -2756,18 +2757,39 @@ async function generatePDF(){
 
   await new Promise(r=>setTimeout(r,400));
 
-  // ── 2. จำ active page เดิม ──
-  const allPageEls=document.querySelectorAll('.page');
-  const prevActivePage=currentPage;
+  // ── 2. ดึง print CSS จากหน้าปัจจุบัน ──
+  const getPrintCSS=()=>{
+    let css='';
+    for(const sheet of document.styleSheets){
+      try{
+        for(const rule of sheet.cssRules){
+          if(rule.type===CSSRule.MEDIA_RULE && rule.conditionText==='print'){
+            css+=rule.cssText;
+          }
+        }
+      }catch(e){}
+    }
+    return css;
+  };
 
-  // ── 3. inject print-simulation style ──
-  // Style นี้จำลอง print CSS บนหน้าจอ เพื่อให้ html2canvas capture ได้ถูกต้อง
-  let capStyle=document.getElementById('_pdf_cap_style');
-  if(!capStyle){capStyle=document.createElement('style');capStyle.id='_pdf_cap_style';document.head.appendChild(capStyle);}
+  // ── 3. ดึง font CSS ──
+  const getFontCSS=()=>{
+    let css='';
+    for(const sheet of document.styleSheets){
+      try{
+        for(const rule of sheet.cssRules){
+          if(rule.type===CSSRule.FONT_FACE_RULE) css+=rule.cssText+'\n';
+        }
+      }catch(e){}
+    }
+    return css;
+  };
 
-  // ── 4. สร้าง jsPDF (orientation ตามหน้าแรก) ──
-  const A4_W=210, A4_H=297;
-  const A4_W_L=297, A4_H_L=210;
+  // ── 4. สร้าง PDF ──
+  const A4_W=210, A4_H=297, A4_W_L=297, A4_H_L=210;
+  const DPI=96;
+  const MM_PX=DPI/25.4; // px per mm
+
   const firstLs=pageList[0].landscape;
   const pdf=new jsPDFLib({
     orientation:firstLs?'landscape':'portrait',
@@ -2775,94 +2797,104 @@ async function generatePDF(){
     format:firstLs?[A4_W_L,A4_H_L]:[A4_W,A4_H]
   });
 
+  const allPageEls=document.querySelectorAll('.page');
+  const prevActivePage=currentPage;
+  const printCSS=getPrintCSS();
+  const fontCSS=getFontCSS();
+
   for(let i=0;i<pageList.length;i++){
     const p=pageList[i];
-    showLoading(`กำลังสร้าง PDF... (${i+1}/${pageList.length}) หน้า: ${p.page}`);
-    await new Promise(r=>setTimeout(r,50));
+    showLoading(`กำลังสร้าง PDF... (${i+1}/${pageList.length})`);
 
-    // แสดงเฉพาะหน้านี้
-    allPageEls.forEach(e=>e.classList.remove('active'));
-    const pageEl=document.getElementById('page-'+p.page);
-    if(!pageEl) continue;
-    pageEl.classList.add('active');
-
-    // inject style จำลอง print สำหรับหน้านี้
+    // กำหนดขนาด A4 เป็น px
     const ls=p.landscape;
-    const pw=ls?A4_W_L:A4_W; // mm
-    const ph=ls?A4_H_L:A4_H;
-    const scale=3.7795; // 1mm = 3.7795px at 96dpi
-    const capW=Math.round(pw*scale);
-    const capH=Math.round(ph*scale);
+    const pageWmm=ls?A4_W_L:A4_W;
+    const pageHmm=ls?A4_H_L:A4_H;
+    const margin=ls?10:12; // mm - ตาม print CSS
+    const contentWmm=pageWmm-margin*2;
+    const contentHmm=pageHmm-margin*2-20; // เผื่อ footer
+    const SCALE=2; // retina scale
+    const pageWpx=Math.round(pageWmm*MM_PX);
+    const pageHpx=Math.round(pageHmm*MM_PX);
 
-    capStyle.textContent=`
-      #_pdf_overlay{
-        position:fixed!important;top:0!important;left:0!important;
-        width:${capW}px!important;height:${capH}px!important;
-        overflow:hidden!important;z-index:-1!important;
-        background:#fff!important;
-      }
-      .bottom-nav,.topbar,.status-bar,.topbar-actions,.no-print,
-      .toast,#launcher,#auth-overlay,#sync-status,.modal-overlay{display:none!important;}
-      .app-wrap{position:static!important;height:auto!important;overflow:visible!important;display:block!important;}
-      .scroll-area,.scroll-content,.page-inner{
-        position:static!important;height:auto!important;overflow:visible!important;display:block!important;padding-bottom:0!important;
-      }
-    `;
+    // ── สร้าง iframe ซ่อน ──
+    const iframe=document.createElement('iframe');
+    iframe.style.cssText=`position:fixed;left:-9999px;top:0;width:${pageWpx}px;height:${pageHpx}px;border:none;visibility:hidden;`;
+    document.body.appendChild(iframe);
+    const idoc=iframe.contentDocument||iframe.contentWindow.document;
 
-    await new Promise(r=>setTimeout(r,100));
+    // หาเนื้อหาของหน้านี้
+    const pageEl=document.getElementById('page-'+p.page);
+    if(!pageEl){iframe.remove();continue;}
+    const pageHTML=pageEl.outerHTML.replace(/class="page"/,'class="page active"').replace(/class="page active"/,'class="page active"');
 
-    // สร้าง overlay div สำหรับ capture
-    let overlay=document.getElementById('_pdf_overlay');
-    if(!overlay){overlay=document.createElement('div');overlay.id='_pdf_overlay';document.body.appendChild(overlay);}
-    overlay.style.cssText=`position:fixed;top:0;left:0;width:${capW}px;height:${capH}px;overflow:hidden;z-index:-1;background:#fff;`;
+    // inject HTML เข้า iframe พร้อม print CSS ทั้งหมด
+    idoc.open();
+    idoc.write(`<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<style>
+${fontCSS}
+*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+html,body{
+  width:${pageWpx}px;height:${pageHpx}px;
+  margin:0;padding:${Math.round(margin*MM_PX)}px;
+  background:#fff;overflow:hidden;
+  font-family:'THSarabunNew','Sarabun',sans-serif;font-size:10pt;color:#000;
+}
+/* --- Web base styles needed --- */
+.page{display:none;}.page.active{display:block;width:100%;overflow:visible;}
+.app-wrap,.scroll-area,.scroll-content{display:block;width:100%;height:auto;overflow:visible;position:static;padding:0;margin:0;}
+/* --- Print CSS (stripped of @media print wrapper) --- */
+${printCSS.replace(/@media print\s*\{([\s\S]*)\}/,'$1')}
+</style>
+</head>
+<body>
+<div class="app-wrap">
+<div class="scroll-area">
+<div class="scroll-content" style="padding:0;padding-bottom:0;">
+${pageHTML}
+</div></div></div>
+</body></html>`);
+    idoc.close();
 
-    // clone หน้าเข้า overlay
-    const clone=pageEl.cloneNode(true);
-    clone.classList.add('active');
-    clone.style.cssText=`display:block!important;width:${capW}px!important;min-height:${capH}px!important;overflow:visible!important;position:static!important;background:#fff!important;box-sizing:border-box!important;padding:${Math.round(12*scale)}px ${Math.round(14*scale)}px!important;`;
-    overlay.innerHTML='';
-    overlay.appendChild(clone);
-
-    await new Promise(r=>setTimeout(r,200));
+    // รอให้ iframe render เสร็จ
+    await new Promise(r=>setTimeout(r,500));
 
     // capture ด้วย html2canvas
     let canvas;
     try{
-      canvas=await html2canvas(overlay,{
-        scale:2,
+      canvas=await html2canvas(idoc.body,{
+        scale:SCALE,
         useCORS:true,
         allowTaint:true,
         backgroundColor:'#ffffff',
-        width:capW,
-        height:capH,
-        windowWidth:capW,
-        windowHeight:capH,
+        width:pageWpx,
+        height:pageHpx,
+        windowWidth:pageWpx,
+        windowHeight:pageHpx,
         scrollX:0,
         scrollY:0,
         logging:false,
+        foreignObjectRendering:false,
       });
     }catch(e){
-      console.error('html2canvas error:',e);
+      console.error('html2canvas error page',p.page,e);
+      iframe.remove();
       continue;
     }
 
-    const imgData=canvas.toDataURL('image/jpeg',0.92);
-    const imgW=pw;
-    const imgH=ph;
+    iframe.remove();
 
+    const imgData=canvas.toDataURL('image/jpeg',0.95);
     if(i>0){
       pdf.addPage(ls?[A4_W_L,A4_H_L]:[A4_W,A4_H], ls?'landscape':'portrait');
     }
-    pdf.addImage(imgData,'JPEG',0,0,imgW,imgH,'','FAST');
-
-    // ทำความสะอาด
-    overlay.innerHTML='';
+    pdf.addImage(imgData,'JPEG',0,0,pageWmm,pageHmm,'','FAST');
   }
 
   // ── 5. คืนค่า ──
-  capStyle.remove();
-  const overlay=document.getElementById('_pdf_overlay');
-  if(overlay) overlay.remove();
   ['_p_school','_p_year_hours','_p_year_col','_p_hours_col','_p_teacher','_p_advisor','_p_apv_date'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.remove();
   });
@@ -2878,11 +2910,12 @@ async function generatePDF(){
 
   hideLoading();
 
-  // ── 6. ดาวน์โหลด PDF ──
+  // ── 6. ดาวน์โหลด ──
   const fname=`ปพ5_${D.school||'โรงเรียน'}_${D.subject||'วิชา'}_${D.year||''}.pdf`;
   pdf.save(fname);
   showToast('✅ ดาวน์โหลด PDF สำเร็จ');
 }
+
 
 /* ══ เตรียม cover print elements (ใช้ร่วมกับ printCurrentPage และ generatePDF) ══ */
 function _prepareCoverPrintElements(){
