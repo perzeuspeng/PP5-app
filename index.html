@@ -14,6 +14,7 @@
 @font-face{font-family:'THSarabunNew';src:url('https://cdn.jsdelivr.net/npm/font-th-sarabun-new@1.0.0/fonts/THSarabunNew-BoldItalic.woff') format('woff'),url('https://cdn.jsdelivr.net/npm/font-th-sarabun-new@1.0.0/fonts/THSarabunNew-BoldItalic.ttf') format('truetype');font-weight:700;font-style:italic;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://apis.google.com/js/api.js" async defer></script>
 <style>
@@ -2715,19 +2716,23 @@ async function generatePDF(){
   closeModal('report-modal');
 
   const pageList=[
-    {id:'r-cover',  page:'cover'},
-    {id:'r-stu',    page:'students'},
-    {id:'r-att',    page:'att'},
-    {id:'r-s1',     page:'s1'},
-    {id:'r-s2',     page:'s2'},
-    {id:'r-tot',    page:'total'},
-    {id:'r-beh',    page:'beh'},
-    {id:'r-ind',    page:'ind'},
+    {id:'r-cover', page:'cover',    landscape:false},
+    {id:'r-stu',   page:'students', landscape:false},
+    {id:'r-att',   page:'att',      landscape:true},
+    {id:'r-s1',    page:'s1',       landscape:true},
+    {id:'r-s2',    page:'s2',       landscape:true},
+    {id:'r-tot',   page:'total',    landscape:false},
+    {id:'r-beh',   page:'beh',      landscape:false},
+    {id:'r-ind',   page:'ind',      landscape:false},
   ].filter(p=>document.getElementById(p.id)?.checked);
 
   if(!pageList.length){showToast('⚠️ กรุณาเลือกอย่างน้อย 1 หน้า');return;}
 
-  showLoading('กำลังเตรียมข้อมูล...');
+  const jsPDFLib=(window.jspdf&&window.jspdf.jsPDF)||window.jsPDF;
+  if(!jsPDFLib){showToast('❌ โหลด jsPDF ไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต');return;}
+
+  showLoading('กำลังเตรียมข้อมูล... (1/'+pageList.length+')');
+  await new Promise(r=>setTimeout(r,100));
 
   // ── 1. render ข้อมูลทุกหน้าที่เลือก ──
   const needRender=new Set(pageList.map(p=>p.page));
@@ -2738,95 +2743,145 @@ async function generatePDF(){
   if(needRender.has('beh'))   renderBehavior();
   if(needRender.has('ind'))   {populateIndSel();renderIndividual();}
   if(needRender.has('cover')) {renderCoverStats();renderCoverBehRead();}
-
-  // ── 2. อัปเดตลายเซ็น ──
-  ['sig-teacher','sig-teacher-pos','sig-director','sig-director-pos'].forEach(id=>{
-    const el=document.getElementById(id);if(!el)return;
-    if(id==='sig-teacher')     el.textContent=D.teacher||'';
-    if(id==='sig-teacher-pos') el.textContent=D.teacherPos?'ตำแหน่ง'+D.teacherPos:'';
-    if(id==='sig-director')    el.textContent=D.director||'';
-    if(id==='sig-director-pos')el.textContent=D.school?'ตำแหน่งผู้อำนวยการโรงเรียน'+D.school:'ตำแหน่งผู้อำนวยการโรงเรียน';
-  });
-
-  await new Promise(r=>setTimeout(r,200));
-
-  // ── 3. เพิ่ม .active ให้ทุกหน้าที่เลือก (print CSS ต้องการ .active) ──
-  const allPageEls=document.querySelectorAll('.page');
-  // จำหน้าที่ active อยู่เดิม
-  const prevActive=document.querySelector('.page.active');
-  const prevActivePage=prevActive?prevActive.id.replace('page-',''):currentPage;
-
-  // ลบ active ทั้งหมดก่อน
-  allPageEls.forEach(e=>e.classList.remove('active'));
-  // เพิ่ม active เฉพาะหน้าที่เลือก
-  pageList.forEach(p=>{
-    const el=document.getElementById('page-'+p.page);
-    if(el) el.classList.add('active');
-  });
-
-  // เตรียม cover elements ถ้าเลือกหน้าปก
+  // อัปเดตลายเซ็น
+  const sigT=document.getElementById('sig-teacher');
+  const sigTP=document.getElementById('sig-teacher-pos');
+  const sigD=document.getElementById('sig-director');
+  const sigDP=document.getElementById('sig-director-pos');
+  if(sigT)  sigT.textContent=D.teacher||'';
+  if(sigTP) sigTP.textContent=D.teacherPos?'ตำแหน่ง'+D.teacherPos:'';
+  if(sigD)  sigD.textContent=D.director||'';
+  if(sigDP) sigDP.textContent=D.school?'ตำแหน่งผู้อำนวยการโรงเรียน'+D.school:'ตำแหน่งผู้อำนวยการโรงเรียน';
   if(needRender.has('cover')) _prepareCoverPrintElements();
 
-  // ── 4. inject PDF print style ──
-  // CSS นี้จะ override การแสดงผล: แสดงทุกหน้า active เรียงกัน + page-break ระหว่างหน้า
-  const landscapePages=new Set(['att','s1','s2']);
-  const hasLandscape=pageList.some(p=>landscapePages.has(p.page));
-  const hasPortrait =pageList.some(p=>!landscapePages.has(p.page));
+  await new Promise(r=>setTimeout(r,400));
 
-  // สร้าง page-break rules — ทุกหน้ายกเว้นหน้าสุดท้ายให้ break after
-  const breakRules=pageList.slice(0,-1).map(p=>`#page-${p.page}.active{page-break-after:always!important;break-after:page!important;}`).join('\n  ');
+  // ── 2. จำ active page เดิม ──
+  const allPageEls=document.querySelectorAll('.page');
+  const prevActivePage=currentPage;
 
-  // orientation: ถ้ามีทั้งสองแบบ → portrait (browser จะจัดการ landscape ผ่าน @page named pages ไม่ได้ใน mobile)
-  // ดังนั้นใช้ portrait ตลอด แล้วหน้า s1/s2/att จะ rotate เอง
-  let styleEl=document.getElementById('pdf-export-style');
-  if(!styleEl){styleEl=document.createElement('style');styleEl.id='pdf-export-style';document.head.appendChild(styleEl);}
+  // ── 3. inject print-simulation style ──
+  // Style นี้จำลอง print CSS บนหน้าจอ เพื่อให้ html2canvas capture ได้ถูกต้อง
+  let capStyle=document.getElementById('_pdf_cap_style');
+  if(!capStyle){capStyle=document.createElement('style');capStyle.id='_pdf_cap_style';document.head.appendChild(capStyle);}
 
-  styleEl.textContent=`
-@media print{
-  /* ── ซ่อนทุก .page ที่ไม่ได้เลือก ── */
-  .page{display:none!important;}
-  /* ── แสดงทุกหน้าที่เลือก (มี .active) ── */
-  .page.active{display:block!important;}
-  /* ── page-break ระหว่างหน้า ── */
-  ${breakRules}
-  /* ── layout wrappers: ปลด fixed height/scroll ── */
-  html,body{overflow:visible!important;height:auto!important;}
-  .app-wrap{display:block!important;height:auto!important;overflow:visible!important;position:static!important;}
-  .scroll-area,.scroll-content,.page-inner{
-    display:block!important;height:auto!important;overflow:visible!important;
-    position:static!important;padding-bottom:0!important;
+  // ── 4. สร้าง jsPDF (orientation ตามหน้าแรก) ──
+  const A4_W=210, A4_H=297;
+  const A4_W_L=297, A4_H_L=210;
+  const firstLs=pageList[0].landscape;
+  const pdf=new jsPDFLib({
+    orientation:firstLs?'landscape':'portrait',
+    unit:'mm',
+    format:firstLs?[A4_W_L,A4_H_L]:[A4_W,A4_H]
+  });
+
+  for(let i=0;i<pageList.length;i++){
+    const p=pageList[i];
+    showLoading(`กำลังสร้าง PDF... (${i+1}/${pageList.length}) หน้า: ${p.page}`);
+    await new Promise(r=>setTimeout(r,50));
+
+    // แสดงเฉพาะหน้านี้
+    allPageEls.forEach(e=>e.classList.remove('active'));
+    const pageEl=document.getElementById('page-'+p.page);
+    if(!pageEl) continue;
+    pageEl.classList.add('active');
+
+    // inject style จำลอง print สำหรับหน้านี้
+    const ls=p.landscape;
+    const pw=ls?A4_W_L:A4_W; // mm
+    const ph=ls?A4_H_L:A4_H;
+    const scale=3.7795; // 1mm = 3.7795px at 96dpi
+    const capW=Math.round(pw*scale);
+    const capH=Math.round(ph*scale);
+
+    capStyle.textContent=`
+      #_pdf_overlay{
+        position:fixed!important;top:0!important;left:0!important;
+        width:${capW}px!important;height:${capH}px!important;
+        overflow:hidden!important;z-index:-1!important;
+        background:#fff!important;
+      }
+      .bottom-nav,.topbar,.status-bar,.topbar-actions,.no-print,
+      .toast,#launcher,#auth-overlay,#sync-status,.modal-overlay{display:none!important;}
+      .app-wrap{position:static!important;height:auto!important;overflow:visible!important;display:block!important;}
+      .scroll-area,.scroll-content,.page-inner{
+        position:static!important;height:auto!important;overflow:visible!important;display:block!important;padding-bottom:0!important;
+      }
+    `;
+
+    await new Promise(r=>setTimeout(r,100));
+
+    // สร้าง overlay div สำหรับ capture
+    let overlay=document.getElementById('_pdf_overlay');
+    if(!overlay){overlay=document.createElement('div');overlay.id='_pdf_overlay';document.body.appendChild(overlay);}
+    overlay.style.cssText=`position:fixed;top:0;left:0;width:${capW}px;height:${capH}px;overflow:hidden;z-index:-1;background:#fff;`;
+
+    // clone หน้าเข้า overlay
+    const clone=pageEl.cloneNode(true);
+    clone.classList.add('active');
+    clone.style.cssText=`display:block!important;width:${capW}px!important;min-height:${capH}px!important;overflow:visible!important;position:static!important;background:#fff!important;box-sizing:border-box!important;padding:${Math.round(12*scale)}px ${Math.round(14*scale)}px!important;`;
+    overlay.innerHTML='';
+    overlay.appendChild(clone);
+
+    await new Promise(r=>setTimeout(r,200));
+
+    // capture ด้วย html2canvas
+    let canvas;
+    try{
+      canvas=await html2canvas(overlay,{
+        scale:2,
+        useCORS:true,
+        allowTaint:true,
+        backgroundColor:'#ffffff',
+        width:capW,
+        height:capH,
+        windowWidth:capW,
+        windowHeight:capH,
+        scrollX:0,
+        scrollY:0,
+        logging:false,
+      });
+    }catch(e){
+      console.error('html2canvas error:',e);
+      continue;
+    }
+
+    const imgData=canvas.toDataURL('image/jpeg',0.92);
+    const imgW=pw;
+    const imgH=ph;
+
+    if(i>0){
+      pdf.addPage(ls?[A4_W_L,A4_H_L]:[A4_W,A4_H], ls?'landscape':'portrait');
+    }
+    pdf.addImage(imgData,'JPEG',0,0,imgW,imgH,'','FAST');
+
+    // ทำความสะอาด
+    overlay.innerHTML='';
   }
-  /* ── ซ่อน UI ที่ไม่ต้องการ ── */
-  .bottom-nav,.topbar,.status-bar,.topbar-actions,.no-print,
-  .toast,#launcher,#auth-overlay,#sync-status,#report-modal,
-  .modal-overlay{display:none!important;}
-}`;
+
+  // ── 5. คืนค่า ──
+  capStyle.remove();
+  const overlay=document.getElementById('_pdf_overlay');
+  if(overlay) overlay.remove();
+  ['_p_school','_p_year_hours','_p_year_col','_p_hours_col','_p_teacher','_p_advisor','_p_apv_date'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.remove();
+  });
+  const schoolRow=document.querySelector('#page-cover .xls-form > .xls-row:has(#f-school)');
+  const teacherNameRow=document.getElementById('teacher-name-row');
+  const advisorNameRow=document.getElementById('advisor-name-row');
+  if(schoolRow)      schoolRow.style.display='';
+  if(teacherNameRow) teacherNameRow.style.display='';
+  if(advisorNameRow) advisorNameRow.style.display='';
+  allPageEls.forEach(e=>e.classList.remove('active'));
+  const cur=document.getElementById('page-'+prevActivePage);
+  if(cur) cur.classList.add('active');
 
   hideLoading();
-  await new Promise(r=>setTimeout(r,150));
 
-  // ── 5. print ──
-  window.print();
-
-  // ── 6. คืนค่าทุกอย่างหลัง print ──
-  setTimeout(()=>{
-    // ลบ pdf style
-    if(styleEl) styleEl.remove();
-    // ลบ cover elements ชั่วคราว
-    ['_p_school','_p_year_hours','_p_year_col','_p_hours_col','_p_teacher','_p_advisor','_p_apv_date'].forEach(id=>{
-      const el=document.getElementById(id);if(el)el.remove();
-    });
-    const schoolRow=document.querySelector('#page-cover .xls-form > .xls-row:has(#f-school)');
-    const teacherNameRow=document.getElementById('teacher-name-row');
-    const advisorNameRow=document.getElementById('advisor-name-row');
-    if(schoolRow)      schoolRow.style.display='';
-    if(teacherNameRow) teacherNameRow.style.display='';
-    if(advisorNameRow) advisorNameRow.style.display='';
-    // คืน active page เดิม
-    allPageEls.forEach(e=>e.classList.remove('active'));
-    const cur=document.getElementById('page-'+prevActivePage);
-    if(cur) cur.classList.add('active');
-  },800);
+  // ── 6. ดาวน์โหลด PDF ──
+  const fname=`ปพ5_${D.school||'โรงเรียน'}_${D.subject||'วิชา'}_${D.year||''}.pdf`;
+  pdf.save(fname);
+  showToast('✅ ดาวน์โหลด PDF สำเร็จ');
 }
 
 /* ══ เตรียม cover print elements (ใช้ร่วมกับ printCurrentPage และ generatePDF) ══ */
