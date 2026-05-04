@@ -216,6 +216,10 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   @page att-page { size:A4 landscape; margin:12mm 12mm 18mm 12mm; }
   @page s1-page  { size:A4 landscape; margin:12mm 12mm 18mm 12mm; }
   @page s2-page  { size:A4 landscape; margin:12mm 12mm 18mm 12mm; }
+  /* Fallback: กำหนด size โดยตรงสำหรับ browser ที่ไม่รองรับ named page */
+  #page-att.active, #page-s1.active, #page-s2.active{
+    /* hint เพิ่มเติม */
+  }
 
   /* ═══ ซ่อน UI ═══ */
   #loading-overlay,.bottom-nav,.topbar,
@@ -662,7 +666,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   /* ════════════════════════════════════════════
      หน้าเวลาเรียน (Landscape)
   ════════════════════════════════════════════ */
-  #page-att.active{page:att-page;}
+  #page-att.active{page:att-page;size:A4 landscape;}
   #page-att.active .tbl-wrap{overflow:visible!important;width:auto!important;max-width:100%!important;}
   #page-att.active #att-grid-table{
     width:auto!important;max-width:100%!important;min-width:0!important;
@@ -3440,7 +3444,7 @@ async function generatePDF(){
   /* ════════════════════════════════════════════
      หน้าเวลาเรียน (Landscape)
   ════════════════════════════════════════════ */
-  #page-att.active{page:landscape;}
+  #page-att.active{page:att-page;}
   #page-att.active .tbl-wrap{overflow:visible!important;width:auto!important;max-width:100%!important;}
   #page-att.active #att-grid-table{
     width:auto!important;max-width:100%!important;min-width:0!important;
@@ -3484,7 +3488,8 @@ async function generatePDF(){
   /* ════════════════════════════════════════════
      หน้าคะแนน ภาค 1 & 2 (Landscape)
   ════════════════════════════════════════════ */
-  #page-s1.active,#page-s2.active{page:landscape;}
+  #page-s1.active{page:s1-page;}
+  #page-s2.active{page:s2-page;}
   #page-s1.active .tbl-wrap,#page-s2.active .tbl-wrap{
     overflow:visible!important;width:auto!important;max-width:100%!important;
   }
@@ -3516,12 +3521,32 @@ async function generatePDF(){
     width:2%!important;border-right:1px solid #000!important;
   }
   #page-s1.active table.xlt td.no-td,#page-s2.active table.xlt td.no-td{background:#fafafa!important;}
-  #page-s1.active table.xlt thead th:not(.name-th):not(.no-th),
-  #page-s2.active table.xlt thead th:not(.name-th):not(.no-th){
-    width:2.8%!important;min-width:0!important;height:72px!important;
-    font-size:5pt!important;padding:2px 0!important;vertical-align:bottom!important;
+  /* header ชื่อหน่วย: เอียงล่าง→บน เหมือน web */
+  #page-s1.active table.xlt thead th.score-item-th,
+  #page-s2.active table.xlt thead th.score-item-th{
+    width:3%!important;min-width:0!important;height:80px!important;
+    font-size:6pt!important;padding:2px 1px!important;
+    vertical-align:bottom!important;text-align:left!important;
     writing-mode:vertical-lr!important;transform:rotate(180deg)!important;
-    word-break:break-all!important;overflow:hidden!important;
+    overflow:hidden!important;border:1px solid #000!important;
+    background:#f0f0f0!important;color:#000!important;
+  }
+  /* แถว max score ด้านล่าง header */
+  #page-s1.active table.xlt thead tr:nth-child(2) th,
+  #page-s2.active table.xlt thead tr:nth-child(2) th{
+    height:auto!important;writing-mode:horizontal-tb!important;
+    transform:none!important;font-size:7pt!important;
+    font-weight:800!important;padding:2px!important;
+    vertical-align:middle!important;text-align:center!important;
+  }
+  /* th สรุปคะแนน (rowspan cols ขวา — ไม่เอียง) */
+  #page-s1.active table.xlt thead th:not(.name-th):not(.no-th):not(.score-item-th),
+  #page-s2.active table.xlt thead th:not(.name-th):not(.no-th):not(.score-item-th){
+    writing-mode:horizontal-tb!important;transform:none!important;
+    font-size:6pt!important;height:auto!important;
+    padding:3px 2px!important;vertical-align:middle!important;
+    white-space:normal!important;word-break:break-word!important;
+    width:5%!important;
   }
   #page-s1.active table.xlt td.ac,#page-s2.active table.xlt td.ac{
     width:4%!important;font-size:6pt!important;
@@ -3679,6 +3704,13 @@ async function generatePDF(){
     // CSS สำหรับ capture: layout เหมือน print จริง บน screen
     // margin: 12mm top/bottom = ~45px, 14mm left/right = ~53px
     const mTop=45, mSide=53, mBot=75; // px (bottom เผื่อ footer)
+    // inject @page landscape/portrait ก่อน capture เพื่อให้ browser render ถูก orientation
+    let pageOrientStyle=document.getElementById('_pdf_page_orient');
+    if(!pageOrientStyle){pageOrientStyle=document.createElement('style');pageOrientStyle.id='_pdf_page_orient';document.head.appendChild(pageOrientStyle);}
+    pageOrientStyle.textContent=ls
+      ?'@media print{@page{size:A4 landscape!important;margin:12mm 12mm 18mm 12mm!important;}}'
+      :'@media print{@page{size:A4 portrait!important;margin:15mm 14mm 20mm 14mm!important;}}';
+
     sim.textContent=`
       body,html{
         margin:0!important;padding:0!important;
@@ -3743,6 +3775,8 @@ async function generatePDF(){
   // ── cleanup ──
   const sim=document.getElementById('_pdf_sim_style');
   if(sim) sim.remove();
+  const pageOrientEl=document.getElementById('_pdf_page_orient');
+  if(pageOrientEl) pageOrientEl.remove();
   ['_p_school','_p_year_hours','_p_year_col','_p_hours_col','_p_teacher','_p_advisor','_p_apv_date'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.remove();
   });
@@ -3925,13 +3959,13 @@ function printCurrentPage(){
   if(sigD)  sigD.textContent  = D.director||'';
   if(sigDP) sigDP.textContent = D.school?'ตำแหน่งผู้อำนวยการโรงเรียน'+D.school:'ตำแหน่งผู้อำนวยการโรงเรียน';
 
-  // orientation
+  // orientation — inject @page size ตรงๆ (วิธีนี้ทำงานได้ทุก browser)
   const isLandscape = currentPage==='s1'||currentPage==='s2'||currentPage==='att';
   let styleEl=document.getElementById('print-orientation-style');
   if(!styleEl){styleEl=document.createElement('style');styleEl.id='print-orientation-style';document.head.appendChild(styleEl);}
   styleEl.textContent=isLandscape
-    ?'@media print{@page{size:A4 landscape;margin:10mm 12mm;}}'
-    :'@media print{@page{size:A4 portrait;margin:12mm 14mm;}}';
+    ?'@media print{@page{size:A4 landscape!important;margin:12mm 12mm 18mm 12mm!important;}}'
+    :'@media print{@page{size:A4 portrait!important;margin:15mm 14mm 20mm 14mm!important;}}';
 
   if(currentPage==='cover'){
     // เตรียม cover elements แล้ว print
