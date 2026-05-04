@@ -213,6 +213,9 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   /* margin ล่าง 35mm เผื่อที่เซ็นชื่อ */
   @page          { size:A4 portrait;  margin:15mm 14mm 20mm 14mm; }
   @page landscape{ size:A4 landscape; margin:12mm 12mm 18mm 12mm; }
+  @page att-page { size:A4 landscape; margin:12mm 12mm 18mm 12mm; }
+  @page s1-page  { size:A4 landscape; margin:12mm 12mm 18mm 12mm; }
+  @page s2-page  { size:A4 landscape; margin:12mm 12mm 18mm 12mm; }
 
   /* ═══ ซ่อน UI ═══ */
   #loading-overlay,.bottom-nav,.topbar,
@@ -659,7 +662,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   /* ════════════════════════════════════════════
      หน้าเวลาเรียน (Landscape)
   ════════════════════════════════════════════ */
-  #page-att.active{page:landscape;}
+  #page-att.active{page:att-page;}
   #page-att.active .tbl-wrap{overflow:visible!important;width:auto!important;max-width:100%!important;}
   #page-att.active #att-grid-table{
     width:auto!important;max-width:100%!important;min-width:0!important;
@@ -703,62 +706,186 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   /* ════════════════════════════════════════════
      หน้าคะแนน ภาค 1 & 2 (Landscape)
   ════════════════════════════════════════════ */
-  #page-s1.active,#page-s2.active{page:landscape;}
+  #page-s1.active{page:s1-page;}
+  #page-s2.active{page:s2-page;}
   #page-s1.active .tbl-wrap,#page-s2.active .tbl-wrap{
     overflow:visible!important;width:auto!important;max-width:100%!important;
   }
-  #page-s1.active table.xlt,#page-s2.active table.xlt{
-    width:auto!important;max-width:100%!important;min-width:0!important;
-    table-layout:fixed!important;font-size:6pt!important;border-collapse:collapse!important;
+  /* ── ตาราง score: layout เหมือน web view แต่ย่อให้พอดีหน้า landscape ── */
+  #page-s1.active .tbl-wrap,#page-s2.active .tbl-wrap{
+    overflow:visible!important;width:100%!important;max-width:100%!important;
   }
+  #page-s1.active table.xlt,#page-s2.active table.xlt{
+    width:100%!important;min-width:0!important;
+    table-layout:fixed!important;font-size:7pt!important;
+    border-collapse:collapse!important;
+  }
+  /* th ทั่วไป */
   #page-s1.active table.xlt th,#page-s2.active table.xlt th{
-    position:static!important;font-size:5.5pt!important;
+    position:static!important;font-size:6pt!important;
     padding:3px 2px!important;white-space:normal!important;
-    word-break:break-word!important;overflow:hidden!important;
     background:#f0f0f0!important;color:#000!important;
     border:1px solid #000!important;font-weight:700!important;
+    text-align:center!important;vertical-align:middle!important;
   }
+  /* td ทั่วไป */
   #page-s1.active table.xlt td,#page-s2.active table.xlt td{
-    position:static!important;font-size:6pt!important;padding:2px 2px!important;
-    overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
-    border:1px solid #888!important;background:#fff!important;color:#000!important;
+    position:static!important;font-size:7pt!important;padding:2px 3px!important;
+    border:1px solid #bbb!important;background:#fff!important;color:#000!important;
+    text-align:center!important;vertical-align:middle!important;white-space:nowrap!important;
   }
-  #page-s1.active table.xlt th.name-th,#page-s2.active table.xlt th.name-th,
+  /* คอลัมน์ชื่อ */
+  #page-s1.active table.xlt th.name-th,#page-s2.active table.xlt th.name-th{
+    width:16%!important;text-align:left!important;padding-left:4px!important;
+    border-right:2px solid #000!important;vertical-align:middle!important;
+    white-space:nowrap!important;
+  }
   #page-s1.active table.xlt td.name-td,#page-s2.active table.xlt td.name-td{
-    width:13%!important;font-size:6pt!important;
-    white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
-    text-align:left!important;padding-left:4px!important;border-right:1px solid #000!important;
+    width:16%!important;text-align:left!important;padding-left:4px!important;
+    border-right:2px solid #000!important;background:#fafafa!important;
+    font-size:6.5pt!important;overflow:hidden!important;text-overflow:ellipsis!important;
   }
-  #page-s1.active table.xlt td.name-td,#page-s2.active table.xlt td.name-td{background:#fafafa!important;}
+  /* คอลัมน์เลขที่ */
   #page-s1.active table.xlt th.no-th,#page-s2.active table.xlt th.no-th,
   #page-s1.active table.xlt td.no-td,#page-s2.active table.xlt td.no-td{
-    width:2%!important;border-right:1px solid #000!important;
+    width:3%!important;border-right:1px solid #000!important;
   }
   #page-s1.active table.xlt td.no-td,#page-s2.active table.xlt td.no-td{background:#fafafa!important;}
-  #page-s1.active table.xlt thead th:not(.name-th):not(.no-th),
-  #page-s2.active table.xlt thead th:not(.name-th):not(.no-th){
-    width:2.8%!important;min-width:0!important;height:72px!important;
-    font-size:5pt!important;padding:2px 0!important;vertical-align:bottom!important;
+  /* header ชื่อหน่วย — เอียงเหมือน web view */
+  #page-s1.active table.xlt thead th.score-item-th,
+  #page-s2.active table.xlt thead th.score-item-th{
+    width:3%!important;min-width:0!important;height:80px!important;
+    font-size:6pt!important;padding:2px 1px!important;
+    vertical-align:bottom!important;text-align:left!important;
     writing-mode:vertical-lr!important;transform:rotate(180deg)!important;
-    word-break:break-all!important;overflow:hidden!important;
+    overflow:hidden!important;border:1px solid #000!important;
+    background:#f0f0f0!important;color:#000!important;
   }
+  /* แถว max score */
+  #page-s1.active table.xlt thead tr:nth-child(2) th,
+  #page-s2.active table.xlt thead tr:nth-child(2) th{
+    height:auto!important;writing-mode:horizontal-tb!important;
+    transform:none!important;font-size:7pt!important;
+    font-weight:800!important;padding:2px!important;
+    vertical-align:middle!important;text-align:center!important;
+  }
+  /* th สรุปคะแนน (rowspan cols ขวา) */
+  #page-s1.active table.xlt thead th:not(.name-th):not(.no-th):not(.score-item-th),
+  #page-s2.active table.xlt thead th:not(.name-th):not(.no-th):not(.score-item-th){
+    writing-mode:horizontal-tb!important;transform:none!important;
+    font-size:6pt!important;height:auto!important;
+    padding:3px 2px!important;vertical-align:middle!important;
+    white-space:normal!important;word-break:break-word!important;
+  }
+  /* ac cell */
   #page-s1.active table.xlt td.ac,#page-s2.active table.xlt td.ac{
-    width:4%!important;font-size:6pt!important;
-    background:#efefef!important;color:#000!important;
-    font-weight:700!important;border:1px solid #555!important;
+    background:#f5f5f5!important;color:#000!important;
+    font-weight:700!important;border:1px solid #888!important;
   }
+  /* gc cell */
   #page-s1.active table.xlt td.gc,#page-s2.active table.xlt td.gc{
-    width:4%!important;font-size:6pt!important;
     background:#e0e0e0!important;color:#000!important;
-    font-weight:800!important;border:1px solid #555!important;
+    font-weight:800!important;border:1px solid #555!important;font-size:7pt!important;
   }
   #page-s1.active table.xlt td.gc span,#page-s2.active table.xlt td.gc span{color:#000!important;}
-  #page-s1.active table.xlt input,#page-s2.active table.xlt input{
-    width:100%!important;font-size:6pt!important;padding:0!important;
+  /* input ในเซล */
+  #page-s1.active table.xlt td input,#page-s2.active table.xlt td input{
+    width:100%!important;font-size:7pt!important;padding:0!important;
     border:none!important;background:transparent!important;text-align:center!important;
   }
   #page-s1.active .sec-box,#page-s2.active .sec-box{margin-bottom:4px!important;}
   #page-s1.active table.xlt tr,#page-s2.active table.xlt tr{page-break-inside:avoid!important;}
+
+
+  /* ════════════════════════════════════════════
+     หน้าคุณลักษณะ — แยก 3 แผ่น portrait A4
+  ════════════════════════════════════════════ */
+  /* ซ่อน tab buttons, save button ใน print */
+  #page-beh.active .no-print{display:none!important;}
+  #page-beh.active .btn{display:none!important;}
+  /* ซ่อน control box (sec-box แรก มี tab buttons) */
+  #page-beh.active .sec-box:first-child{display:none!important;}
+
+  /* แต่ละ beh section พอดีหน้า A4 */
+  #page-beh.active .sec-box{
+    page-break-inside:avoid!important;
+    margin-bottom:0!important;
+    border:1px solid #000!important;
+    box-shadow:none!important;
+  }
+  /* beh-wrap และ read-wrap อยู่คนละ section — แต่ละหน้าแสดงทั้งคู่ */
+  /* แยก 3 หน้า: ต้องสร้าง wrapper พิเศษใน print */
+  #beh-print-s1,#beh-print-s2,#beh-print-all{display:none!important;}
+  #page-beh.active #beh-print-s1,
+  #page-beh.active #beh-print-s2,
+  #page-beh.active #beh-print-all{
+    display:block!important;
+    page-break-after:always!important;
+    break-after:page!important;
+    width:100%!important;
+    min-height:220mm!important;
+  }
+  #page-beh.active #beh-print-all{
+    page-break-after:auto!important;
+    break-after:auto!important;
+  }
+  /* title แต่ละแผ่น */
+  .beh-print-title{
+    display:none!important;
+  }
+  #page-beh.active .beh-print-title{
+    display:block!important;
+    font-size:11pt!important;font-weight:800!important;
+    text-align:center!important;color:#000!important;
+    padding:6px 0 4px!important;
+    border-bottom:2px solid #000!important;
+    margin-bottom:6px!important;
+  }
+  /* ตารางใน beh เต็มหน้า A4 */
+  #page-beh.active .tbl-wrap{
+    overflow:visible!important;width:100%!important;
+  }
+  #page-beh.active table.xlt{
+    width:100%!important;table-layout:fixed!important;
+    border-collapse:collapse!important;font-size:8pt!important;
+    min-width:0!important;
+  }
+  #page-beh.active table.xlt th{
+    font-size:7pt!important;padding:3px 2px!important;
+    background:#f0f0f0!important;color:#000!important;
+    border:1px solid #000!important;font-weight:700!important;
+    text-align:center!important;white-space:normal!important;
+    word-break:break-word!important;
+  }
+  #page-beh.active table.xlt th.name-th{
+    width:22%!important;text-align:left!important;padding-left:4px!important;
+  }
+  #page-beh.active table.xlt th.no-th{width:4%!important;}
+  #page-beh.active table.xlt th:not(.name-th):not(.no-th){
+    width:auto!important;
+  }
+  #page-beh.active table.xlt td{
+    font-size:8pt!important;padding:2px 3px!important;
+    border:1px solid #bbb!important;color:#000!important;
+    text-align:center!important;background:#fff!important;
+  }
+  #page-beh.active table.xlt td.name-td{
+    text-align:left!important;padding-left:4px!important;
+    background:#fafafa!important;font-size:7.5pt!important;
+    overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+  }
+  #page-beh.active table.xlt td.no-td{background:#fafafa!important;}
+  #page-beh.active table.xlt td.ac{
+    background:#f5f5f5!important;font-weight:700!important;
+    border:1px solid #888!important;
+  }
+  /* rating-btn → แสดงตัวเลขเรียบๆ */
+  #page-beh.active .rating-btn{
+    display:inline!important;background:none!important;
+    border:none!important;padding:0!important;
+    font-size:8pt!important;font-weight:700!important;color:#000!important;
+  }
+  #page-beh.active table.xlt tr{page-break-inside:avoid!important;}
 
   /* ════════════════════════════════════════════
      ลายเซ็น — fixed bottom + ที่ว่างเซ็น 28mm
@@ -1403,7 +1530,8 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
 
 <!-- ══════════════════════════ PAGE: คุณลักษณะ ══════════════════════════ -->
 <div id="page-beh" class="page">
-  <div class="sec-box" style="margin-bottom:8px">
+  <!-- ── โหมดแสดงผล: tab + ตารางเดียว ── -->
+  <div class="sec-box no-print" style="margin-bottom:8px">
     <div class="sec-body" style="padding:10px 12px">
       <div style="display:flex;gap:6px;margin-bottom:6px">
         <button id="beh-tab-1" class="btn btn-primary btn-sm" style="flex:1;text-align:center;justify-content:center" onclick="setBehSem('1')">ภาคเรียนที่ 1</button>
@@ -1417,18 +1545,54 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
       <div style="font-size:11px;color:var(--text2);text-align:center;margin-top:4px">ระดับ:  0 = ไม่ผ่าน  &nbsp; 1 = ผ่าน  &nbsp; 2 = ดี  &nbsp; 3 = ดีเยี่ยม</div>
     </div>
   </div>
-
-  <div class="sec-box">
+  <div class="sec-box no-print">
     <div class="sec-head"><div class="sec-head-title"><div class="sec-head-dot"></div>สรุปการประเมินคุณลักษณะอันพึงประสงค์</div></div>
     <div class="tbl-wrap" id="beh-wrap"></div>
   </div>
-  <div class="sec-box">
+  <div class="sec-box no-print">
     <div class="sec-head"><div class="sec-head-title"><div class="sec-head-dot"></div>การอ่าน คิดวิเคราะห์ และเขียนสื่อความ</div></div>
     <div class="tbl-wrap" id="read-wrap"></div>
   </div>
-
   <button class="btn btn-success btn-full no-print" onclick="saveData()" style="margin-top:4px;margin-bottom:8px">💾 บันทึกข้อมูล</button>
-  <div style="height:60px"></div>
+
+  <!-- ── โหมดพิมพ์: 3 แผ่นแยกกัน ── -->
+  <div id="beh-print-s1">
+    <div class="beh-print-title">สรุปการประเมินคุณลักษณะอันพึงประสงค์ และการอ่านฯ — ภาคเรียนที่ 1</div>
+    <div class="sec-box" style="margin-bottom:6px">
+      <div class="sec-head"><div class="sec-head-title">คุณลักษณะอันพึงประสงค์ — ภาคเรียนที่ 1</div></div>
+      <div class="tbl-wrap" id="beh-wrap-s1"></div>
+    </div>
+    <div class="sec-box">
+      <div class="sec-head"><div class="sec-head-title">การอ่าน คิดวิเคราะห์ และเขียนสื่อความ — ภาคเรียนที่ 1</div></div>
+      <div class="tbl-wrap" id="read-wrap-s1"></div>
+    </div>
+  </div>
+
+  <div id="beh-print-s2">
+    <div class="beh-print-title">สรุปการประเมินคุณลักษณะอันพึงประสงค์ และการอ่านฯ — ภาคเรียนที่ 2</div>
+    <div class="sec-box" style="margin-bottom:6px">
+      <div class="sec-head"><div class="sec-head-title">คุณลักษณะอันพึงประสงค์ — ภาคเรียนที่ 2</div></div>
+      <div class="tbl-wrap" id="beh-wrap-s2"></div>
+    </div>
+    <div class="sec-box">
+      <div class="sec-head"><div class="sec-head-title">การอ่าน คิดวิเคราะห์ และเขียนสื่อความ — ภาคเรียนที่ 2</div></div>
+      <div class="tbl-wrap" id="read-wrap-s2"></div>
+    </div>
+  </div>
+
+  <div id="beh-print-all">
+    <div class="beh-print-title">สรุปการประเมินคุณลักษณะอันพึงประสงค์ และการอ่านฯ — รวมตลอดปีการศึกษา</div>
+    <div class="sec-box" style="margin-bottom:6px">
+      <div class="sec-head"><div class="sec-head-title">คุณลักษณะอันพึงประสงค์ — รวมตลอดปีการศึกษา</div></div>
+      <div class="tbl-wrap" id="beh-wrap-all"></div>
+    </div>
+    <div class="sec-box">
+      <div class="sec-head"><div class="sec-head-title">การอ่าน คิดวิเคราะห์ และเขียนสื่อความ — รวมตลอดปีการศึกษา</div></div>
+      <div class="tbl-wrap" id="read-wrap-all"></div>
+    </div>
+  </div>
+
+  <div style="height:60px" class="no-print"></div>
 </div>
 
 <!-- ══════════════════════════ PAGE: รายบุคคล ══════════════════════════ -->
@@ -2469,7 +2633,65 @@ function setBehSem(v){
   });
   renderBehTable(v);renderReadTable(v);
 }
-function renderBehavior(){setBehSem(behSem);}
+function renderBehavior(){
+  setBehSem(behSem);
+  // render print sections (แยก 3 ภาค)
+  _renderBehPrint('1');
+  _renderBehPrint('2');
+  _renderBehPrint('all');
+}
+function _renderBehPrint(sem){
+  const sfx=sem==='all'?'all':('s'+sem);
+  // beh table
+  const bw=document.getElementById('beh-wrap-'+sfx);
+  const rw=document.getElementById('read-wrap-'+sfx);
+  if(!bw||!rw)return;
+  const n=D.students.filter(s=>s.name).length;
+  if(!n){bw.innerHTML='';rw.innerHTML='';return;}
+  const isAll=sem==='all';
+  // beh
+  let bHtml=`<table class="xlt"><thead><tr>
+    <th class="name-th">ชื่อ-สกุล</th><th class="no-th">ที่</th>
+    ${BEH.map(l=>`<th>${l}</th>`).join('')}
+    <th>เฉลี่ย</th><th>ผลการประเมิน</th>
+  </tr></thead><tbody>`;
+  D.students.forEach((s,si)=>{
+    if(!s.name)return;
+    const getV=(i)=>{
+      if(sem==='1')return D.beh1[si]?D.beh1[si][i]||0:0;
+      if(sem==='2')return D.beh2[si]?D.beh2[si][i]||0:0;
+      const b1=D.beh1[si]?D.beh1[si][i]||0:0;const b2=D.beh2[si]?D.beh2[si][i]||0:0;
+      return b1&&b2?Math.round((b1+b2)/2*10)/10:b1||b2;
+    };
+    const vals=BEH.map((_,i)=>getV(i));
+    const avg=vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length*10)/10:0;
+    const result=avg>=3?'ดีเยี่ยม':avg>=2?'ดี':avg>=1?'ผ่าน':'ไม่ผ่าน';
+    bHtml+=`<tr style="background:${si%2===0?'#fff':'#f9fafb'}">${tdName(si,s.name)}${tdNo(si,s.no)}${vals.map(v=>`<td class="ac">${v}</td>`).join('')}<td class="ac">${avg}</td><td class="ac" style="font-weight:700">${result}</td></tr>`;
+  });
+  bHtml+=`</tbody></table>`;
+  bw.innerHTML=bHtml;
+  // read
+  let rHtml=`<table class="xlt"><thead><tr>
+    <th class="name-th">ชื่อ-สกุล</th><th class="no-th">ที่</th>
+    ${READ.map(l=>`<th>${l}</th>`).join('')}
+    <th>เฉลี่ย</th><th>ผลการประเมิน</th>
+  </tr></thead><tbody>`;
+  D.students.forEach((s,si)=>{
+    if(!s.name)return;
+    const getV=(i)=>{
+      if(sem==='1')return D.read1[si]?D.read1[si][i]||0:0;
+      if(sem==='2')return D.read2[si]?D.read2[si][i]||0:0;
+      const r1=D.read1[si]?D.read1[si][i]||0:0;const r2=D.read2[si]?D.read2[si][i]||0:0;
+      return r1&&r2?Math.round((r1+r2)/2*10)/10:r1||r2;
+    };
+    const vals=READ.map((_,i)=>getV(i));
+    const avg=vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length*10)/10:0;
+    const result=avg>=3?'ดีเยี่ยม':avg>=2?'ดี':avg>=1?'ผ่าน':'ไม่ผ่าน';
+    rHtml+=`<tr style="background:${si%2===0?'#fff':'#f9fafb'}">${tdName(si,s.name)}${tdNo(si,s.no)}${vals.map(v=>`<td class="ac">${v}</td>`).join('')}<td class="ac">${avg}</td><td class="ac" style="font-weight:700">${result}</td></tr>`;
+  });
+  rHtml+=`</tbody></table>`;
+  rw.innerHTML=rHtml;
+}
 function openCriteriaModal(type){
   const arr=type==='beh'?BEH:READ;
   const title=type==='beh'?'คุณลักษณะอันพึงประสงค์':'การอ่าน คิดวิเคราะห์ เขียน';
