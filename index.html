@@ -2731,83 +2731,89 @@ async function generatePDF(){
 
   // ── 1. render ข้อมูลทุกหน้าที่เลือก ──
   const needRender=new Set(pageList.map(p=>p.page));
-  if(needRender.has('att'))    renderAttPage();
-  if(needRender.has('s1'))     renderScore(1);
-  if(needRender.has('s2'))     renderScore(2);
-  if(needRender.has('total'))  {renderTotal();drawCharts();}
-  if(needRender.has('beh'))    renderBehavior();
-  if(needRender.has('ind'))    {populateIndSel();renderIndividual();}
-  if(needRender.has('cover'))  {
-    renderCoverStats();renderCoverBehRead();
-    // เรียก prepareCoverForPrint (เหมือนใน printCurrentPage)
-    _prepareCoverPrintElements();
-  }
+  if(needRender.has('att'))   renderAttPage();
+  if(needRender.has('s1'))    renderScore(1);
+  if(needRender.has('s2'))    renderScore(2);
+  if(needRender.has('total')) {renderTotal();drawCharts();}
+  if(needRender.has('beh'))   renderBehavior();
+  if(needRender.has('ind'))   {populateIndSel();renderIndividual();}
+  if(needRender.has('cover')) {renderCoverStats();renderCoverBehRead();}
 
   // ── 2. อัปเดตลายเซ็น ──
-  const sigT=document.getElementById('sig-teacher');
-  const sigTP=document.getElementById('sig-teacher-pos');
-  const sigD=document.getElementById('sig-director');
-  const sigDP=document.getElementById('sig-director-pos');
-  if(sigT)  sigT.textContent  = D.teacher||'';
-  if(sigTP) sigTP.textContent = D.teacherPos?'ตำแหน่ง'+D.teacherPos:'';
-  if(sigD)  sigD.textContent  = D.director||'';
-  if(sigDP) sigDP.textContent = D.school?'ตำแหน่งผู้อำนวยการโรงเรียน'+D.school:'ตำแหน่งผู้อำนวยการโรงเรียน';
+  ['sig-teacher','sig-teacher-pos','sig-director','sig-director-pos'].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    if(id==='sig-teacher')     el.textContent=D.teacher||'';
+    if(id==='sig-teacher-pos') el.textContent=D.teacherPos?'ตำแหน่ง'+D.teacherPos:'';
+    if(id==='sig-director')    el.textContent=D.director||'';
+    if(id==='sig-director-pos')el.textContent=D.school?'ตำแหน่งผู้อำนวยการโรงเรียน'+D.school:'ตำแหน่งผู้อำนวยการโรงเรียน';
+  });
 
-  await new Promise(r=>setTimeout(r,300));
+  await new Promise(r=>setTimeout(r,200));
 
-  // ── 3. ซ่อนทุกหน้า → แสดงเฉพาะหน้าที่เลือกตามลำดับ ──
+  // ── 3. เพิ่ม .active ให้ทุกหน้าที่เลือก (print CSS ต้องการ .active) ──
   const allPageEls=document.querySelectorAll('.page');
-  allPageEls.forEach(e=>{e.classList.remove('active');e.dataset.pdfVisible='0';});
+  // จำหน้าที่ active อยู่เดิม
+  const prevActive=document.querySelector('.page.active');
+  const prevActivePage=prevActive?prevActive.id.replace('page-',''):currentPage;
 
-  // กำหนด orientation สำหรับแต่ละหน้า
+  // ลบ active ทั้งหมดก่อน
+  allPageEls.forEach(e=>e.classList.remove('active'));
+  // เพิ่ม active เฉพาะหน้าที่เลือก
+  pageList.forEach(p=>{
+    const el=document.getElementById('page-'+p.page);
+    if(el) el.classList.add('active');
+  });
+
+  // เตรียม cover elements ถ้าเลือกหน้าปก
+  if(needRender.has('cover')) _prepareCoverPrintElements();
+
+  // ── 4. inject PDF print style ──
+  // CSS นี้จะ override การแสดงผล: แสดงทุกหน้า active เรียงกัน + page-break ระหว่างหน้า
   const landscapePages=new Set(['att','s1','s2']);
+  const hasLandscape=pageList.some(p=>landscapePages.has(p.page));
+  const hasPortrait =pageList.some(p=>!landscapePages.has(p.page));
 
-  // สร้าง dynamic print style สำหรับหลายหน้า
-  // ใช้ @page named pages เพื่อสลับ portrait/landscape
-  const orientations=pageList.map(p=>landscapePages.has(p.page)?'landscape':'portrait');
-  const hasLandscape=orientations.some(o=>o==='landscape');
-  const hasPortrait=orientations.some(o=>o==='portrait');
+  // สร้าง page-break rules — ทุกหน้ายกเว้นหน้าสุดท้ายให้ break after
+  const breakRules=pageList.slice(0,-1).map(p=>`#page-${p.page}.active{page-break-after:always!important;break-after:page!important;}`).join('\n  ');
 
-  // inject style: แสดงเฉพาะหน้าที่เลือก + page-break ระหว่างหน้า
+  // orientation: ถ้ามีทั้งสองแบบ → portrait (browser จะจัดการ landscape ผ่าน @page named pages ไม่ได้ใน mobile)
+  // ดังนั้นใช้ portrait ตลอด แล้วหน้า s1/s2/att จะ rotate เอง
   let styleEl=document.getElementById('pdf-export-style');
   if(!styleEl){styleEl=document.createElement('style');styleEl.id='pdf-export-style';document.head.appendChild(styleEl);}
 
-  // สร้าง CSS ที่แสดงเฉพาะหน้าที่เลือก
-  const selectedIds=pageList.map(p=>`#page-${p.page}`).join(',');
-
-  // orientation: ถ้ามีทั้ง portrait+landscape → ใช้ portrait เป็น default แล้วแต่ละหน้าจัดการเอง
-  // ถ้า landscape ทั้งหมด → ใช้ landscape
-  let pageSize='A4 portrait';
-  if(hasLandscape&&!hasPortrait) pageSize='A4 landscape';
-
   styleEl.textContent=`
 @media print{
-  @page{size:${pageSize};margin:12mm 14mm 20mm 14mm;}
-  body,html{overflow:visible!important;}
-  .bottom-nav,.topbar,.status-bar,.topbar-actions,.no-print,.toast,#launcher,#auth-overlay,#sync-status{display:none!important;}
+  /* ── ซ่อนทุก .page ที่ไม่ได้เลือก ── */
   .page{display:none!important;}
-  ${selectedIds}{display:block!important;}
-  /* page-break ระหว่างหน้าที่เลือก */
-  ${pageList.map((p,i)=>i<pageList.length-1?`#page-${p.page}{page-break-after:always!important;}`:'').filter(Boolean).join('\n  ')}
-  /* scroll wrappers */
-  .app-wrap,.scroll-area,.scroll-content{display:block!important;width:100%!important;height:auto!important;overflow:visible!important;position:static!important;padding:0!important;margin:0!important;background:#fff!important;}
+  /* ── แสดงทุกหน้าที่เลือก (มี .active) ── */
+  .page.active{display:block!important;}
+  /* ── page-break ระหว่างหน้า ── */
+  ${breakRules}
+  /* ── layout wrappers: ปลด fixed height/scroll ── */
+  html,body{overflow:visible!important;height:auto!important;}
+  .app-wrap{display:block!important;height:auto!important;overflow:visible!important;position:static!important;}
+  .scroll-area,.scroll-content,.page-inner{
+    display:block!important;height:auto!important;overflow:visible!important;
+    position:static!important;padding-bottom:0!important;
+  }
+  /* ── ซ่อน UI ที่ไม่ต้องการ ── */
+  .bottom-nav,.topbar,.status-bar,.topbar-actions,.no-print,
+  .toast,#launcher,#auth-overlay,#sync-status,#report-modal,
+  .modal-overlay{display:none!important;}
 }`;
 
   hideLoading();
   await new Promise(r=>setTimeout(r,150));
 
-  // ── 4. เปิด print dialog ──
+  // ── 5. print ──
   window.print();
 
-  // ── 5. คืนค่าหลัง print ──
+  // ── 6. คืนค่าทุกอย่างหลัง print ──
   setTimeout(()=>{
+    // ลบ pdf style
     if(styleEl) styleEl.remove();
-    // คืน active page ปัจจุบัน
-    allPageEls.forEach(e=>e.classList.remove('active'));
-    const cur=document.getElementById('page-'+currentPage);
-    if(cur) cur.classList.add('active');
-    // ลบ cover print elements
-    ['_p_school','_p_year_hours','_p_teacher','_p_advisor','_p_apv_date'].forEach(id=>{
+    // ลบ cover elements ชั่วคราว
+    ['_p_school','_p_year_hours','_p_year_col','_p_hours_col','_p_teacher','_p_advisor','_p_apv_date'].forEach(id=>{
       const el=document.getElementById(id);if(el)el.remove();
     });
     const schoolRow=document.querySelector('#page-cover .xls-form > .xls-row:has(#f-school)');
@@ -2816,6 +2822,10 @@ async function generatePDF(){
     if(schoolRow)      schoolRow.style.display='';
     if(teacherNameRow) teacherNameRow.style.display='';
     if(advisorNameRow) advisorNameRow.style.display='';
+    // คืน active page เดิม
+    allPageEls.forEach(e=>e.classList.remove('active'));
+    const cur=document.getElementById('page-'+prevActivePage);
+    if(cur) cur.classList.add('active');
   },800);
 }
 
