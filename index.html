@@ -679,28 +679,33 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   .att-print-month:last-child{page-break-after:auto!important;break-after:auto!important;}
   .att-print-month-title{font-size:10pt!important;font-weight:800!important;text-align:center!important;padding:4px 0!important;border-bottom:2px solid #000!important;margin-bottom:5px!important;}
   #page-att.active .tbl-wrap{overflow:visible!important;width:100%!important;max-width:100%!important;}
-  #page-att.active #att-grid-table{
-    width:auto!important;max-width:100%!important;min-width:0!important;
+  #page-att.active #att-grid-table,
+  #page-att.active .att-grid-table{
+    width:100%!important;min-width:0!important;
     table-layout:fixed!important;font-size:5.5pt!important;border-collapse:collapse!important;
   }
   #page-att.active #att-grid-table th,
-  #page-att.active #att-grid-table td{
+  #page-att.active #att-grid-table td,
+  #page-att.active .att-grid-table th,
+  #page-att.active .att-grid-table td{
     position:static!important;padding:2px 1px!important;overflow:hidden!important;
     font-size:5.5pt!important;white-space:nowrap!important;border:1px solid #888!important;
   }
-  #page-att.active #att-grid-table th{
+  #page-att.active #att-grid-table th,
+  #page-att.active .att-grid-table th{
     background:#f0f0f0!important;color:#000!important;font-weight:700!important;
   }
-  #page-att.active #att-grid-table th.name-th,
-  #page-att.active #att-grid-table td.name-td{
+  #page-att.active #att-grid-table th.name-th,#page-att.active #att-grid-table td.name-td,
+  #page-att.active .att-grid-table th.name-th,#page-att.active .att-grid-table td.name-td{
     width:24%!important;font-size:5.5pt!important;text-overflow:ellipsis!important;
     text-align:left!important;padding-left:3px!important;border-right:1px solid #000!important;
   }
-  #page-att.active #att-grid-table th.no-th,
-  #page-att.active #att-grid-table td.no-td{
+  #page-att.active #att-grid-table th.no-th,#page-att.active #att-grid-table td.no-td,
+  #page-att.active .att-grid-table th.no-th,#page-att.active .att-grid-table td.no-td{
     width:1.8%!important;border-right:1px solid #000!important;
   }
-  #page-att.active #att-grid-table td:not(.name-td):not(.no-td):not(.ac){
+  #page-att.active #att-grid-table td:not(.name-td):not(.no-td):not(.ac),
+  #page-att.active .att-grid-table td:not(.name-td):not(.no-td):not(.ac){
     width:2%!important;padding:1px 0!important;text-align:center!important;
   }
   #page-att.active .att-dot{
@@ -710,9 +715,10 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
     background:#fff!important;color:#000!important;
   }
   #page-att.active .att-x{background:#ccc!important;}
-  #page-att.active #att-grid-table th.att-sum-th,
-  #page-att.active #att-grid-table th.att-pct-th{width:2.5%!important;}
-  #page-att.active #att-grid-table td.ac{
+  #page-att.active #att-grid-table th.att-sum-th,#page-att.active #att-grid-table th.att-pct-th,
+  #page-att.active .att-grid-table th.att-sum-th,#page-att.active .att-grid-table th.att-pct-th{width:2.5%!important;}
+  #page-att.active #att-grid-table td.ac,
+  #page-att.active .att-grid-table td.ac{
     width:2.5%!important;font-size:5.5pt!important;
     background:#efefef!important;color:#000!important;
     border:1px solid #555!important;font-weight:700!important;
@@ -2202,7 +2208,7 @@ function _buildAttPrintAll(){
   MONTHS.forEach((mName,mi)=>{
     const days=MDAYS[mi];
     const dayNums=Array.from({length:days},(_,i)=>i+1);
-    let tbl=`<table class="xlt" id="att-grid-table" style="width:100%;font-size:11px">
+    let tbl=`<table class="xlt att-grid-table" style="width:100%;font-size:11px">
       <thead><tr>
         <th class="name-th">ชื่อ-สกุล</th><th class="no-th">ที่</th>
         ${dayNums.map(d=>`<th class="att-day-th" style="padding:3px 1px">${d}</th>`).join('')}
@@ -3509,24 +3515,25 @@ async function generatePDF(){
     width:auto!important;max-width:100%!important;min-width:0!important;
     table-layout:fixed!important;font-size:5.5pt!important;border-collapse:collapse!important;
   }
-  #page-att.active #att-grid-table th,
-  #page-att.active #att-grid-table td{
+  #page-att.active #att-grid-table th,#page-att.active #att-grid-table td,
+  #page-att.active .att-grid-table th,#page-att.active .att-grid-table td{
     position:static!important;padding:2px 1px!important;overflow:hidden!important;
     font-size:5.5pt!important;white-space:nowrap!important;border:1px solid #888!important;
   }
-  #page-att.active #att-grid-table th{
+  #page-att.active #att-grid-table th,#page-att.active .att-grid-table th{
     background:#f0f0f0!important;color:#000!important;font-weight:700!important;
   }
-  #page-att.active #att-grid-table th.name-th,
-  #page-att.active #att-grid-table td.name-td{
+  #page-att.active #att-grid-table th.name-th,#page-att.active #att-grid-table td.name-td,
+  #page-att.active .att-grid-table th.name-th,#page-att.active .att-grid-table td.name-td{
     width:24%!important;font-size:5.5pt!important;text-overflow:ellipsis!important;
     text-align:left!important;padding-left:3px!important;border-right:1px solid #000!important;
   }
-  #page-att.active #att-grid-table th.no-th,
-  #page-att.active #att-grid-table td.no-td{
+  #page-att.active #att-grid-table th.no-th,#page-att.active #att-grid-table td.no-td,
+  #page-att.active .att-grid-table th.no-th,#page-att.active .att-grid-table td.no-td{
     width:1.8%!important;border-right:1px solid #000!important;
   }
-  #page-att.active #att-grid-table td:not(.name-td):not(.no-td):not(.ac){
+  #page-att.active #att-grid-table td:not(.name-td):not(.no-td):not(.ac),
+  #page-att.active .att-grid-table td:not(.name-td):not(.no-td):not(.ac){
     width:2%!important;padding:1px 0!important;text-align:center!important;
   }
   #page-att.active .att-dot{
@@ -3536,9 +3543,10 @@ async function generatePDF(){
     background:#fff!important;color:#000!important;
   }
   #page-att.active .att-x{background:#ccc!important;}
-  #page-att.active #att-grid-table th.att-sum-th,
-  #page-att.active #att-grid-table th.att-pct-th{width:2.5%!important;}
-  #page-att.active #att-grid-table td.ac{
+  #page-att.active #att-grid-table th.att-sum-th,#page-att.active #att-grid-table th.att-pct-th,
+  #page-att.active .att-grid-table th.att-sum-th,#page-att.active .att-grid-table th.att-pct-th{width:2.5%!important;}
+  #page-att.active #att-grid-table td.ac,
+  #page-att.active .att-grid-table td.ac{
     width:2.5%!important;font-size:5.5pt!important;
     background:#efefef!important;color:#000!important;
     border:1px solid #555!important;font-weight:700!important;
@@ -4019,13 +4027,20 @@ function printCurrentPage(){
   if(sigD)  sigD.textContent  = D.director||'';
   if(sigDP) sigDP.textContent = D.school?'ตำแหน่งผู้อำนวยการโรงเรียน'+D.school:'ตำแหน่งผู้อำนวยการโรงเรียน';
 
-  // orientation — inject @page size ตรงๆ (วิธีนี้ทำงานได้ทุก browser)
+  // orientation — inject @page แบบ !important ให้ override ทุก stylesheet
   const isLandscape = currentPage==='s1'||currentPage==='s2'||currentPage==='att';
-  let styleEl=document.getElementById('print-orientation-style');
-  if(!styleEl){styleEl=document.createElement('style');styleEl.id='print-orientation-style';document.head.appendChild(styleEl);}
-  styleEl.textContent=isLandscape
-    ?'@media print{@page{size:A4 landscape!important;margin:12mm 12mm 18mm 12mm!important;} html,body{size:A4 landscape!important;}}'
-    :'@media print{@page{size:A4 portrait!important;margin:15mm 14mm 20mm 14mm!important;}}';
+  // ลบ style เก่าก่อน แล้วสร้างใหม่ทุกครั้ง (force browser re-apply)
+  const oldStyle=document.getElementById('print-orientation-style');
+  if(oldStyle) oldStyle.remove();
+  const styleEl=document.createElement('style');
+  styleEl.id='print-orientation-style';
+  // ต้องเป็น style แรกสุดใน head เพื่อให้ override ได้
+  document.head.insertBefore(styleEl, document.head.firstChild);
+  if(isLandscape){
+    styleEl.textContent='@media print{@page{size:A4 landscape;margin:12mm 12mm 18mm 12mm;}#page-att.active,#page-s1.active,#page-s2.active{-webkit-print-color-adjust:exact;}}';
+  } else {
+    styleEl.textContent='@media print{@page{size:A4 portrait;margin:15mm 14mm 20mm 14mm;}}';
+  }
 
   if(currentPage==='cover'){
     // เตรียม cover elements แล้ว print
