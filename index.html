@@ -7,14 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>ปพ.5 สมุดบันทึกการพัฒนาคุณภาพผู้เรียน</title>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-@font-face{font-family:'THSarabunNew';src:url('https://cdn.jsdelivr.net/npm/font-th-sarabun-new@1.0.0/fonts/THSarabunNew.woff') format('woff'),url('https://cdn.jsdelivr.net/npm/font-th-sarabun-new@1.0.0/fonts/THSarabunNew.ttf') format('truetype');font-weight:400;font-style:normal;}
-@font-face{font-family:'THSarabunNew';src:url('https://cdn.jsdelivr.net/npm/font-th-sarabun-new@1.0.0/fonts/THSarabunNew-Bold.woff') format('woff'),url('https://cdn.jsdelivr.net/npm/font-th-sarabun-new@1.0.0/fonts/THSarabunNew-Bold.ttf') format('truetype');font-weight:700;font-style:normal;}
-@font-face{font-family:'THSarabunNew';src:url('https://cdn.jsdelivr.net/npm/font-th-sarabun-new@1.0.0/fonts/THSarabunNew-Italic.woff') format('woff'),url('https://cdn.jsdelivr.net/npm/font-th-sarabun-new@1.0.0/fonts/THSarabunNew-Italic.ttf') format('truetype');font-weight:400;font-style:italic;}
-@font-face{font-family:'THSarabunNew';src:url('https://cdn.jsdelivr.net/npm/font-th-sarabun-new@1.0.0/fonts/THSarabunNew-BoldItalic.woff') format('woff'),url('https://cdn.jsdelivr.net/npm/font-th-sarabun-new@1.0.0/fonts/THSarabunNew-BoldItalic.ttf') format('truetype');font-weight:700;font-style:italic;}
-</style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://apis.google.com/js/api.js" async defer></script>
 <style>
@@ -25,7 +18,7 @@
   --nav-h:56px;--safe-bottom:env(safe-area-inset-bottom,0px);--safe-top:env(safe-area-inset-top,0px);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;font-family:'THSarabunNew','Sarabun',sans-serif;background:var(--bg);color:var(--text);font-size:14px;overflow:hidden;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+html,body{height:100%;font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);font-size:14px;overflow:hidden;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 
 /* ── APP SHELL ── */
 .app-wrap{display:flex;flex-direction:column;height:100%;overflow:hidden;}
@@ -60,10 +53,9 @@ html,body{height:100%;font-family:'THSarabunNew','Sarabun',sans-serif;background
 .xls-form{display:grid;gap:6px;}
 .xls-row{display:flex;align-items:center;gap:0;background:#ffffff;border-radius:8px;border:1px solid #e5e7eb;overflow:hidden;}
 .xls-label{font-size:11px;font-weight:700;color:#6b7280;padding:8px 10px;white-space:nowrap;min-width:90px;flex-shrink:0;}
-.xls-val{flex:1;font-size:13px;font-weight:600;color:#1f2937;padding:8px 10px;background:#ffffff;border:none;border-left:1px solid #e5e7eb;font-family:inherit;outline:none;min-width:0;}
+.xls-val{flex:1;font-size:13px;font-weight:600;color:#1f2937;padding:8px 10px;background:#ffffff;border:none;font-family:inherit;outline:none;min-width:0;}
 .xls-val::placeholder{color:#9ca3af;font-weight:400;}
-.xls-val:focus{background:#f9fafb;border-left:1px solid #d1d5db;}
-select.xls-val{border-left:1px solid #e5e7eb;}
+.xls-val:focus{background:#f9fafb;}
 .xls-row-2col{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
 .xls-row-3col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;}
 .xls-row-readonly .xls-val{background:rgba(255,255,255,.07);color:#6b7280;}
@@ -100,7 +92,7 @@ select.xls-val{border-left:1px solid #e5e7eb;}
 /* ── EXCEL TABLES ── */
 .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:0 0 10px 10px;}
 table.xlt{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;}
-table.xlt th{background:#e5e7eb;color:#1f2937;padding:7px 5px;text-align:center;font-weight:700;white-space:nowrap;font-size:11px;border-top:1px solid rgba(255,255,255,.15);border-right:1px solid rgba(255,255,255,.15);border-bottom:1px solid rgba(255,255,255,.15);border-left:none;position:sticky;top:0;z-index:5;}
+table.xlt th{background:#e5e7eb;color:#1f2937!important;color:#1f2937;padding:7px 5px;text-align:center;font-weight:700;white-space:nowrap;font-size:11px;border-top:1px solid rgba(255,255,255,.15);border-right:1px solid rgba(255,255,255,.15);border-bottom:1px solid rgba(255,255,255,.15);border-left:none;position:sticky;top:0;z-index:5;}
 table.xlt th:first-child{border-left:1px solid rgba(255,255,255,.15);}
 table.xlt th.left{text-align:left;padding-left:8px;}
 table.xlt td{padding:6px 5px;border-top:none;border-right:1px solid var(--border);border-bottom:1px solid var(--border);border-left:none;vertical-align:middle;text-align:center;background:#fff;}
@@ -113,7 +105,7 @@ table.xlt td.name-td{width:180px;min-width:180px;max-width:180px;overflow:hidden
 table.xlt td.no-td{width:32px;min-width:32px;max-width:32px;font-weight:700;text-align:center;padding:6px 2px;position:sticky;left:180px;z-index:3;border-left:none;border-right:1.5px solid #94a3b8;background:#f8fafc;}
 /* auto/formula cells */
 table.xlt td.ac{background:#fff7ed!important;color:#c2410c;font-weight:400;}
-table.xlt td.gc{background:#4b5563!important;color:#fff;font-weight:800;font-size:12px;}
+table.xlt td.gc{background:#4b5563!important;color:#1f2937;font-weight:800;font-size:12px;}
 table.xlt td.gc-chip{background:white!important;font-weight:800;font-size:12px;text-align:center;}
 /* editable inputs in table */
 table.xlt td input[type=number],table.xlt td input[type=text]{
@@ -213,13 +205,6 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   /* margin ล่าง 35mm เผื่อที่เซ็นชื่อ */
   @page          { size:A4 portrait;  margin:15mm 14mm 20mm 14mm; }
   @page landscape{ size:A4 landscape; margin:12mm 12mm 18mm 12mm; }
-  @page att-page { size:A4 landscape; margin:12mm 12mm 18mm 12mm; }
-  @page s1-page  { size:A4 landscape; margin:12mm 12mm 18mm 12mm; }
-  @page s2-page  { size:A4 landscape; margin:12mm 12mm 18mm 12mm; }
-  /* Fallback: กำหนด size โดยตรงสำหรับ browser ที่ไม่รองรับ named page */
-  #page-att.active, #page-s1.active, #page-s2.active{
-    /* hint เพิ่มเติม */
-  }
 
   /* ═══ ซ่อน UI ═══ */
   #loading-overlay,.bottom-nav,.topbar,
@@ -232,7 +217,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   html,body{
     width:100%!important;margin:0!important;padding:0!important;
     overflow:visible!important;background:#fff!important;
-    font-family:'THSarabunNew','Sarabun',sans-serif!important;font-size:10pt!important;color:#000!important;
+    font-family:'Sarabun',sans-serif!important;font-size:10pt!important;color:#000!important;
   }
   .app-wrap,.scroll-area,.scroll-content{
     display:block!important;width:100%!important;height:auto!important;
@@ -334,7 +319,6 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
     background:#e0e0e0!important;color:#000!important;
     font-weight:800!important;border:1px solid #555!important;
   }
-  table.xlt td.gc span{color:#000!important;}
   table.xlt td.edit-cell{background:#fff!important;}
   table.xlt td input[type=number],table.xlt td input[type=text]{
     font-size:9pt!important;width:100%!important;
@@ -666,46 +650,30 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   /* ════════════════════════════════════════════
      หน้าเวลาเรียน (Landscape)
   ════════════════════════════════════════════ */
-  #page-att.active{}
-  /* ── web view: ซ่อน att-print-all ── */
-  #att-print-all{display:none!important;}
-  /* ── print: แสดง att-print-all ซ่อน grid/year wraps ── */
-  #page-att.active #att-print-all{display:block!important;}
-  #page-att.active #att-grid-wrap{display:none!important;}
-  #page-att.active #att-year-wrap{display:none!important;}
-  #page-att.active .att-month-tabs{display:none!important;}
-  /* แต่ละ block เดือนแยกหน้า */
-  .att-print-month{page-break-after:always!important;break-after:page!important;padding-bottom:4mm!important;}
-  .att-print-month:last-child{page-break-after:auto!important;break-after:auto!important;}
-  .att-print-month-title{font-size:10pt!important;font-weight:800!important;text-align:center!important;padding:4px 0!important;border-bottom:2px solid #000!important;margin-bottom:5px!important;}
-  #page-att.active .tbl-wrap{overflow:visible!important;width:100%!important;max-width:100%!important;}
-  #page-att.active #att-grid-table,
-  #page-att.active .att-grid-table{
-    width:100%!important;min-width:0!important;
+  #page-att.active{page:landscape;}
+  #page-att.active .tbl-wrap{overflow:visible!important;width:auto!important;max-width:100%!important;}
+  #page-att.active #att-grid-table{
+    width:auto!important;max-width:100%!important;min-width:0!important;
     table-layout:fixed!important;font-size:5.5pt!important;border-collapse:collapse!important;
   }
   #page-att.active #att-grid-table th,
-  #page-att.active #att-grid-table td,
-  #page-att.active .att-grid-table th,
-  #page-att.active .att-grid-table td{
+  #page-att.active #att-grid-table td{
     position:static!important;padding:2px 1px!important;overflow:hidden!important;
     font-size:5.5pt!important;white-space:nowrap!important;border:1px solid #888!important;
   }
-  #page-att.active #att-grid-table th,
-  #page-att.active .att-grid-table th{
+  #page-att.active #att-grid-table th{
     background:#f0f0f0!important;color:#000!important;font-weight:700!important;
   }
-  #page-att.active #att-grid-table th.name-th,#page-att.active #att-grid-table td.name-td,
-  #page-att.active .att-grid-table th.name-th,#page-att.active .att-grid-table td.name-td{
+  #page-att.active #att-grid-table th.name-th,
+  #page-att.active #att-grid-table td.name-td{
     width:24%!important;font-size:5.5pt!important;text-overflow:ellipsis!important;
     text-align:left!important;padding-left:3px!important;border-right:1px solid #000!important;
   }
-  #page-att.active #att-grid-table th.no-th,#page-att.active #att-grid-table td.no-td,
-  #page-att.active .att-grid-table th.no-th,#page-att.active .att-grid-table td.no-td{
+  #page-att.active #att-grid-table th.no-th,
+  #page-att.active #att-grid-table td.no-td{
     width:1.8%!important;border-right:1px solid #000!important;
   }
-  #page-att.active #att-grid-table td:not(.name-td):not(.no-td):not(.ac),
-  #page-att.active .att-grid-table td:not(.name-td):not(.no-td):not(.ac){
+  #page-att.active #att-grid-table td:not(.name-td):not(.no-td):not(.ac){
     width:2%!important;padding:1px 0!important;text-align:center!important;
   }
   #page-att.active .att-dot{
@@ -715,10 +683,9 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
     background:#fff!important;color:#000!important;
   }
   #page-att.active .att-x{background:#ccc!important;}
-  #page-att.active #att-grid-table th.att-sum-th,#page-att.active #att-grid-table th.att-pct-th,
-  #page-att.active .att-grid-table th.att-sum-th,#page-att.active .att-grid-table th.att-pct-th{width:2.5%!important;}
-  #page-att.active #att-grid-table td.ac,
-  #page-att.active .att-grid-table td.ac{
+  #page-att.active #att-grid-table th.att-sum-th,
+  #page-att.active #att-grid-table th.att-pct-th{width:2.5%!important;}
+  #page-att.active #att-grid-table td.ac{
     width:2.5%!important;font-size:5.5pt!important;
     background:#efefef!important;color:#000!important;
     border:1px solid #555!important;font-weight:700!important;
@@ -727,187 +694,61 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   /* ════════════════════════════════════════════
      หน้าคะแนน ภาค 1 & 2 (Landscape)
   ════════════════════════════════════════════ */
-  #page-s1.active{page:s1-page;}
-  #page-s2.active{page:s2-page;}
+  #page-s1.active,#page-s2.active{page:landscape;}
   #page-s1.active .tbl-wrap,#page-s2.active .tbl-wrap{
     overflow:visible!important;width:auto!important;max-width:100%!important;
   }
-  /* ── ตาราง score: layout เหมือน web view แต่ย่อให้พอดีหน้า landscape ── */
-  #page-s1.active .tbl-wrap,#page-s2.active .tbl-wrap{
-    overflow:visible!important;width:100%!important;max-width:100%!important;
-  }
   #page-s1.active table.xlt,#page-s2.active table.xlt{
-    width:100%!important;min-width:0!important;
-    table-layout:fixed!important;font-size:7pt!important;
-    border-collapse:collapse!important;
+    width:auto!important;max-width:100%!important;min-width:0!important;
+    table-layout:fixed!important;font-size:6pt!important;border-collapse:collapse!important;
   }
-  /* th ทั่วไป */
   #page-s1.active table.xlt th,#page-s2.active table.xlt th{
-    position:static!important;font-size:6pt!important;
+    position:static!important;font-size:5.5pt!important;
     padding:3px 2px!important;white-space:normal!important;
+    word-break:break-word!important;overflow:hidden!important;
     background:#f0f0f0!important;color:#000!important;
     border:1px solid #000!important;font-weight:700!important;
-    text-align:center!important;vertical-align:middle!important;
   }
-  /* td ทั่วไป */
   #page-s1.active table.xlt td,#page-s2.active table.xlt td{
-    position:static!important;font-size:7pt!important;padding:2px 3px!important;
-    border:1px solid #bbb!important;background:#fff!important;color:#000!important;
-    text-align:center!important;vertical-align:middle!important;white-space:nowrap!important;
+    position:static!important;font-size:6pt!important;padding:2px 2px!important;
+    overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+    border:1px solid #888!important;background:#fff!important;color:#000!important;
   }
-  /* คอลัมน์ชื่อ */
-  #page-s1.active table.xlt th.name-th,#page-s2.active table.xlt th.name-th{
-    width:16%!important;text-align:left!important;padding-left:4px!important;
-    border-right:2px solid #000!important;vertical-align:middle!important;
-    white-space:nowrap!important;
-  }
+  #page-s1.active table.xlt th.name-th,#page-s2.active table.xlt th.name-th,
   #page-s1.active table.xlt td.name-td,#page-s2.active table.xlt td.name-td{
-    width:16%!important;text-align:left!important;padding-left:4px!important;
-    border-right:2px solid #000!important;background:#fafafa!important;
-    font-size:6.5pt!important;overflow:hidden!important;text-overflow:ellipsis!important;
+    width:13%!important;font-size:6pt!important;
+    white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+    text-align:left!important;padding-left:4px!important;border-right:1px solid #000!important;
   }
-  /* คอลัมน์เลขที่ */
+  #page-s1.active table.xlt td.name-td,#page-s2.active table.xlt td.name-td{background:#fafafa!important;}
   #page-s1.active table.xlt th.no-th,#page-s2.active table.xlt th.no-th,
   #page-s1.active table.xlt td.no-td,#page-s2.active table.xlt td.no-td{
-    width:3%!important;border-right:1px solid #000!important;
+    width:2%!important;border-right:1px solid #000!important;
   }
   #page-s1.active table.xlt td.no-td,#page-s2.active table.xlt td.no-td{background:#fafafa!important;}
-  /* header ชื่อหน่วย — เอียงเหมือน web view */
-  #page-s1.active table.xlt thead th.score-item-th,
-  #page-s2.active table.xlt thead th.score-item-th{
-    width:3%!important;min-width:0!important;height:80px!important;
-    font-size:6pt!important;padding:0 1px 2px 1px!important;
-    vertical-align:bottom!important;text-align:center!important;
+  #page-s1.active table.xlt thead th:not(.name-th):not(.no-th),
+  #page-s2.active table.xlt thead th:not(.name-th):not(.no-th){
+    width:2.8%!important;min-width:0!important;height:72px!important;
+    font-size:5pt!important;padding:2px 0!important;vertical-align:bottom!important;
     writing-mode:vertical-lr!important;transform:rotate(180deg)!important;
-    overflow:hidden!important;border:1px solid #000!important;
-    background:#f0f0f0!important;color:#000!important;
-    display:table-cell!important;
+    word-break:break-all!important;overflow:hidden!important;
   }
-  /* แถว max score */
-  #page-s1.active table.xlt thead tr:nth-child(2) th,
-  #page-s2.active table.xlt thead tr:nth-child(2) th{
-    height:auto!important;writing-mode:horizontal-tb!important;
-    transform:none!important;font-size:7pt!important;
-    font-weight:800!important;padding:2px!important;
-    vertical-align:middle!important;text-align:center!important;
-  }
-  /* th สรุปคะแนน (rowspan cols ขวา) */
-  #page-s1.active table.xlt thead th:not(.name-th):not(.no-th):not(.score-item-th),
-  #page-s2.active table.xlt thead th:not(.name-th):not(.no-th):not(.score-item-th){
-    writing-mode:horizontal-tb!important;transform:none!important;
-    font-size:6pt!important;height:auto!important;
-    padding:3px 2px!important;vertical-align:middle!important;
-    white-space:normal!important;word-break:break-word!important;
-  }
-  /* ac cell */
   #page-s1.active table.xlt td.ac,#page-s2.active table.xlt td.ac{
-    background:#f5f5f5!important;color:#000!important;
-    font-weight:700!important;border:1px solid #888!important;
+    width:4%!important;font-size:6pt!important;
+    background:#efefef!important;color:#000!important;
+    font-weight:700!important;border:1px solid #555!important;
   }
-  /* gc cell */
   #page-s1.active table.xlt td.gc,#page-s2.active table.xlt td.gc{
+    width:4%!important;font-size:6pt!important;
     background:#e0e0e0!important;color:#000!important;
-    font-weight:800!important;border:1px solid #555!important;font-size:7pt!important;
+    font-weight:800!important;border:1px solid #555!important;
   }
-  #page-s1.active table.xlt td.gc span,#page-s2.active table.xlt td.gc span{color:#000!important;}
-  /* input ในเซล */
-  #page-s1.active table.xlt td input,#page-s2.active table.xlt td input{
-    width:100%!important;font-size:7pt!important;padding:0!important;
+  #page-s1.active table.xlt input,#page-s2.active table.xlt input{
+    width:100%!important;font-size:6pt!important;padding:0!important;
     border:none!important;background:transparent!important;text-align:center!important;
   }
   #page-s1.active .sec-box,#page-s2.active .sec-box{margin-bottom:4px!important;}
   #page-s1.active table.xlt tr,#page-s2.active table.xlt tr{page-break-inside:avoid!important;}
-
-
-  /* ════════════════════════════════════════════
-     หน้าคุณลักษณะ — แยก 3 แผ่น portrait A4
-  ════════════════════════════════════════════ */
-  /* ซ่อน tab buttons, save button ใน print */
-  #page-beh.active .no-print{display:none!important;}
-  #page-beh.active .btn{display:none!important;}
-  /* ซ่อน control box (sec-box แรก มี tab buttons) */
-  #page-beh.active .sec-box:first-child{display:none!important;}
-
-  /* แต่ละ beh section พอดีหน้า A4 */
-  #page-beh.active .sec-box{
-    page-break-inside:avoid!important;
-    margin-bottom:0!important;
-    border:1px solid #000!important;
-    box-shadow:none!important;
-  }
-  /* beh-wrap และ read-wrap อยู่คนละ section — แต่ละหน้าแสดงทั้งคู่ */
-  /* แยก 3 หน้า: ต้องสร้าง wrapper พิเศษใน print */
-  #beh-print-s1,#beh-print-s2,#beh-print-all{display:none!important;}
-  #page-beh.active #beh-print-s1,
-  #page-beh.active #beh-print-s2,
-  #page-beh.active #beh-print-all{
-    display:block!important;
-    page-break-after:always!important;
-    break-after:page!important;
-    width:100%!important;
-    min-height:220mm!important;
-  }
-  #page-beh.active #beh-print-all{
-    page-break-after:auto!important;
-    break-after:auto!important;
-  }
-  /* title แต่ละแผ่น */
-  .beh-print-title{
-    display:none!important;
-  }
-  #page-beh.active .beh-print-title{
-    display:block!important;
-    font-size:11pt!important;font-weight:800!important;
-    text-align:center!important;color:#000!important;
-    padding:6px 0 4px!important;
-    border-bottom:2px solid #000!important;
-    margin-bottom:6px!important;
-  }
-  /* ตารางใน beh เต็มหน้า A4 */
-  #page-beh.active .tbl-wrap{
-    overflow:visible!important;width:100%!important;
-  }
-  #page-beh.active table.xlt{
-    width:100%!important;table-layout:fixed!important;
-    border-collapse:collapse!important;font-size:8pt!important;
-    min-width:0!important;
-  }
-  #page-beh.active table.xlt th{
-    font-size:7pt!important;padding:3px 2px!important;
-    background:#f0f0f0!important;color:#000!important;
-    border:1px solid #000!important;font-weight:700!important;
-    text-align:center!important;white-space:normal!important;
-    word-break:break-word!important;
-  }
-  #page-beh.active table.xlt th.name-th{
-    width:22%!important;text-align:left!important;padding-left:4px!important;
-  }
-  #page-beh.active table.xlt th.no-th{width:4%!important;}
-  #page-beh.active table.xlt th:not(.name-th):not(.no-th){
-    width:auto!important;
-  }
-  #page-beh.active table.xlt td{
-    font-size:8pt!important;padding:2px 3px!important;
-    border:1px solid #bbb!important;color:#000!important;
-    text-align:center!important;background:#fff!important;
-  }
-  #page-beh.active table.xlt td.name-td{
-    text-align:left!important;padding-left:4px!important;
-    background:#fafafa!important;font-size:7.5pt!important;
-    overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
-  }
-  #page-beh.active table.xlt td.no-td{background:#fafafa!important;}
-  #page-beh.active table.xlt td.ac{
-    background:#f5f5f5!important;font-weight:700!important;
-    border:1px solid #888!important;
-  }
-  /* rating-btn → แสดงตัวเลขเรียบๆ */
-  #page-beh.active .rating-btn{
-    display:inline!important;background:none!important;
-    border:none!important;padding:0!important;
-    font-size:8pt!important;font-weight:700!important;color:#000!important;
-  }
-  #page-beh.active table.xlt tr{page-break-inside:avoid!important;}
 
   /* ════════════════════════════════════════════
      ลายเซ็น — fixed bottom + ที่ว่างเซ็น 28mm
@@ -930,7 +771,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
     justify-content:space-between!important;
     padding:0 14mm!important;
     font-size:7.5pt!important;
-    font-family:'THSarabunNew','Sarabun',sans-serif!important;
+    font-family:'Sarabun',sans-serif!important;
     z-index:9999!important;
     box-sizing:border-box!important;
     -webkit-print-color-adjust:exact!important;
@@ -1072,26 +913,26 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   background:#fff;border-radius:20px;padding:32px 24px;
   width:100%;max-width:360px;text-align:center;
   box-shadow:0 4px 24px rgba(0,0,0,.08);border-top:3px solid #f97316;
-  font-family:'THSarabunNew','Sarabun',sans-serif;
+  font-family:'Sarabun',sans-serif;
   -webkit-text-size-adjust:100%;
   text-size-adjust:100%;
 }
 #auth-overlay .auth-logo{font-size:48px;margin-bottom:12px;}
 #auth-overlay .auth-title{
   font-size:20px;font-weight:800;color:#1f2937;margin-bottom:4px;
-  font-family:'THSarabunNew','Sarabun',sans-serif;
+  font-family:'Sarabun',sans-serif;
   letter-spacing:normal;word-spacing:normal;
   -webkit-text-size-adjust:100%;text-size-adjust:100%;
 }
 #auth-overlay .auth-sub{
   font-size:13px;color:#64748b;margin-bottom:24px;line-height:1.5;
-  font-family:'THSarabunNew','Sarabun',sans-serif;
+  font-family:'Sarabun',sans-serif;
   -webkit-text-size-adjust:100%;text-size-adjust:100%;
 }
 #auth-overlay .auth-divider{border:none;border-top:1px solid #e2e8f0;margin:20px 0;}
 #auth-overlay .auth-note{
   font-size:11px;color:#94a3b8;margin-top:16px;line-height:1.6;
-  font-family:'THSarabunNew','Sarabun',sans-serif;
+  font-family:'Sarabun',sans-serif;
   -webkit-text-size-adjust:100%;text-size-adjust:100%;
 }
 #auth-overlay #g_signin_btn{display:flex;justify-content:center;align-items:center;width:100%;}
@@ -1125,7 +966,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
   <div class="topbar-actions no-print">
     <div id="tb-user" onclick="showUserMenu()" style="width:30px;height:30px;border-radius:50%;overflow:hidden;cursor:pointer;flex-shrink:0;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:14px;display:none">👤</div>
     <button class="tb-btn" onclick="openLauncher()" title="เลือก/เปลี่ยนรายวิชา">📂</button><button class="tb-btn accent" onclick="saveData()" title="บันทึก">💾</button>
-    <button class="tb-btn" onclick="openModal('report-modal')">📊</button>
+    
     <button class="tb-btn" onclick="printCurrentPage()">🖨️</button>
   </div>
 </div>
@@ -1448,9 +1289,6 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
     </div>
   </div>
 
-  <!-- ── โหมดพิมพ์: แสดงทุกเดือนเรียงกัน ── -->
-  <div id="att-print-all" style="display:none"></div>
-
   <div id="att-year-wrap" style="display:none">
     <div class="sec-box">
       <div class="sec-head">
@@ -1555,8 +1393,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
 
 <!-- ══════════════════════════ PAGE: คุณลักษณะ ══════════════════════════ -->
 <div id="page-beh" class="page">
-  <!-- ── โหมดแสดงผล: tab + ตารางเดียว ── -->
-  <div class="sec-box no-print" style="margin-bottom:8px">
+  <div class="sec-box" style="margin-bottom:8px">
     <div class="sec-body" style="padding:10px 12px">
       <div style="display:flex;gap:6px;margin-bottom:6px">
         <button id="beh-tab-1" class="btn btn-primary btn-sm" style="flex:1;text-align:center;justify-content:center" onclick="setBehSem('1')">ภาคเรียนที่ 1</button>
@@ -1570,54 +1407,18 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
       <div style="font-size:11px;color:var(--text2);text-align:center;margin-top:4px">ระดับ:  0 = ไม่ผ่าน  &nbsp; 1 = ผ่าน  &nbsp; 2 = ดี  &nbsp; 3 = ดีเยี่ยม</div>
     </div>
   </div>
-  <div class="sec-box no-print">
+
+  <div class="sec-box">
     <div class="sec-head"><div class="sec-head-title"><div class="sec-head-dot"></div>สรุปการประเมินคุณลักษณะอันพึงประสงค์</div></div>
     <div class="tbl-wrap" id="beh-wrap"></div>
   </div>
-  <div class="sec-box no-print">
+  <div class="sec-box">
     <div class="sec-head"><div class="sec-head-title"><div class="sec-head-dot"></div>การอ่าน คิดวิเคราะห์ และเขียนสื่อความ</div></div>
     <div class="tbl-wrap" id="read-wrap"></div>
   </div>
+
   <button class="btn btn-success btn-full no-print" onclick="saveData()" style="margin-top:4px;margin-bottom:8px">💾 บันทึกข้อมูล</button>
-
-  <!-- ── โหมดพิมพ์: 3 แผ่นแยกกัน ── -->
-  <div id="beh-print-s1">
-    <div class="beh-print-title">สรุปการประเมินคุณลักษณะอันพึงประสงค์ และการอ่านฯ — ภาคเรียนที่ 1</div>
-    <div class="sec-box" style="margin-bottom:6px">
-      <div class="sec-head"><div class="sec-head-title">คุณลักษณะอันพึงประสงค์ — ภาคเรียนที่ 1</div></div>
-      <div class="tbl-wrap" id="beh-wrap-s1"></div>
-    </div>
-    <div class="sec-box">
-      <div class="sec-head"><div class="sec-head-title">การอ่าน คิดวิเคราะห์ และเขียนสื่อความ — ภาคเรียนที่ 1</div></div>
-      <div class="tbl-wrap" id="read-wrap-s1"></div>
-    </div>
-  </div>
-
-  <div id="beh-print-s2">
-    <div class="beh-print-title">สรุปการประเมินคุณลักษณะอันพึงประสงค์ และการอ่านฯ — ภาคเรียนที่ 2</div>
-    <div class="sec-box" style="margin-bottom:6px">
-      <div class="sec-head"><div class="sec-head-title">คุณลักษณะอันพึงประสงค์ — ภาคเรียนที่ 2</div></div>
-      <div class="tbl-wrap" id="beh-wrap-s2"></div>
-    </div>
-    <div class="sec-box">
-      <div class="sec-head"><div class="sec-head-title">การอ่าน คิดวิเคราะห์ และเขียนสื่อความ — ภาคเรียนที่ 2</div></div>
-      <div class="tbl-wrap" id="read-wrap-s2"></div>
-    </div>
-  </div>
-
-  <div id="beh-print-all">
-    <div class="beh-print-title">สรุปการประเมินคุณลักษณะอันพึงประสงค์ และการอ่านฯ — รวมตลอดปีการศึกษา</div>
-    <div class="sec-box" style="margin-bottom:6px">
-      <div class="sec-head"><div class="sec-head-title">คุณลักษณะอันพึงประสงค์ — รวมตลอดปีการศึกษา</div></div>
-      <div class="tbl-wrap" id="beh-wrap-all"></div>
-    </div>
-    <div class="sec-box">
-      <div class="sec-head"><div class="sec-head-title">การอ่าน คิดวิเคราะห์ และเขียนสื่อความ — รวมตลอดปีการศึกษา</div></div>
-      <div class="tbl-wrap" id="read-wrap-all"></div>
-    </div>
-  </div>
-
-  <div style="height:60px" class="no-print"></div>
+  <div style="height:60px"></div>
 </div>
 
 <!-- ══════════════════════════ PAGE: รายบุคคล ══════════════════════════ -->
@@ -1635,7 +1436,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
 </div><!-- scroll-area -->
 
 <nav class="bottom-nav no-print">
-  <div class="nav-item active" id="nav-cover" onclick="goPage('cover',this)"><div class="nav-icon"></div><div class="nav-label">ปก</div></div>
+  <div class="nav-item active" id="nav-cover" onclick="goPage('cover',this)"><div class="nav-icon">📋</div><div class="nav-label">ปก</div></div>
   <div class="nav-item" id="nav-students" onclick="goPage('students',this)"><div class="nav-icon">👥</div><div class="nav-label">รายชื่อ</div></div>
   <div class="nav-item" id="nav-att" onclick="goPage('att',this)"><div class="nav-icon">📅</div><div class="nav-label">เวลาเรียน</div></div>
   <div class="nav-item" id="nav-s1" onclick="goPage('s1',this)"><div class="nav-icon">✏️</div><div class="nav-label">คะแนน 1</div></div>
@@ -1686,7 +1487,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
     <div style="font-size:15px;font-weight:800;color:var(--primary)">⚙️ หน่วยการเรียนรู้ ภาคเรียนที่ 1</div>
     <button class="btn btn-outline btn-sm" onclick="closeUnitModal(1)" style="font-size:16px;padding:4px 10px">✕</button>
   </div>
-  <div style="background:#f3f4f6;border-radius:10px;padding:12px;margin-bottom:12px;border:1.5px solid #e5e7eb">
+  <div style="background:#f3f4f6;border-radius:10px;padding:12px;margin-bottom:12px;border:1.5px solid #bfdbfe">
     <div style="font-size:12px;font-weight:700;color:var(--primary);margin-bottom:8px">📝 กำหนดคะแนนสอบปลายภาค</div>
     <div style="display:flex;align-items:center;gap:10px">
       <span style="font-size:12px;color:var(--text2);flex-shrink:0">คะแนนสอบปลายภาคเต็ม</span>
@@ -1708,7 +1509,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
     <div style="font-size:15px;font-weight:800;color:var(--primary)">⚙️ หน่วยการเรียนรู้ ภาคเรียนที่ 2</div>
     <button class="btn btn-outline btn-sm" onclick="closeUnitModal(2)" style="font-size:16px;padding:4px 10px">✕</button>
   </div>
-  <div style="background:#f3f4f6;border-radius:10px;padding:12px;margin-bottom:12px;border:1.5px solid #e5e7eb">
+  <div style="background:#f3f4f6;border-radius:10px;padding:12px;margin-bottom:12px;border:1.5px solid #bfdbfe">
     <div style="font-size:12px;font-weight:700;color:var(--primary);margin-bottom:8px">📝 กำหนดคะแนนสอบปลายภาค</div>
     <div style="display:flex;align-items:center;gap:10px">
       <span style="font-size:12px;color:var(--text2);flex-shrink:0">คะแนนสอบปลายภาคเต็ม</span>
@@ -1724,25 +1525,7 @@ dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
 </dialog>
 
 <!-- ══ REPORT MODAL ══ -->
-<div class="modal-overlay" id="report-modal" onclick="closeModal('report-modal')">
-<div class="modal-sheet" onclick="event.stopPropagation()">
-  <div class="modal-handle"></div>
-  <div class="modal-title">📊 สร้างรายงาน PDF</div>
-  <div style="font-size:13px;color:var(--text2);margin-bottom:10px">เลือกส่วนที่ต้องการรวมในรายงาน</div>
-  <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
-    <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--light);border-radius:10px;cursor:pointer"><input type="checkbox" id="r-cover" checked style="width:18px;height:18px"><span> ปก</span></label>
-    <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--light);border-radius:10px;cursor:pointer"><input type="checkbox" id="r-stu" checked style="width:18px;height:18px"><span>👥 รายชื่อนักเรียน</span></label>
-    <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--light);border-radius:10px;cursor:pointer"><input type="checkbox" id="r-att" checked style="width:18px;height:18px"><span>📅 เวลาเรียน</span></label>
-    <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--light);border-radius:10px;cursor:pointer"><input type="checkbox" id="r-s1" checked style="width:18px;height:18px"><span>✏️ คะแนนภาคเรียนที่ 1</span></label>
-    <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--light);border-radius:10px;cursor:pointer"><input type="checkbox" id="r-s2" checked style="width:18px;height:18px"><span>📝 คะแนนภาคเรียนที่ 2</span></label>
-    <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--light);border-radius:10px;cursor:pointer"><input type="checkbox" id="r-tot" checked style="width:18px;height:18px"><span>📊 ผลสัมฤทธิ์รวม</span></label>
-    <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--light);border-radius:10px;cursor:pointer"><input type="checkbox" id="r-beh" checked style="width:18px;height:18px"><span>⭐ คุณลักษณะ & การอ่าน</span></label>
-    <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--light);border-radius:10px;cursor:pointer"><input type="checkbox" id="r-ind" style="width:18px;height:18px"><span>📄 รายงานรายบุคคล</span></label>
-  </div>
-  <button class="btn btn-accent btn-full" style="margin-bottom:8px" onclick="generatePDF()">📑 สร้างไฟล์ PDF</button>
-  <button class="btn btn-outline btn-full" onclick="closeModal('report-modal')">ปิด</button>
-</div>
-</div>
+
 
 <script>
 /* ══════════════════════════════════════════════════
@@ -2047,7 +1830,7 @@ function makeSummaryTableHTML(dist,total,compact){
   keys.forEach(function(k,i){
     const cnt=dist[k]||0;
     const pct=total?Math.round(cnt/total*100):0;
-    h+='<tr style="background:'+(i%2===0?'#fff':'#f9fafb')+'">';
+    h+='<tr style="background:'+(i%2===0?'#fff':'#f7fafd')+'">';
     h+='<td style="color:'+colors[i]+';font-weight:700;'+pd+'">'+labels[i]+'</td>';
     h+='<td class="ac" style="'+pd+'">'+cnt+'</td>';
     h+='<td class="ac" style="'+pd+'">'+pct+'</td>';
@@ -2093,7 +1876,7 @@ function renderCoverStats(){
 }
 
 /* ══ ROW HELPERS ══ */
-function rowBg(i){return i%2===0?'#ffffff':'#f9fafb';}
+function rowBg(i){return i%2===0?'#ffffff':'#f7fafd';}
 function tdName(i,txt){const bg=rowBg(i);return `<td class="name-td" style="background:${bg}">${txt}</td>`;}
 function tdNo(i,txt){const bg=rowBg(i);return `<td class="no-td" style="background:${bg}">${txt}</td>`;}
 
@@ -2101,7 +1884,7 @@ function tdNo(i,txt){const bg=rowBg(i);return `<td class="no-td" style="backgrou
 function renderStudents(){
   const tbody=document.getElementById('student-tbody');
   tbody.innerHTML=D.students.map((s,i)=>`
-    <tr style="background:${i%2===0?'#fff':'#f9fafb'}">
+    <tr style="background:${i%2===0?'#fff':'#f7fafd'}">
       <td>${s.no||i+1}</td>
       <td>${s.id||''}</td>
       ${tdName(i,s.name||'')}
@@ -2180,7 +1963,7 @@ function renderAttGrid(){
     const tot=D.attDays[attMonth]||days;
     const pct=tot>0?Math.round(m/tot*100):0;
     const ok=pct>=80;
-    html+=`<tr style="background:${si%2===0?'#fff':'#f9fafb'}">
+    html+=`<tr style="background:${si%2===0?'#fff':'#f7fafd'}">
       ${tdName(si,s.name)}
       ${tdNo(si,s.no)}
       ${dayNums.map(d=>{
@@ -2197,50 +1980,6 @@ function renderAttGrid(){
   html+=`</tbody></table>`;
   document.getElementById('att-table-wrap').innerHTML=html;
 }
-function _buildAttPrintAll(){
-  const wrap=document.getElementById('att-print-all');
-  if(!wrap)return;
-  const n=D.students.filter(s=>s.name).length;
-  if(!n){wrap.innerHTML='';return;}
-  const ATT_LABEL={'m':'✓','x':'✗','l':'ส','lv':'ล','':''};
-  const ATT_CLS={'m':'att-m','x':'att-x','l':'att-l','lv':'att-lv','':'att-empty'};
-  let html='';
-  MONTHS.forEach((mName,mi)=>{
-    const days=MDAYS[mi];
-    const dayNums=Array.from({length:days},(_,i)=>i+1);
-    let tbl=`<table class="xlt att-grid-table" style="width:100%;font-size:11px">
-      <thead><tr>
-        <th class="name-th">ชื่อ-สกุล</th><th class="no-th">ที่</th>
-        ${dayNums.map(d=>`<th class="att-day-th" style="padding:3px 1px">${d}</th>`).join('')}
-        <th class="att-sum-th">ม</th><th class="att-sum-th">ป</th><th class="att-sum-th">ล</th><th class="att-sum-th">ข</th>
-        <th class="att-pct-th">%มา</th>
-      </tr></thead><tbody>`;
-    D.students.forEach((s,si)=>{
-      if(!s.name)return;
-      const row=D.att[mi][si]||[];
-      const m=row.filter(c=>c==='m').length;
-      const x=row.filter(c=>c==='x').length;
-      const l=row.filter(c=>c==='l').length;
-      const lv=row.filter(c=>c==='lv').length;
-      const tot=D.attDays[mi]||days;
-      const pct=tot>0?Math.round(m/tot*100):0;
-      const ok=pct>=80;
-      tbl+=`<tr style="background:${si%2===0?'#fff':'#f9fafb'}">
-        ${tdName(si,s.name)}${tdNo(si,s.no)}
-        ${dayNums.map(d=>{const v=row[d-1]||'';return `<td style="padding:1px;text-align:center"><span class="att-dot ${ATT_CLS[v]}">${ATT_LABEL[v]}</span></td>`;}).join('')}
-        <td class="ac">${m}</td><td class="ac">${x}</td><td class="ac">${l}</td><td class="ac">${lv}</td>
-        <td class="ac" style="color:${ok?'#166534':'#991b1b'};font-weight:800">${pct}%</td>
-      </tr>`;
-    });
-    tbl+=`</tbody></table>`;
-    html+=`<div class="att-print-month">
-      <div class="att-print-month-title">บันทึกการมาเรียน — เดือน${mName} (วันเรียนเต็ม ${D.attDays[mi]||days} วัน)</div>
-      <div class="tbl-wrap">${tbl}</div>
-    </div>`;
-  });
-  wrap.innerHTML=html;
-}
-
 function toggleAtt(si,di,cell){
   const cur=D.att[attMonth][si][di]||'';
   const CYCLE={'':'m','m':'x','x':'l','l':'lv','lv':''};
@@ -2285,7 +2024,7 @@ function calcYearlyAtt(){
     }).join('');
     const pct=totD>0?Math.round(totM/totD*100):0;
     const ok=pct>=80;
-    html+=`<tr style="background:${si%2===0?'#fff':'#f9fafb'}">
+    html+=`<tr style="background:${si%2===0?'#fff':'#f7fafd'}">
       ${tdName(si,s.name)}${tdNo(si,s.no)}
       ${mCells}
       <td class="ac">${totM}</td><td class="ac">${totD}</td>
@@ -2322,10 +2061,10 @@ function renderScore(sem){
         <th class="no-th" rowspan="2">ที่</th>
         ${items.map(it=>`<th class="score-item-th" style="padding:4px 2px;vertical-align:middle;text-align:left;writing-mode:vertical-lr;transform:rotate(180deg);font-size:11px;font-weight:700;white-space:normal;line-height:1.4;word-break:break-all;height:160px;overflow:hidden">${it.name}</th>`).join('')}
         <th rowspan="2" style="width:70px;border-left:2px solid white">รวม<br>ระหว่าง<br><small>${maxBet}</small><br><small>คะแนน</small></th>
-        <th rowspan="2" style="width:75px;background:#4b5563;color:#fff">ระหว่าง<br>เรียน<br><small>${bet}</small><br><small>คะแนน</small></th>
+        <th rowspan="2" style="width:75px;background:#235a8e">ระหว่าง<br>เรียน<br><small>${bet}</small><br><small>คะแนน</small></th>
         <th rowspan="2" style="width:70px">สอบ<br>ปลาย<br><small>${examMax}</small><br><small>คะแนน</small></th>
-        <th rowspan="2" style="width:75px;background:#4b5563;color:#fff">คะแนน<br>ปลายภาค<br><small>${ex}</small><br><small>คะแนน</small></th>
-        <th rowspan="2" style="width:100px;background:#ea6c00;color:#fff">รวม<br><small>100</small><br><small>คะแนน</small></th>
+        <th rowspan="2" style="width:75px;background:#235a8e">คะแนน<br>ปลายภาค<br><small>${ex}</small><br><small>คะแนน</small></th>
+        <th rowspan="2" style="width:100px;background:#154360">รวม<br><small>100</small><br><small>คะแนน</small></th>
 
       </tr>
       <tr>
@@ -2351,14 +2090,14 @@ function renderScore(sem){
     const exScaled=parseFloat((exv/examMax*ex).toFixed(2));
     const total=parseFloat((betScaled+exScaled).toFixed(2));
     const grade=scoreToGrade(total);
-    html+=`<tr style="background:${si%2===0?'#fff':'#f9fafb'}">
+    html+=`<tr style="background:${si%2===0?'#fff':'#f7fafd'}">
       ${tdName(si,s.name)}
       ${tdNo(si,s.no)}
       ${cells}
       <td class="ac" style="border-left:2px solid #8da4b8" id="bt-${sem}-${si}">${betTotal}</td>
-      <td class="ac" style="background:#fff7ed;color:#c2410c" id="bs-${sem}-${si}">${betScaled.toFixed(2)}</td>
+      <td class="ac" style="background:#d6eaf8;color:#1a5276" id="bs-${sem}-${si}">${betScaled.toFixed(2)}</td>
       <td class="edit-cell" style="padding:2px"><input type="number" min="0" max="${examMax}" value="${exv}" style="width:62px" oninput="setExam(${sem},${si},this.value)"></td>
-      <td class="ac" style="background:#fff7ed;color:#c2410c" id="es-${sem}-${si}">${exScaled.toFixed(2)}</td>
+      <td class="ac" style="background:#d6eaf8;color:#1a5276" id="es-${sem}-${si}">${exScaled.toFixed(2)}</td>
       <td class="gc" style="min-width:100px" id="tot-${sem}-${si}">${total.toFixed(2)}</td>
     </tr>`;
   });
@@ -2493,7 +2232,7 @@ function scoreToGrade(s){
   if(s>=50)return 1;return 0;
 }
 function gradeChip(g){
-  return `<span style="color:#fff;font-weight:800">${g.toFixed(1)}</span>`;
+  return `<span style="color:#1f2937;font-weight:800">${g.toFixed(1)}</span>`;
 }
 function attPct(si){
   let m=0,d=0;
@@ -2537,7 +2276,7 @@ function renderTotal(){
         <th colspan="3">ภาคเรียนที่ 1</th>
         <th colspan="3">ภาคเรียนที่ 2</th>
         <th rowspan="2">คะแนนเฉลี่ย</th>
-        <th rowspan="2" style="background:#ea6c00;color:#fff">เกรด</th>
+        <th rowspan="2" style="background:#154360">เกรด</th>
         <th rowspan="2" style="min-width:160px;white-space:nowrap">หมายเหตุ</th>
       </tr>
       <tr>
@@ -2562,7 +2301,7 @@ function renderTotal(){
     } else {
       gradeDisplay=gradeChip(grade);
     }
-    html+=`<tr style="background:${si%2===0?'#fff':'#f9fafb'}">
+    html+=`<tr style="background:${si%2===0?'#fff':'#f7fafd'}">
       ${tdName(si,s.name)}${tdNo(si,s.no)}
       <td class="ac">${s1.bet.toFixed(2)}</td><td class="ac">${s1.ex.toFixed(2)}</td><td class="ac">${s1.total.toFixed(2)}</td>
       <td class="ac">${s2.bet.toFixed(2)}</td><td class="ac">${s2.ex.toFixed(2)}</td><td class="ac">${s2.total.toFixed(2)}</td>
@@ -2593,7 +2332,7 @@ function drawPieChart(canvasId, legendId, slices, opts){
   const total=slices.reduce((s,sl)=>s+sl.value,0);
   if(!total){
     ctx.fillStyle='#e2e8f0';ctx.beginPath();ctx.arc(sz/2,sz/2,sz/2-3,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle='#94a3b8';ctx.font=`10px THSarabunNew,Sarabun`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillStyle='#94a3b8';ctx.font=`10px Sarabun`;ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText('ไม่มีข้อมูล',sz/2,sz/2);
     if(legendEl)legendEl.innerHTML='';return;
   }
@@ -2702,65 +2441,7 @@ function setBehSem(v){
   });
   renderBehTable(v);renderReadTable(v);
 }
-function renderBehavior(){
-  setBehSem(behSem);
-  // render print sections (แยก 3 ภาค)
-  _renderBehPrint('1');
-  _renderBehPrint('2');
-  _renderBehPrint('all');
-}
-function _renderBehPrint(sem){
-  const sfx=sem==='all'?'all':('s'+sem);
-  // beh table
-  const bw=document.getElementById('beh-wrap-'+sfx);
-  const rw=document.getElementById('read-wrap-'+sfx);
-  if(!bw||!rw)return;
-  const n=D.students.filter(s=>s.name).length;
-  if(!n){bw.innerHTML='';rw.innerHTML='';return;}
-  const isAll=sem==='all';
-  // beh
-  let bHtml=`<table class="xlt"><thead><tr>
-    <th class="name-th">ชื่อ-สกุล</th><th class="no-th">ที่</th>
-    ${BEH.map(l=>`<th>${l}</th>`).join('')}
-    <th>เฉลี่ย</th><th>ผลการประเมิน</th>
-  </tr></thead><tbody>`;
-  D.students.forEach((s,si)=>{
-    if(!s.name)return;
-    const getV=(i)=>{
-      if(sem==='1')return D.beh1[si]?D.beh1[si][i]||0:0;
-      if(sem==='2')return D.beh2[si]?D.beh2[si][i]||0:0;
-      const b1=D.beh1[si]?D.beh1[si][i]||0:0;const b2=D.beh2[si]?D.beh2[si][i]||0:0;
-      return b1&&b2?Math.round((b1+b2)/2*10)/10:b1||b2;
-    };
-    const vals=BEH.map((_,i)=>getV(i));
-    const avg=vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length*10)/10:0;
-    const result=avg>=3?'ดีเยี่ยม':avg>=2?'ดี':avg>=1?'ผ่าน':'ไม่ผ่าน';
-    bHtml+=`<tr style="background:${si%2===0?'#fff':'#f9fafb'}">${tdName(si,s.name)}${tdNo(si,s.no)}${vals.map(v=>`<td class="ac">${v}</td>`).join('')}<td class="ac">${avg}</td><td class="ac" style="font-weight:700">${result}</td></tr>`;
-  });
-  bHtml+=`</tbody></table>`;
-  bw.innerHTML=bHtml;
-  // read
-  let rHtml=`<table class="xlt"><thead><tr>
-    <th class="name-th">ชื่อ-สกุล</th><th class="no-th">ที่</th>
-    ${READ.map(l=>`<th>${l}</th>`).join('')}
-    <th>เฉลี่ย</th><th>ผลการประเมิน</th>
-  </tr></thead><tbody>`;
-  D.students.forEach((s,si)=>{
-    if(!s.name)return;
-    const getV=(i)=>{
-      if(sem==='1')return D.read1[si]?D.read1[si][i]||0:0;
-      if(sem==='2')return D.read2[si]?D.read2[si][i]||0:0;
-      const r1=D.read1[si]?D.read1[si][i]||0:0;const r2=D.read2[si]?D.read2[si][i]||0:0;
-      return r1&&r2?Math.round((r1+r2)/2*10)/10:r1||r2;
-    };
-    const vals=READ.map((_,i)=>getV(i));
-    const avg=vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length*10)/10:0;
-    const result=avg>=3?'ดีเยี่ยม':avg>=2?'ดี':avg>=1?'ผ่าน':'ไม่ผ่าน';
-    rHtml+=`<tr style="background:${si%2===0?'#fff':'#f9fafb'}">${tdName(si,s.name)}${tdNo(si,s.no)}${vals.map(v=>`<td class="ac">${v}</td>`).join('')}<td class="ac">${avg}</td><td class="ac" style="font-weight:700">${result}</td></tr>`;
-  });
-  rHtml+=`</tbody></table>`;
-  rw.innerHTML=rHtml;
-}
+function renderBehavior(){setBehSem(behSem);}
 function openCriteriaModal(type){
   const arr=type==='beh'?BEH:READ;
   const title=type==='beh'?'คุณลักษณะอันพึงประสงค์':'การอ่าน คิดวิเคราะห์ เขียน';
@@ -2826,7 +2507,7 @@ function renderBehTable(sem){
       const arrKey=`beh${sem}`;
       return `<td style="padding:3px;text-align:center">${ratingButtons(arrKey,si,ii,vals[ii])}</td>`;
     }).join('');
-    html+=`<tr style="background:${si%2===0?'#fff':'#f9fafb'}">${tdName(si,s.name)}${tdNo(si,s.no)}${cells}<td class="ac">${avg}</td><td class="ac" style="color:${resColor};font-weight:700;white-space:nowrap">${result}</td></tr>`;
+    html+=`<tr style="background:${si%2===0?'#fff':'#f7fafd'}">${tdName(si,s.name)}${tdNo(si,s.no)}${cells}<td class="ac">${avg}</td><td class="ac" style="color:${resColor};font-weight:700;white-space:nowrap">${result}</td></tr>`;
   });
   html+=`</tbody></table>`;
   document.getElementById('beh-wrap').innerHTML=html;
@@ -2860,7 +2541,7 @@ function renderReadTable(sem){
       const arrKey=`read${sem}`;
       return `<td style="padding:3px;text-align:center">${ratingButtons(arrKey,si,ii,vals[ii])}</td>`;
     }).join('');
-    html+=`<tr style="background:${si%2===0?'#fff':'#f9fafb'}">${tdName(si,s.name)}${tdNo(si,s.no)}${cells}<td class="ac">${avg}</td><td class="ac" style="color:${resColor};font-weight:700;white-space:nowrap">${result}</td></tr>`;
+    html+=`<tr style="background:${si%2===0?'#fff':'#f7fafd'}">${tdName(si,s.name)}${tdNo(si,s.no)}${cells}<td class="ac">${avg}</td><td class="ac" style="color:${resColor};font-weight:700;white-space:nowrap">${result}</td></tr>`;
   });
   html+=`</tbody></table>`;
   document.getElementById('read-wrap').innerHTML=html;
@@ -2935,42 +2616,42 @@ function renderIndividual(){
         <thead>
           <tr>
             <th rowspan="2" style="font-size:11px;text-align:center">รายการ</th>
-            <th colspan="2" style="background:#4b5563;color:#fff;font-size:10px">ระหว่าง</th>
-            <th colspan="2" style="background:#374151;color:#fff;font-size:10px">ปลายภาค</th>
+            <th colspan="2" style="background:#235a8e;font-size:10px">ระหว่าง</th>
+            <th colspan="2" style="background:#1a5276;font-size:10px">ปลายภาค</th>
             <th rowspan="2" style="font-size:10px">เต็ม</th>
             <th rowspan="2" style="font-size:10px">รวม</th>
           </tr>
           <tr>
-            <th style="background:#4b5563;color:#fff;font-size:9px">เต็ม</th>
-            <th style="background:#4b5563;color:#fff;font-size:9px">ได้</th>
-            <th style="background:#374151;color:#fff;font-size:9px">เต็ม</th>
-            <th style="background:#374151;color:#fff;font-size:9px">ได้</th>
+            <th style="background:#235a8e;font-size:9px">เต็ม</th>
+            <th style="background:#235a8e;font-size:9px">ได้</th>
+            <th style="background:#1a5276;font-size:9px">เต็ม</th>
+            <th style="background:#1a5276;font-size:9px">ได้</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td style="font-size:11px;text-align:center;font-weight:600">ภาคเรียนที่ 1</td>
-            <td style="background:#f3f4f6;color:#374151;font-weight:700;font-size:11px">${D.s1bet}</td>
+            <td style="background:#e8f4fd;color:#1a5276;font-weight:700;font-size:11px">${D.s1bet}</td>
             <td class="ac" style="font-size:11px">${s1.bet}</td>
-            <td style="background:#f3f4f6;color:#374151;font-weight:700;font-size:11px">${D.s1ex}</td>
+            <td style="background:#dce8f5;color:#1a3a5c;font-weight:700;font-size:11px">${D.s1ex}</td>
             <td class="ac" style="font-size:11px">${s1.ex}</td>
             <td style="font-size:11px">100</td>
             <td class="ac" style="font-weight:800;font-size:11px">${s1.total}</td>
           </tr>
           <tr>
             <td style="font-size:11px;text-align:center;font-weight:600">ภาคเรียนที่ 2</td>
-            <td style="background:#f3f4f6;color:#374151;font-weight:700;font-size:11px">${D.s2bet}</td>
+            <td style="background:#e8f4fd;color:#1a5276;font-weight:700;font-size:11px">${D.s2bet}</td>
             <td class="ac" style="font-size:11px">${s2.bet}</td>
-            <td style="background:#f3f4f6;color:#374151;font-weight:700;font-size:11px">${D.s2ex}</td>
+            <td style="background:#dce8f5;color:#1a3a5c;font-weight:700;font-size:11px">${D.s2ex}</td>
             <td class="ac" style="font-size:11px">${s2.ex}</td>
             <td style="font-size:11px">100</td>
             <td class="ac" style="font-weight:800;font-size:11px">${s2.total}</td>
           </tr>
-          <tr style="background:#f3f4f6">
+          <tr style="background:#e8f4fd">
             <td style="font-weight:700;font-size:11px;text-align:center">เฉลี่ยตลอดปี</td>
-            <td style="background:#f3f4f6;color:#374151;font-weight:700;font-size:11px">${Math.round((D.s1bet+D.s2bet)/2)}</td>
+            <td style="background:#e0eef8;color:#1a5276;font-weight:700;font-size:11px">${Math.round((D.s1bet+D.s2bet)/2)}</td>
             <td class="ac" style="font-size:11px">${parseFloat(((s1.bet+s2.bet)/2).toFixed(2))}</td>
-            <td style="background:#f3f4f6;color:#374151;font-weight:700;font-size:11px">${Math.round((D.s1ex+D.s2ex)/2)}</td>
+            <td style="background:#d4e6f4;color:#1a3a5c;font-weight:700;font-size:11px">${Math.round((D.s1ex+D.s2ex)/2)}</td>
             <td class="ac" style="font-size:11px">${parseFloat(((s1.ex+s2.ex)/2).toFixed(2))}</td>
             <td style="font-size:11px">100</td>
             <td class="ac" style="font-weight:800;font-size:11px;color:var(--primary)">${avg}</td>
@@ -3002,1119 +2683,7 @@ function renderIndividual(){
   </div>`;
 }
 
-/* ══ PDF — ใช้ print CSS ของแต่ละหน้า รวมเป็น PDF จริง ══ */
-async function generatePDF(){
-  closeModal('report-modal');
-
-  const SEL=[
-    {id:'r-cover', page:'cover',    ls:false},
-    {id:'r-stu',   page:'students', ls:false},
-    {id:'r-att',   page:'att',      ls:true},
-    {id:'r-s1',    page:'s1',       ls:true},
-    {id:'r-s2',    page:'s2',       ls:true},
-    {id:'r-tot',   page:'total',    ls:false},
-    {id:'r-beh',   page:'beh',      ls:false},
-    {id:'r-ind',   page:'ind',      ls:false},
-  ].filter(p=>document.getElementById(p.id)?.checked);
-
-  if(!SEL.length){showToast('⚠️ กรุณาเลือกอย่างน้อย 1 หน้า');return;}
-  const jsPDFLib=(window.jspdf&&window.jspdf.jsPDF)||window.jsPDF;
-  if(!jsPDFLib){showToast('❌ โหลด jsPDF ไม่สำเร็จ');return;}
-
-  showLoading('กำลังเตรียมข้อมูล...');
-  await new Promise(r=>setTimeout(r,80));
-
-  // ── render ข้อมูลทุกหน้า ──
-  const need=new Set(SEL.map(p=>p.page));
-  if(need.has('att'))   {renderAttPage();_buildAttPrintAll();}
-  if(need.has('s1'))    renderScore(1);
-  if(need.has('s2'))    renderScore(2);
-  if(need.has('total')) {renderTotal();drawCharts();}
-  if(need.has('beh'))   renderBehavior();
-  if(need.has('ind'))   {populateIndSel();renderIndividual();}
-  if(need.has('cover')) {renderCoverStats();renderCoverBehRead();}
-  const sigT=document.getElementById('sig-teacher');
-  const sigTP=document.getElementById('sig-teacher-pos');
-  const sigD=document.getElementById('sig-director');
-  const sigDP=document.getElementById('sig-director-pos');
-  if(sigT)  sigT.textContent=D.teacher||'';
-  if(sigTP) sigTP.textContent=D.teacherPos?'ตำแหน่ง'+D.teacherPos:'';
-  if(sigD)  sigD.textContent=D.director||'';
-  if(sigDP) sigDP.textContent=D.school?'ตำแหน่งผู้อำนวยการโรงเรียน'+D.school:'ตำแหน่งผู้อำนวยการโรงเรียน';
-  if(need.has('cover')) _prepareCoverPrintElements();
-  await new Promise(r=>setTimeout(r,400));
-
-  // ── จำ active page เดิม ──
-  const allPageEls=document.querySelectorAll('.page');
-  const prevPage=currentPage;
-
-  // ── print CSS ที่ inject เป็น screen CSS เพื่อให้ html2canvas เห็น ──
-  const PCSS=`
-
-  /* ═══ ฐาน ═══ */
-  *{
-    -webkit-print-color-adjust:exact!important;
-    print-color-adjust:exact!important;
-    box-sizing:border-box!important;
-  }
-  /* margin ล่าง 35mm เผื่อที่เซ็นชื่อ */
-  @page          { size:A4 portrait;  margin:15mm 14mm 20mm 14mm; }
-  @page landscape{ size:A4 landscape; margin:12mm 12mm 18mm 12mm; }
-  @page att-page { size:A4 landscape; margin:12mm 12mm 18mm 12mm; }
-  @page s1-page  { size:A4 landscape; margin:12mm 12mm 18mm 12mm; }
-  @page s2-page  { size:A4 landscape; margin:12mm 12mm 18mm 12mm; }
-  /* Fallback: กำหนด size โดยตรงสำหรับ browser ที่ไม่รองรับ named page */
-  #page-att.active, #page-s1.active, #page-s2.active{
-    /* hint เพิ่มเติม */
-  }
-
-  /* ═══ ซ่อน UI ═══ */
-  #loading-overlay,.bottom-nav,.topbar,
-  .status-bar,.topbar-actions,.no-print,
-  .toast,#launcher{display:none!important;}
-  /* ยกเว้น: cover-beh-read-web แสดงใน print หน้าปก */
-  #page-cover.active #cover-beh-read-web{display:grid!important;}
-
-  /* ═══ รีเซ็ต body/wrapper ═══ */
-  html,body{
-    width:100%!important;margin:0!important;padding:0!important;
-    overflow:visible!important;background:#fff!important;
-    font-family:'THSarabunNew','Sarabun',sans-serif!important;font-size:10pt!important;color:#000!important;
-  }
-  .app-wrap,.scroll-area,.scroll-content{
-    display:block!important;width:100%!important;height:auto!important;
-    overflow:visible!important;position:static!important;
-    padding:0!important;margin:0!important;background:#fff!important;
-  }
-  .page{display:none!important;}
-  .page.active{display:block!important;width:100%!important;overflow:visible!important;}
-
-  /* ═══ SEC-BOX — กรอบดำบางๆ พื้นขาว ═══ */
-  .sec-box{
-    margin-bottom:7px!important;box-shadow:none!important;
-    border:1px solid #000!important;border-radius:0!important;
-    width:auto!important;overflow:visible!important;page-break-inside:avoid;
-  }
-  .sec-head{
-    background:#fff!important;color:#000!important;
-    border-bottom:1px solid #000!important;padding:4px 10px!important;
-  }
-  .sec-head-title{font-size:10pt!important;font-weight:700!important;color:#000!important;}
-  .sec-head-dot{display:none!important;}
-  .sec-body{padding:7px 10px!important;background:#fff!important;}
-
-  /* ═══ XLS-HEADER (ปก) — พื้นขาว กรอบดำ ═══ */
-  .xls-header{
-    background:#fff!important;border:1px solid #000!important;
-    border-radius:0!important;padding:10px 12px!important;margin-bottom:6px!important;
-  }
-  .xls-header-title{
-    font-size:12pt!important;font-weight:800!important;color:#000!important;
-    margin-bottom:6px!important;text-align:center!important;
-    border-bottom:1.5px solid #000!important;padding-bottom:4px!important;
-  }
-  .xls-row{
-    border-radius:0!important;overflow:visible!important;
-    background:#fff!important;border-bottom:1px solid #ddd!important;
-  }
-  .xls-label{
-    font-size:9pt!important;min-width:80px!important;padding:4px 8px!important;
-    color:#000!important;font-weight:700!important;
-    background:#f5f5f5!important;border-right:1px solid #ccc!important;
-  }
-  .xls-val{font-size:9pt!important;padding:4px 8px!important;color:#000!important;background:#fff!important;}
-  .xls-row-2col{gap:4px!important;}
-  .xls-form{gap:2px!important;}
-  .xls-header-inner{display:block!important;}
-  .xls-header-content{display:block!important;width:100%!important;}
-
-  /* ═══ STAT TILES — แถวเล็กๆ ไม่ยืด ═══ */
-  .stats-row{
-    display:flex!important;flex-wrap:wrap!important;
-    justify-content:center!important;gap:6px!important;margin-bottom:6px!important;
-  }
-  .stat-tile{
-    width:88px!important;flex-shrink:0!important;padding:7px 5px!important;
-    border-radius:0!important;border:1px solid #000!important;
-    box-shadow:none!important;background:#fff!important;text-align:center!important;
-  }
-  .stat-num{font-size:15pt!important;color:#000!important;font-weight:800!important;}
-  .stat-lbl{font-size:7pt!important;color:#333!important;}
-
-  /* ═══ ตารางทั่วไป — width:auto ไม่ยืด ═══ */
-  .tbl-wrap{overflow:visible!important;width:auto!important;max-width:100%!important;}
-  table.xlt{
-    width:auto!important;max-width:100%!important;min-width:0!important;
-    font-size:9pt!important;border-collapse:collapse!important;table-layout:auto!important;
-  }
-  table.xlt th{
-    font-size:8.5pt!important;padding:5px 6px!important;
-    background:#f0f0f0!important;color:#000!important;
-    position:static!important;white-space:normal!important;
-    border:1px solid #000!important;text-align:center!important;font-weight:700!important;
-  }
-  table.xlt th.left{text-align:left!important;padding-left:8px!important;}
-  table.xlt td{
-    font-size:9pt!important;padding:4px 6px!important;position:static!important;
-    white-space:nowrap!important;overflow:hidden!important;
-    border:1px solid #888!important;text-align:center!important;
-    vertical-align:middle!important;background:#fff!important;color:#000!important;
-  }
-  table.xlt td.left{text-align:left!important;padding-left:8px!important;}
-  table.xlt td.name-td{
-    background:#fafafa!important;color:#000!important;font-size:9pt!important;
-    text-align:left!important;padding-left:8px!important;position:static!important;
-    border-right:1.5px solid #000!important;
-  }
-  table.xlt td.no-td{
-    background:#fafafa!important;color:#000!important;font-weight:700!important;
-    position:static!important;border-right:1px solid #000!important;text-align:center!important;
-  }
-  table.xlt th.name-th,table.xlt th.no-th{
-    position:static!important;background:#f0f0f0!important;color:#000!important;
-  }
-  table.xlt td.ac{
-    background:#efefef!important;color:#000!important;
-    font-weight:700!important;border:1px solid #555!important;
-  }
-  table.xlt td.gc{
-    background:#e0e0e0!important;color:#000!important;
-    font-weight:800!important;border:1px solid #555!important;
-  }
-  table.xlt td.gc span{color:#000!important;}
-  table.xlt td.edit-cell{background:#fff!important;}
-  table.xlt td input[type=number],table.xlt td input[type=text]{
-    font-size:9pt!important;width:100%!important;
-    background:transparent!important;border:none!important;
-    text-align:center!important;color:#000!important;
-  }
-  tr{page-break-inside:avoid;}
-  .g-chip{
-    font-size:8.5pt!important;padding:1px 5px!important;font-weight:700!important;
-    background:#fff!important;border:1px solid #000!important;
-    color:#000!important;border-radius:0!important;
-  }
-  .gA,.gB,.gC,.gD,.gF,.gX{background:#fff!important;color:#000!important;border:1px solid #000!important;}
-
-  /* ═══ RATING BUTTONS ═══ */
-  .rating-btn{
-    border:none!important;font-size:9.5pt!important;font-weight:800!important;
-    background:transparent!important;width:auto!important;height:auto!important;color:#000!important;
-  }
-  .rating-btn.sel-0,.rating-btn.sel-1,
-  .rating-btn.sel-2,.rating-btn.sel-3{color:#000!important;}
-
-  /* ═══ CHART ═══ */
-  .chart-wrap{
-    padding:10px 12px!important;border-radius:0!important;box-shadow:none!important;
-    border:1px solid #000!important;page-break-inside:avoid;
-    width:auto!important;margin-bottom:8px!important;background:#fff!important;
-  }
-  .chart-wrap.grade-chart-wrap{padding:12px 14px!important;}
-  .charts-grid{
-    display:grid!important;grid-template-columns:1fr 1fr!important;
-    gap:8px!important;margin-bottom:8px!important;width:auto!important;max-width:100%!important;
-  }
-  .charts-grid .chart-wrap{margin-bottom:0!important;}
-  .chart-title{
-    font-size:10pt!important;font-weight:800!important;color:#000!important;
-    margin-bottom:8px!important;border-bottom:1px solid #000!important;padding-bottom:3px!important;
-  }
-  .chart-title::before{display:none!important;}
-  .pie-legend-tbl td,.pie-legend-name,.pie-legend-val,
-  .plt-dot,.plt-name,.plt-num,.plt-dash,.plt-pct{font-size:8.5pt!important;color:#000!important;}
-  .pie-legend-dot{width:9px!important;height:9px!important;}
-  .bar-label{font-size:8.5pt!important;width:130px!important;color:#000!important;}
-  .bar-val{font-size:8.5pt!important;width:55px!important;color:#000!important;}
-  .bar-track{height:10px!important;background:#ddd!important;}
-  .bar-fill{border-radius:0!important;}
-  .bar-row{margin-bottom:4px!important;}
-  .legend-bar{font-size:8.5pt!important;gap:10px!important;}
-
-  /* att-dot ขาวดำ */
-  .att-dot{
-    width:16px!important;height:16px!important;font-size:8pt!important;
-    border-radius:0!important;border:1px solid #666!important;
-    background:#fff!important;color:#000!important;
-  }
-  .att-m{background:#fff!important;color:#000!important;}
-  .att-x{background:#ccc!important;color:#000!important;}
-  .att-l{background:#eee!important;color:#000!important;}
-  .att-lv{background:#f5f5f5!important;color:#000!important;}
-  .att-empty{background:#fff!important;}
-
-  /* ═══ INFO / IND ═══ */
-  .info-cell{
-    padding:6px 8px!important;border-radius:0!important;
-    background:#fff!important;border:1px solid #888!important;
-  }
-  .info-cell strong{font-size:8pt!important;color:#555!important;}
-  .info-cell span{font-size:11pt!important;color:#000!important;font-weight:700!important;}
-  .ind-header{
-    padding:14px!important;border-radius:0!important;
-    background:#fff!important;color:#000!important;
-    border:1.5px solid #000!important;margin-bottom:8px!important;
-  }
-  .ind-name{font-size:13pt!important;color:#000!important;font-weight:800!important;}
-  .ind-sub{color:#333!important;}
-  .ind-grade-big{font-size:32pt!important;color:#000!important;font-weight:800!important;}
-
-  /* ════════════════════════════════════════════════════
-     หน้าปก print — ตรงตามภาพต้นแบบทุกจุด
-  ════════════════════════════════════════════════════ */
-  #page-cover.active { display:block!important; width:100%!important; font-size:9pt!important; }
-  #cover-logo-upload-ui { display:none!important; }
-
-  /* ══════════════════════════════════════════
-     หน้าปก print — ตรงตามภาพต้นแบบ 100%
-     โลโก้วงกลมขาวกลางบนสุด → card น้ำเงิน
-     แถวข้อมูล: โรงเรียน | สังกัด | ชั้น/ภาค/ปี |
-     รายวิชา/รหัส/ชม. | ครูผู้สอน | ตำแหน่ง |
-     ครูที่ปรึกษา | ตำแหน่ง | ผู้อำนวยการ
-  ══════════════════════════════════════════ */
-
-  /* ── wrapper: column-flex เพื่อให้โลโก้อยู่เหนือ card ── */
-  #page-cover.active .xls-header-inner {
-    display:flex!important;
-    flex-direction:column!important;
-    align-items:center!important;
-    gap:0!important;
-  }
-
-  /* ── โลโก้วงกลมขาว กลางบนสุด นอก card — ไม่ล้ำทับตัวหนังสือ ── */
-  /* ซ่อนทั้งคู่ก่อน */
-  #page-cover.active #cover-logo-print-wrap          { display:none!important; }
-  #page-cover.active #cover-logo-placeholder-print   { display:none!important; }
-  /* แสดงเฉพาะอันที่ JS ใส่ class cover-logo-show */
-  #page-cover.active #cover-logo-print-wrap.cover-logo-show {
-    display:flex!important; align-items:center!important; justify-content:center!important;
-    width:88px!important; height:88px!important; flex-shrink:0!important;
-    background:#fff!important; border-radius:50%!important;
-    box-shadow:0 3px 14px rgba(0,0,0,.22)!important;
-    margin-bottom:8px!important; z-index:2!important; position:relative!important;
-  }
-  #cover-print-logo {
-    width:72px!important; height:72px!important; object-fit:contain!important;
-    border-radius:50%!important; display:block!important;
-  }
-  #page-cover.active #cover-logo-placeholder-print.cover-logo-show {
-    display:flex!important; align-items:center!important; justify-content:center!important;
-    width:88px!important; height:88px!important; flex-shrink:0!important;
-    background:#fff!important; border-radius:50%!important;
-    box-shadow:0 3px 14px rgba(0,0,0,.22)!important;
-    font-size:48px!important; line-height:1!important;
-    margin-bottom:8px!important; z-index:2!important; position:relative!important;
-  }
-
-  /* ── xls-header card น้ำเงิน ── */
-  #page-cover.active .xls-header {
-    background:#f9fafb!important; border-top:3px solid #f97316!important;
-    border-radius:14px!important;
-    padding:16px 16px 14px!important;
-    margin-bottom:10px!important; border:none!important; overflow:visible!important;
-    width:100%!important;
-  }
-  #page-cover.active .xls-header-content { display:block!important; width:100%!important; }
-  #page-cover.active .xls-header-title {
-    font-size:13pt!important; font-weight:800!important; color:#1f2937!important;
-    text-align:center!important; margin-bottom:10px!important;
-    border-bottom:1.5px solid rgba(255,255,255,.3)!important; padding-bottom:8px!important;
-  }
-
-  /* ── xls-form grid ── */
-  #page-cover.active .xls-form {
-    display:grid!important; gap:5px!important; padding:0!important; border:none!important;
-  }
-
-  /* ── ทุก xls-row ใน form ── */
-  #page-cover.active .xls-form > .xls-row,
-  #page-cover.active .xls-row-2col > .xls-row {
-    display:flex!important; align-items:stretch!important;
-    background:#f3f4f6!important; border-radius:8px!important;
-    overflow:hidden!important; border:none!important; min-height:0!important; padding:0!important;
-  }
-  #page-cover.active .xls-form > .xls-row { width:100%!important; }
-
-  /* ── ซ่อน/แสดง rows ตามภาพต้นแบบ ── */
-  /* โรงเรียน: JS inject combined-row แทน → ซ่อน original */
-  #page-cover.active .xls-form > .xls-row:has(#f-school) { display:none!important; }
-  /* สังกัด: ซ่อน (JS inject แยก row แล้ว) */
-  #page-cover.active .xls-form > .xls-row:has(#f-dept) { display:none!important; }
-  /* ครูผู้สอน: JS inject 2col-row → ซ่อนทั้ง name-row และ pos-row */
-  #page-cover.active #teacher-name-row { display:none!important; }
-  #page-cover.active #teacher-pos-row  { display:none!important; }
-  /* ครูที่ปรึกษา: JS inject 2col-row → ซ่อนทั้ง name-row และ pos-row */
-  #page-cover.active #advisor-name-row { display:none!important; }
-  #page-cover.active #advisor-pos-row  { display:none!important; }
-
-  /* ── print-2col-row: ชื่อครู + ตำแหน่ง ในแถวเดียวกัน 2 กล่อง ── */
-  .print-2col-row {
-    display:grid!important; grid-template-columns:1fr 1fr!important;
-    gap:5px!important;
-  }
-  .print-2col-row .print-combined-row {
-    display:flex!important; align-items:stretch!important;
-    background:#f3f4f6!important; border-radius:8px!important;
-    overflow:hidden!important; padding:0!important;
-  }
-
-  /* ── 2col: ชั้น+ภาคเรียน, รายวิชา+รหัส ── */
-  #page-cover.active .xls-row-2col {
-    display:grid!important; grid-template-columns:1fr 1fr!important;
-    gap:5px!important; border:none!important;
-  }
-  /* ── 3col: ชั้น|ภาคเรียน|ปีการศึกษา ── */
-  #page-cover.active .xls-row-2col:has(#f-sem)     { grid-template-columns:1fr 1fr 1fr!important; }
-  #page-cover.active .xls-row-2col:has(#f-year)    { display:none!important; }
-  /* ── 3col: รายวิชา|รหัสวิชา|ชม./สัปดาห์ ── */
-  #page-cover.active .xls-row-2col:has(#f-subject) { grid-template-columns:1fr 1fr 1fr!important; }
-  #page-cover.active .xls-row-2col:has(#f-hours)   { display:none!important; }
-
-  /* ── label ── */
-  #page-cover.active .xls-label {
-    font-size:8.5pt!important; font-weight:700!important; color:#6b7280!important;
-    background:transparent!important; padding:6px 10px!important; white-space:nowrap!important;
-    min-width:72px!important; flex-shrink:0!important; border:none!important;
-    display:flex!important; align-items:center!important;
-  }
-  /* ── val ── */
-  #page-cover.active .xls-val {
-    flex:1!important; font-size:9.5pt!important; font-weight:600!important; color:#1f2937!important;
-    padding:6px 10px!important; background:#fff!important;
-    border:none!important; outline:none!important; min-width:0!important;
-    -webkit-appearance:none!important; appearance:none!important;
-    display:flex!important; align-items:center!important;
-  }
-
-  /* ══ print-combined-row: inject โดย JS (โรงเรียน, ครูผู้สอน) ══ */
-  .print-combined-row {
-    display:flex!important; align-items:stretch!important;
-    background:#f3f4f6!important; border-radius:8px!important;
-    overflow:hidden!important; padding:0!important; gap:0!important;
-  }
-  .print-combined-row .xls-label {
-    font-size:8.5pt!important; font-weight:700!important; color:#6b7280!important;
-    padding:6px 10px!important; white-space:nowrap!important; min-width:72px!important;
-    flex-shrink:0!important; border:none!important;
-    display:flex!important; align-items:center!important;
-  }
-  .print-combined-val {
-    flex:1!important; display:flex!important; align-items:center!important; gap:6px!important;
-    font-size:9.5pt!important; font-weight:600!important; color:#1f2937!important;
-    padding:6px 10px!important; background:#fff!important; min-width:0!important;
-  }
-  .print-sep        { color:#d1d5db!important; margin:0 2px!important; flex-shrink:0!important; }
-  .print-sub-label  { font-size:8pt!important; color:#6b7280!important; font-weight:700!important; white-space:nowrap!important; }
-  .print-sub-val    { font-size:9pt!important; color:#1f2937!important; font-weight:500!important; }
-
-  /* ══ print-3col-extra: div inject เป็น col ที่ 3 (ปีการศึกษา / ชม.) ══ */
-  .print-3col-extra {
-    display:flex!important; align-items:stretch!important;
-    background:#f3f4f6!important; border-radius:8px!important;
-    overflow:hidden!important; padding:0!important;
-  }
-  .print-3col-extra .xls-label {
-    font-size:8.5pt!important; font-weight:700!important; color:#6b7280!important;
-    padding:6px 10px!important; white-space:nowrap!important; min-width:72px!important;
-    flex-shrink:0!important; border:none!important;
-    display:flex!important; align-items:center!important;
-  }
-  .print-3col-extra .xls-val {
-    flex:1!important; font-size:9.5pt!important; font-weight:600!important; color:#1f2937!important;
-    padding:6px 10px!important; background:#fff!important;
-    border:none!important; min-width:0!important;
-    display:flex!important; align-items:center!important;
-  }
-
-  /* ── sec-box card ── */
-  #page-cover.active .sec-box {
-    background:#fff!important; border-radius:12px!important; margin-bottom:10px!important;
-    overflow:hidden!important; box-shadow:0 2px 8px rgba(30,58,95,.12)!important;
-    border:none!important; border-top:3px solid #f97316!important; border-top:none!important; border-right:none!important;
-    border-bottom:none!important; border-left:none!important;
-  }
-  /* มุมโค้ง sec-head ต้องไม่ตัดมุมล่าง — ใช้ overflow:hidden ของ sec-box แทน */
-  #page-cover.active .sec-head {
-    background:#f3f4f6!important;
-    color:#1f2937!important; padding:8px 14px!important; border-bottom:none!important;
-    display:flex!important; align-items:center!important;
-    border-radius:0!important;
-  }
-  #page-cover.active .sec-head-title {
-    font-size:10pt!important; font-weight:700!important; color:#fff!important;
-    display:flex!important; align-items:center!important; gap:7px!important;
-  }
-  #page-cover.active .sec-head-dot {
-    display:block!important; width:3px!important; height:14px!important;
-    background:#f59e0b!important; border-radius:2px!important; flex-shrink:0!important;
-  }
-  #page-cover.active .sec-body { padding:10px 12px!important; background:#fff!important; }
-
-  /* ── approval-wrap: grid 2col (จำนวนนักเรียน | การอนุมัติ) ── */
-  #page-cover.active #approval-wrap {
-    display:grid!important; grid-template-columns:1fr 1fr!important;
-    gap:6px!important; align-items:start!important; margin-bottom:0!important;
-    width:100%!important; box-sizing:border-box!important;
-  }
-  #page-cover.active #cover-row2 { display:block!important; }
-  #page-cover.active #cover-row2 .sec-box,
-  #page-cover.active .sec-box:has(#approval-body) { margin-bottom:0!important; border-top:3px solid #f97316!important; }
-
-  /* ── sec-body ของฝั่งอนุมัติ: padding น้อยลงเพื่อให้ stat ไม่ล้น ── */
-  #page-cover.active #approval-body { padding:6px 8px!important; }
-
-  /* ── stat-tiles: 4 กล่อง เรียงแถวเดียว แต่ละกล่องแคบลง ── */
-  #page-cover.active .stats-row {
-    display:flex!important; flex-direction:row!important; flex-wrap:nowrap!important;
-    justify-content:center!important;
-    gap:6px!important; margin-bottom:5px!important;
-    width:100%!important; box-sizing:border-box!important;
-  }
-  #page-cover.active .stat-tile {
-    flex:0 0 auto!important;
-    width:24%!important;
-    background:#fff!important; border-radius:5px!important; padding:3px 2px!important;
-    text-align:center!important; box-shadow:0 1px 3px rgba(30,58,95,.1)!important;
-    border-top:2px solid #f59e0b!important; border-left:none!important; border-right:none!important; border-bottom:none!important;
-    min-width:0!important; overflow:hidden!important; box-sizing:border-box!important;
-  }
-  #page-cover.active .stat-num { font-size:8pt!important; color:#f97316!important; font-weight:800!important; display:block!important; line-height:1.2!important; }
-  #page-cover.active .stat-lbl { font-size:5pt!important; color:#64748b!important; display:block!important; margin-top:1px!important; white-space:nowrap!important; overflow:hidden!important; text-overflow:ellipsis!important; padding:0!important; }
-
-  /* ── grade-dist-table ── */
-  #page-cover.active #grade-dist-table table { width:100%!important; border-collapse:separate!important; border-spacing:0!important; font-size:8pt!important; }
-  #page-cover.active #grade-dist-table th { background:#4b5563!important; color:#fff!important; padding:4px 3px!important; text-align:center!important; font-size:7.5pt!important; font-weight:700!important; border:1px solid rgba(255,255,255,.15)!important; }
-  #page-cover.active #grade-dist-table td { padding:4px 3px!important; text-align:center!important; border:1px solid #e2e8f0!important; font-size:8pt!important; background:#fff!important; color:#000!important; }
-  #page-cover.active #grade-dist-table td:first-child { text-align:left!important; padding-left:8px!important; background:#f8fafc!important; font-weight:700!important; }
-
-  /* ── ตารางนักเรียน ── */
-  #page-cover.active table.xlt { width:100%!important; font-size:8.5pt!important; border-collapse:separate!important; border-spacing:0!important; table-layout:fixed!important; }
-  #page-cover.active table.xlt th { background:#4b5563!important; color:#fff!important; font-size:8pt!important; padding:5px 4px!important; font-weight:700!important; text-align:center!important; border:1px solid rgba(255,255,255,.2)!important; }
-  #page-cover.active table.xlt td { font-size:8.5pt!important; padding:4px!important; border:1px solid #e2e8f0!important; text-align:center!important; background:#fff!important; color:#000!important; }
-  #page-cover.active table.xlt td.left { text-align:left!important; padding-left:8px!important; }
-  #page-cover.active table.xlt td.ac { background:#fff7ed!important; color:#c2410c!important; font-weight:700!important; }
-  #page-cover.active table.xlt td.edit-cell { background:#fefce8!important; }
-  #page-cover.active table.xlt input[type=number] { font-size:8.5pt!important; width:100%!important; background:transparent!important; border:none!important; text-align:center!important; color:#000!important; }
-
-  /* ── วันที่อนุมัติ: ซ่อน input เว็บ (ใช้ JS inject แทน) ── */
-  #page-cover.active #approval-body > div:has(#f-approve-day) { display:none!important; }
-
-  /* ── cover-beh-read-web 2col ── */
-  #page-cover.active #cover-beh-read-web {
-    display:grid!important; grid-template-columns:1fr 1fr!important;
-    gap:10px!important; margin-bottom:10px!important;
-  }
-  .cover-summary-box { background:#fff!important; border-radius:12px!important; overflow:hidden!important; box-shadow:none!important; border-top:3px solid #f97316!important; }
-  .cover-summary-head { background:#f3f4f6!important; color:#1f2937!important; border-top:3px solid #f97316!important; font-size:10pt!important; font-weight:700!important; padding:8px 14px!important; }
-
-  /* cover-summary-print ซ่อน */
-  #cover-summary-print { display:none!important; }
-
-  /* ════════════════════════════════════════════
-     หน้าเวลาเรียน (Landscape)
-  ════════════════════════════════════════════ */
-  #page-att.active{}
-  /* ── web view: ซ่อน att-print-all ── */
-  #att-print-all{display:none!important;}
-  /* ── print: แสดง att-print-all ซ่อน grid/year wraps ── */
-  #page-att.active #att-print-all{display:block!important;}
-  #page-att.active #att-grid-wrap{display:none!important;}
-  #page-att.active #att-year-wrap{display:none!important;}
-  #page-att.active .att-month-tabs{display:none!important;}
-  /* แต่ละ block เดือนแยกหน้า */
-  .att-print-month{page-break-after:always!important;break-after:page!important;padding-bottom:4mm!important;}
-  .att-print-month:last-child{page-break-after:auto!important;break-after:auto!important;}
-  .att-print-month-title{font-size:10pt!important;font-weight:800!important;text-align:center!important;padding:4px 0!important;border-bottom:2px solid #000!important;margin-bottom:5px!important;}
-  #page-att.active .tbl-wrap{overflow:visible!important;width:100%!important;max-width:100%!important;}
-  #page-att.active #att-grid-table,
-  #page-att.active .att-grid-table{
-    width:100%!important;min-width:0!important;
-    table-layout:fixed!important;font-size:5.5pt!important;border-collapse:collapse!important;
-  }
-  #page-att.active #att-grid-table th,
-  #page-att.active #att-grid-table td,
-  #page-att.active .att-grid-table th,
-  #page-att.active .att-grid-table td{
-    position:static!important;padding:2px 1px!important;overflow:hidden!important;
-    font-size:5.5pt!important;white-space:nowrap!important;border:1px solid #888!important;
-  }
-  #page-att.active #att-grid-table th,
-  #page-att.active .att-grid-table th{
-    background:#f0f0f0!important;color:#000!important;font-weight:700!important;
-  }
-  #page-att.active #att-grid-table th.name-th,#page-att.active #att-grid-table td.name-td,
-  #page-att.active .att-grid-table th.name-th,#page-att.active .att-grid-table td.name-td{
-    width:24%!important;font-size:5.5pt!important;text-overflow:ellipsis!important;
-    text-align:left!important;padding-left:3px!important;border-right:1px solid #000!important;
-  }
-  #page-att.active #att-grid-table th.no-th,#page-att.active #att-grid-table td.no-td,
-  #page-att.active .att-grid-table th.no-th,#page-att.active .att-grid-table td.no-td{
-    width:1.8%!important;border-right:1px solid #000!important;
-  }
-  #page-att.active #att-grid-table td:not(.name-td):not(.no-td):not(.ac),
-  #page-att.active .att-grid-table td:not(.name-td):not(.no-td):not(.ac){
-    width:2%!important;padding:1px 0!important;text-align:center!important;
-  }
-  #page-att.active .att-dot{
-    width:11px!important;height:11px!important;font-size:4.5pt!important;
-    border-radius:0!important;border:1px solid #666!important;
-    display:inline-flex!important;align-items:center!important;justify-content:center!important;
-    background:#fff!important;color:#000!important;
-  }
-  #page-att.active .att-x{background:#ccc!important;}
-  #page-att.active #att-grid-table th.att-sum-th,#page-att.active #att-grid-table th.att-pct-th,
-  #page-att.active .att-grid-table th.att-sum-th,#page-att.active .att-grid-table th.att-pct-th{width:2.5%!important;}
-  #page-att.active #att-grid-table td.ac,
-  #page-att.active .att-grid-table td.ac{
-    width:2.5%!important;font-size:5.5pt!important;
-    background:#efefef!important;color:#000!important;
-    border:1px solid #555!important;font-weight:700!important;
-  }
-
-  /* ════════════════════════════════════════════
-     หน้าคะแนน ภาค 1 & 2 (Landscape)
-  ════════════════════════════════════════════ */
-  #page-s1.active{page:s1-page;}
-  #page-s2.active{page:s2-page;}
-  #page-s1.active .tbl-wrap,#page-s2.active .tbl-wrap{
-    overflow:visible!important;width:auto!important;max-width:100%!important;
-  }
-  /* ── ตาราง score: layout เหมือน web view แต่ย่อให้พอดีหน้า landscape ── */
-  #page-s1.active .tbl-wrap,#page-s2.active .tbl-wrap{
-    overflow:visible!important;width:100%!important;max-width:100%!important;
-  }
-  #page-s1.active table.xlt,#page-s2.active table.xlt{
-    width:100%!important;min-width:0!important;
-    table-layout:fixed!important;font-size:7pt!important;
-    border-collapse:collapse!important;
-  }
-  /* th ทั่วไป */
-  #page-s1.active table.xlt th,#page-s2.active table.xlt th{
-    position:static!important;font-size:6pt!important;
-    padding:3px 2px!important;white-space:normal!important;
-    background:#f0f0f0!important;color:#000!important;
-    border:1px solid #000!important;font-weight:700!important;
-    text-align:center!important;vertical-align:middle!important;
-  }
-  /* td ทั่วไป */
-  #page-s1.active table.xlt td,#page-s2.active table.xlt td{
-    position:static!important;font-size:7pt!important;padding:2px 3px!important;
-    border:1px solid #bbb!important;background:#fff!important;color:#000!important;
-    text-align:center!important;vertical-align:middle!important;white-space:nowrap!important;
-  }
-  /* คอลัมน์ชื่อ */
-  #page-s1.active table.xlt th.name-th,#page-s2.active table.xlt th.name-th{
-    width:16%!important;text-align:left!important;padding-left:4px!important;
-    border-right:2px solid #000!important;vertical-align:middle!important;
-    white-space:nowrap!important;
-  }
-  #page-s1.active table.xlt td.name-td,#page-s2.active table.xlt td.name-td{
-    width:16%!important;text-align:left!important;padding-left:4px!important;
-    border-right:2px solid #000!important;background:#fafafa!important;
-    font-size:6.5pt!important;overflow:hidden!important;text-overflow:ellipsis!important;
-  }
-  /* คอลัมน์เลขที่ */
-  #page-s1.active table.xlt th.no-th,#page-s2.active table.xlt th.no-th,
-  #page-s1.active table.xlt td.no-td,#page-s2.active table.xlt td.no-td{
-    width:3%!important;border-right:1px solid #000!important;
-  }
-  #page-s1.active table.xlt td.no-td,#page-s2.active table.xlt td.no-td{background:#fafafa!important;}
-  /* header ชื่อหน่วย — เอียงเหมือน web view */
-  #page-s1.active table.xlt thead th.score-item-th,
-  #page-s2.active table.xlt thead th.score-item-th{
-    width:3%!important;min-width:0!important;height:80px!important;
-    font-size:6pt!important;padding:0 1px 2px 1px!important;
-    vertical-align:bottom!important;text-align:center!important;
-    writing-mode:vertical-lr!important;transform:rotate(180deg)!important;
-    overflow:hidden!important;border:1px solid #000!important;
-    background:#f0f0f0!important;color:#000!important;
-    display:table-cell!important;
-  }
-  /* แถว max score */
-  #page-s1.active table.xlt thead tr:nth-child(2) th,
-  #page-s2.active table.xlt thead tr:nth-child(2) th{
-    height:auto!important;writing-mode:horizontal-tb!important;
-    transform:none!important;font-size:7pt!important;
-    font-weight:800!important;padding:2px!important;
-    vertical-align:middle!important;text-align:center!important;
-  }
-  /* th สรุปคะแนน (rowspan cols ขวา) */
-  #page-s1.active table.xlt thead th:not(.name-th):not(.no-th):not(.score-item-th),
-  #page-s2.active table.xlt thead th:not(.name-th):not(.no-th):not(.score-item-th){
-    writing-mode:horizontal-tb!important;transform:none!important;
-    font-size:6pt!important;height:auto!important;
-    padding:3px 2px!important;vertical-align:middle!important;
-    white-space:normal!important;word-break:break-word!important;
-  }
-  /* ac cell */
-  #page-s1.active table.xlt td.ac,#page-s2.active table.xlt td.ac{
-    background:#f5f5f5!important;color:#000!important;
-    font-weight:700!important;border:1px solid #888!important;
-  }
-  /* gc cell */
-  #page-s1.active table.xlt td.gc,#page-s2.active table.xlt td.gc{
-    background:#e0e0e0!important;color:#000!important;
-    font-weight:800!important;border:1px solid #555!important;font-size:7pt!important;
-  }
-  #page-s1.active table.xlt td.gc span,#page-s2.active table.xlt td.gc span{color:#000!important;}
-  /* input ในเซล */
-  #page-s1.active table.xlt td input,#page-s2.active table.xlt td input{
-    width:100%!important;font-size:7pt!important;padding:0!important;
-    border:none!important;background:transparent!important;text-align:center!important;
-  }
-  #page-s1.active .sec-box,#page-s2.active .sec-box{margin-bottom:4px!important;}
-  #page-s1.active table.xlt tr,#page-s2.active table.xlt tr{page-break-inside:avoid!important;}
-
-
-  /* ════════════════════════════════════════════
-     หน้าคุณลักษณะ — แยก 3 แผ่น portrait A4
-  ════════════════════════════════════════════ */
-  /* ซ่อน tab buttons, save button ใน print */
-  #page-beh.active .no-print{display:none!important;}
-  #page-beh.active .btn{display:none!important;}
-  /* ซ่อน control box (sec-box แรก มี tab buttons) */
-  #page-beh.active .sec-box:first-child{display:none!important;}
-
-  /* แต่ละ beh section พอดีหน้า A4 */
-  #page-beh.active .sec-box{
-    page-break-inside:avoid!important;
-    margin-bottom:0!important;
-    border:1px solid #000!important;
-    box-shadow:none!important;
-  }
-  /* beh-wrap และ read-wrap อยู่คนละ section — แต่ละหน้าแสดงทั้งคู่ */
-  /* แยก 3 หน้า: ต้องสร้าง wrapper พิเศษใน print */
-  #beh-print-s1,#beh-print-s2,#beh-print-all{display:none!important;}
-  #page-beh.active #beh-print-s1,
-  #page-beh.active #beh-print-s2,
-  #page-beh.active #beh-print-all{
-    display:block!important;
-    page-break-after:always!important;
-    break-after:page!important;
-    width:100%!important;
-    min-height:220mm!important;
-  }
-  #page-beh.active #beh-print-all{
-    page-break-after:auto!important;
-    break-after:auto!important;
-  }
-  /* title แต่ละแผ่น */
-  .beh-print-title{
-    display:none!important;
-  }
-  #page-beh.active .beh-print-title{
-    display:block!important;
-    font-size:11pt!important;font-weight:800!important;
-    text-align:center!important;color:#000!important;
-    padding:6px 0 4px!important;
-    border-bottom:2px solid #000!important;
-    margin-bottom:6px!important;
-  }
-  /* ตารางใน beh เต็มหน้า A4 */
-  #page-beh.active .tbl-wrap{
-    overflow:visible!important;width:100%!important;
-  }
-  #page-beh.active table.xlt{
-    width:100%!important;table-layout:fixed!important;
-    border-collapse:collapse!important;font-size:8pt!important;
-    min-width:0!important;
-  }
-  #page-beh.active table.xlt th{
-    font-size:7pt!important;padding:3px 2px!important;
-    background:#f0f0f0!important;color:#000!important;
-    border:1px solid #000!important;font-weight:700!important;
-    text-align:center!important;white-space:normal!important;
-    word-break:break-word!important;
-  }
-  #page-beh.active table.xlt th.name-th{
-    width:22%!important;text-align:left!important;padding-left:4px!important;
-  }
-  #page-beh.active table.xlt th.no-th{width:4%!important;}
-  #page-beh.active table.xlt th:not(.name-th):not(.no-th){
-    width:auto!important;
-  }
-  #page-beh.active table.xlt td{
-    font-size:8pt!important;padding:2px 3px!important;
-    border:1px solid #bbb!important;color:#000!important;
-    text-align:center!important;background:#fff!important;
-  }
-  #page-beh.active table.xlt td.name-td{
-    text-align:left!important;padding-left:4px!important;
-    background:#fafafa!important;font-size:7.5pt!important;
-    overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
-  }
-  #page-beh.active table.xlt td.no-td{background:#fafafa!important;}
-  #page-beh.active table.xlt td.ac{
-    background:#f5f5f5!important;font-weight:700!important;
-    border:1px solid #888!important;
-  }
-  /* rating-btn → แสดงตัวเลขเรียบๆ */
-  #page-beh.active .rating-btn{
-    display:inline!important;background:none!important;
-    border:none!important;padding:0!important;
-    font-size:8pt!important;font-weight:700!important;color:#000!important;
-  }
-  #page-beh.active table.xlt tr{page-break-inside:avoid!important;}
-
-  /* ════════════════════════════════════════════
-     ลายเซ็น — fixed bottom + ที่ว่างเซ็น 28mm
-  ════════════════════════════════════════════ */
-  /* ── ซ่อน sync-status ใน print ── */
-  #sync-status{display:none!important;}
-
-  /* ── Copyright Footer — แสดงทุกหน้าในโหมดพิมพ์ ── */
-  #print-copyright-footer{
-    display:block!important;
-    position:fixed!important;
-    bottom:0!important;
-    left:0!important;
-    right:0!important;
-    height:14mm!important;
-    background:#e5e7eb!important;
-    color:#1f2937!important;
-    display:flex!important;
-    align-items:center!important;
-    justify-content:space-between!important;
-    padding:0 14mm!important;
-    font-size:7.5pt!important;
-    font-family:'THSarabunNew','Sarabun',sans-serif!important;
-    z-index:9999!important;
-    box-sizing:border-box!important;
-    -webkit-print-color-adjust:exact!important;
-    print-color-adjust:exact!important;
-  }
-  #print-copyright-footer .pcf-left{
-    font-size:7.5pt!important;
-    color:#374151!important;
-  }
-  #print-copyright-footer .pcf-center{
-    font-size:8pt!important;
-    font-weight:700!important;
-    color:#f97316!important;
-    letter-spacing:0.3px!important;
-  }
-  #print-copyright-footer .pcf-right{
-    font-size:7pt!important;
-    color:#374151!important;
-  }
-
-  #print-signature{
-    display:flex!important;
-    justify-content:space-between!important;
-    gap:30px!important;
-    position:fixed!important;
-    bottom:17mm!important;
-    left:14mm!important;
-    right:14mm!important;
-    page-break-inside:avoid!important;
-    background:#fff!important;
-  }
-  .sig-box{
-    flex:1!important;
-    text-align:left!important;
-    padding:0!important;
-  }
-  /* แถวลงชื่อ: ลงชื่อ....ครูผู้สอน */
-  .sig-line-row{
-    display:flex!important;
-    align-items:baseline!important;
-    gap:0!important;
-    font-size:9pt!important;
-    font-weight:700!important;
-    color:#000!important;
-    margin-bottom:4px!important;
-    white-space:nowrap!important;
-  }
-  .sig-label{
-    font-size:9pt!important;
-    font-weight:700!important;
-    flex-shrink:0!important;
-  }
-  .sig-dots-line{
-    flex:1!important;
-    border-bottom:1px dotted #000!important;
-    margin:0 4px 2px 4px!important;
-    min-width:80px!important;
-  }
-  .sig-role{
-    font-size:9pt!important;
-    font-weight:700!important;
-    flex-shrink:0!important;
-  }
-  /* แถวชื่อ: ( นายปกรณ์ มั่นจิต ) */
-  .sig-name-row{
-    font-size:9pt!important;
-    font-weight:600!important;
-    color:#000!important;
-    text-align:center!important;
-    margin-bottom:2px!important;
-  }
-  /* แถวตำแหน่ง */
-  .sig-pos-row{
-    font-size:9pt!important;
-    font-weight:600!important;
-    color:#000!important;
-    text-align:center!important;
-  }
-`;
-
-  // mm → px at 96dpi (1mm = 3.7795px)
-  const MM=3.7795;
-  // A4 portrait พื้นที่พิมพ์จริง (หักขอบ 14mm ซ้าย/ขวา, 15mm บน, 20mm ล่าง)
-  const PW_PORT=Math.round((210-14*2)*MM); // 686px ≈ 182mm
-  const PH_PORT=Math.round((297-15-20)*MM); // 990px ≈ 262mm
-  // A4 landscape (หักขอบ 12mm ทุกด้าน ยกเว้นล่าง 18mm)
-  const PW_LAND=Math.round((297-12*2)*MM); // 1030px ≈ 273mm
-  const PH_LAND=Math.round((210-12-18)*MM); // 681px ≈ 180mm
-
-  const firstLs=SEL[0].ls;
-  const pdf=new jsPDFLib({
-    orientation:firstLs?'landscape':'portrait',
-    unit:'mm',format:'a4'
-  });
-
-  for(let i=0;i<SEL.length;i++){
-    const p=SEL[i];
-    showLoading(`กำลังสร้าง PDF... (${i+1}/${SEL.length}) — ${p.page}`);
-    await new Promise(r=>setTimeout(r,30));
-
-    const ls=p.ls;
-    const capW=ls?PW_LAND:PW_PORT;
-    const capH=ls?PH_LAND:PH_PORT;
-    const pdfW=ls?297:210;
-    const pdfH=ls?210:297;
-    const mgTop=ls?12:15;   // mm
-    const mgSide=ls?12:14;  // mm
-    const mgBot=ls?18:20;   // mm
-
-    // แสดงหน้านี้
-    allPageEls.forEach(e=>e.classList.remove('active'));
-    const pageEl=document.getElementById('page-'+p.page);
-    if(!pageEl)continue;
-    pageEl.classList.add('active');
-
-    // inject screen CSS จำลอง print layout
-    let sim=document.getElementById('_pdf_sim');
-    if(!sim){sim=document.createElement('style');sim.id='_pdf_sim';document.head.appendChild(sim);}
-
-    const mTop=Math.round(mgTop*MM);
-    const mSide=Math.round(mgSide*MM);
-    const mBot=Math.round(mgBot*MM);
-
-    sim.textContent=`
-      /* ── reset layout ── */
-      body,html{
-        margin:0!important;padding:0!important;
-        overflow:visible!important;background:#fff!important;
-        width:${capW+mSide*2}px!important;
-        -webkit-print-color-adjust:exact!important;
-        print-color-adjust:exact!important;
-      }
-      .bottom-nav,.topbar,.status-bar,.topbar-actions,.no-print,
-      .toast,#launcher,#auth-overlay,#sync-status,.modal-overlay,
-      #report-modal,.sec-box.no-print{display:none!important;}
-      .app-wrap,.scroll-area,.scroll-content{
-        display:block!important;width:100%!important;height:auto!important;
-        overflow:visible!important;position:static!important;
-        padding:0!important;margin:0!important;background:#fff!important;
-      }
-      /* ── page container ── */
-      .page{display:none!important;}
-      .page.active{
-        display:block!important;
-        width:${capW}px!important;
-        min-height:${capH}px!important;
-        overflow:visible!important;
-        padding:${mTop}px ${mSide}px ${mBot}px!important;
-        box-sizing:content-box!important;
-        background:#fff!important;
-        margin:0!important;
-      }
-      /* ── inject print rules เป็น screen rules ── */
-      ${PCSS}
-      /* ── override selectors ที่ต้องการ .active ── */
-      #page-cover.active,#page-students.active,#page-att.active,
-      #page-s1.active,#page-s2.active,#page-total.active,
-      #page-beh.active,#page-ind.active{
-        display:block!important;
-      }
-    `;
-
-    await new Promise(r=>setTimeout(r,200));
-
-    // capture พื้นที่ content (ไม่รวม margin)
-    const pageRect=pageEl.getBoundingClientRect();
-    let canvas;
-    try{
-      canvas=await html2canvas(pageEl,{
-        scale:2,
-        useCORS:true,
-        allowTaint:true,
-        backgroundColor:'#ffffff',
-        width:capW,
-        height:Math.max(capH, pageRect.height||capH),
-        windowWidth:capW+mSide*2,
-        windowHeight:Math.max(capH,pageRect.height||capH)+mTop+mBot,
-        x:0,y:0,
-        scrollX:0,scrollY:0,
-        logging:false,
-        imageTimeout:10000,
-        onclone:(doc)=>{
-          // ใน clone ให้แน่ใจว่า page active แสดง
-          const pg=doc.getElementById('page-'+p.page);
-          if(pg){
-            pg.style.cssText=`display:block!important;width:${capW}px!important;overflow:visible!important;padding:0!important;margin:0!important;background:#fff!important;`;
-          }
-          // ซ่อน elements ที่ไม่ต้องการ
-          ['bottom-nav','loading-overlay'].forEach(cls=>{
-            doc.querySelectorAll('.'+cls).forEach(e=>e.style.display='none');
-          });
-        }
-      });
-    }catch(e){console.error('h2c',e);continue;}
-
-    const imgData=canvas.toDataURL('image/jpeg',0.92);
-    if(i>0) pdf.addPage([pdfW,pdfH],ls?'landscape':'portrait');
-    // วางภาพพอดีหน้า (เว้น margin)
-    pdf.addImage(imgData,'JPEG',mgSide,mgTop,pdfW-mgSide*2,pdfH-mgTop-mgBot,'','FAST');
-  }
-
-  // ── cleanup ──
-  const sim=document.getElementById('_pdf_sim');
-  if(sim)sim.remove();
-  const pgOri=document.getElementById('_pdf_page_orient');
-  if(pgOri)pgOri.remove();
-  // คืน cover elements
-  ['_p_school','_p_year_hours','_p_year_col','_p_hours_col','_p_teacher','_p_advisor','_p_apv_date'].forEach(id=>{
-    const el=document.getElementById(id);if(el)el.remove();
-  });
-  const schoolRow=document.querySelector('#page-cover .xls-form > .xls-row:has(#f-school)');
-  const teacherNameRow=document.getElementById('teacher-name-row');
-  const advisorNameRow=document.getElementById('advisor-name-row');
-  if(schoolRow)      schoolRow.style.display='';
-  if(teacherNameRow) teacherNameRow.style.display='';
-  if(advisorNameRow) advisorNameRow.style.display='';
-  // คืน active page เดิม
-  allPageEls.forEach(e=>e.classList.remove('active'));
-  const cur=document.getElementById('page-'+prevPage);
-  if(cur)cur.classList.add('active');
-
-  hideLoading();
-  const fname=`ปพ5_${D.school||'โรงเรียน'}_${D.subject||'วิชา'}_${D.year||''}.pdf`;
-  pdf.save(fname);
-  showToast('✅ ดาวน์โหลด PDF สำเร็จ');
-}
-
-function _prepareCoverPrintElements(){
-  const gv2=id=>{const el=document.getElementById(id);return el?(el.value||el.textContent||''):''};
-
-  // โลโก้
-  const printLogoWrap=document.getElementById('cover-logo-print-wrap');
-  const printLogoImg=document.getElementById('cover-print-logo');
-  const printLogoPh=document.getElementById('cover-logo-placeholder-print');
-  if(D.logoData){
-    if(printLogoImg)printLogoImg.src=D.logoData;
-    if(printLogoWrap)printLogoWrap.classList.add('cover-logo-show');
-    if(printLogoPh)printLogoPh.classList.remove('cover-logo-show');
-  } else {
-    if(printLogoWrap)printLogoWrap.classList.remove('cover-logo-show');
-    if(printLogoPh)printLogoPh.classList.add('cover-logo-show');
-  }
-
-  // ── สร้าง cover-summary-print ──
-  const n=D.students.filter(s=>s.name).length;
-  const {bDist,rDist}=calcBehReadDist();
-  const csp=document.getElementById('cover-summary-print');
-  const gradeKeysPrint=[4,3.5,3,2.5,2,1.5,1,0];
-  const gradesPrint=D.students.map((_,i)=>calcFinalGrade(i)).filter(g=>g!==null);
-  const distPrint={};gradeKeysPrint.forEach(k=>{distPrint[k]=0;});
-  gradesPrint.forEach(g=>{const k=gradeKeysPrint.find(k=>k===g)||0;distPrint[k]=(distPrint[k]||0)+1;});
-  const approveDay=D.approveDay||gv2('f-approve-day')||'';
-  const approveMonth=D.approveMonth||gv2('f-approve-month')||'';
-  const approveYear=D.approveYear||gv2('f-approve-year')||'';
-  const dash=v=>(v===0||v===null||v===''||v===undefined)?'-':v;
-  const pct=(v,t)=>t?Math.round(v/t*100):'-';
-  const gradeKeys=[4,3.5,3,2.5,2,1.5,1,0];
-  const totalStu=n;
-  let achieveRow1='',achieveRow2='';
-  gradeKeys.forEach(k=>{const cnt=distPrint[k]||0;achieveRow1+='<td>'+dash(cnt)+'</td>';achieveRow2+='<td>'+dash(pct(cnt,gradesPrint.length))+'</td>';});
-  achieveRow1+='<td>-</td>';achieveRow2+='<td>-</td>';
-  const bKeys=[3,2,1,0];
-  let bRow='',rRow='';
-  bKeys.forEach(k=>{bRow+='<td>'+dash(bDist[k]||0)+'</td>';rRow+='<td>'+dash(rDist[k]||0)+'</td>';});
-  const actRow='<td>-</td><td>-</td><td>-</td><td>-</td>';
-  if(csp){
-    csp.innerHTML=`<table class="csp-outer" style="width:100%;border-collapse:collapse;font-size:7.5pt;"><thead><tr><th rowspan="3" style="width:9%;text-align:center;vertical-align:middle">จำนวนนักเรียน<br>ทั้งหมด</th><th colspan="10" style="text-align:center">สรุปผลสัมฤทธิ์ทางการเรียนรู้</th><th rowspan="3" style="width:8%;text-align:center;vertical-align:middle">หมายเหตุ</th></tr><tr><th colspan="9" style="text-align:center">จำนวนนักเรียนที่ได้ระดับผลการเรียน</th><th rowspan="2" style="text-align:center;vertical-align:middle">จำนวนนักเรียนที่ได้รับ<br>การแก้ไขผลการเรียนรู้ (0)</th></tr><tr><th>4</th><th>3.5</th><th>3</th><th>2.5</th><th>2</th><th>1.5</th><th>1</th><th>0</th><th></th></tr></thead><tbody><tr><td>${dash(totalStu)}</td>${achieveRow1}<td></td></tr><tr><td class="csp-label">ร้อยละ</td>${achieveRow2}<td></td></tr></tbody></table><table class="csp-outer" style="width:100%;border-collapse:collapse;font-size:7.5pt;margin-top:0;border-top:none;"><thead><tr><th rowspan="3" style="width:9%;vertical-align:middle;text-align:center">สรุปผล</th><th colspan="4" style="text-align:center">สรุปผลการประเมิน<br>คุณลักษณะอันพึงประสงค์</th><th colspan="4" style="text-align:center">สรุปผลการประเมิน<br>การอ่าน คิดวิเคราะห์และการเขียน</th><th colspan="4" style="text-align:center">สรุปผลการประเมิน<br>กิจกรรมพัฒนาผู้เรียน</th><th rowspan="3" style="width:8%;vertical-align:middle;text-align:center">หมายเหตุ</th></tr><tr><th>3<br><small>(ดีเยี่ยม)</small></th><th>2<br><small>(ดี)</small></th><th>1<br><small>(ผ่าน)</small></th><th>0<br><small>(ไม่ผ่าน)</small></th><th>3<br><small>(ดีเยี่ยม)</small></th><th>2<br><small>(ดี)</small></th><th>1<br><small>(ผ่าน)</small></th><th>0<br><small>(ไม่ผ่าน)</small></th><th>ผ่าน</th><th>ไม่ผ่าน</th><th colspan="2"></th></tr></thead><tbody><tr><td class="csp-label">ผลการประเมิน<br>จำนวนนักเรียน</td>${bRow}${rRow}${actRow}<td></td></tr></tbody></table><div class="csp-remark"><b>หมายเหตุ :</b> ไม่ได้นำผลการเรียนนักเรียนพิการเรียนร่วมมาคิดคำนวน</div><div style="text-align:center;font-size:8.5pt;font-weight:700;margin:6px 0 4px">การอนุมัติผลการเรียน</div><table class="csp-outer" style="width:100%;border-collapse:collapse;font-size:8pt;"><tr><td style="width:33%;text-align:center;padding:4px 8px;border:1px solid #000">ครูผู้สอน<br><div style="border-bottom:1px dotted #000;height:18px;margin:4px 10px 2px"></div><div>(${D.teacher||'................................'})</div></td><td style="width:33%;text-align:center;padding:4px 8px;border:1px solid #000">หัวหน้ากลุ่มสาระการเรียนรู้<br><div style="border-bottom:1px dotted #000;height:18px;margin:4px 10px 2px"></div><div>(................................)</div></td><td style="width:33%;text-align:center;padding:4px 8px;border:1px solid #000">หัวหน้างานวิชาการ<br><div style="border-bottom:1px dotted #000;height:18px;margin:4px 10px 2px"></div><div>(................................)</div></td></tr></table><table class="csp-outer" style="width:100%;border-collapse:collapse;font-size:8pt;margin-top:0;border-top:none;"><tr><td style="width:40%;padding:6px 8px;border:1px solid #000;vertical-align:middle"><span style="margin-right:16px">☐ อนุมัติ</span><span>☐ ไม่อนุมัติ</span></td><td style="width:60%;text-align:center;padding:6px 8px;border:1px solid #000"><div style="border-bottom:1px dotted #000;height:18px;margin:0 20px 2px"></div><div>(${D.director||'................................'})</div><div style="font-size:7.5pt">ผู้อำนวยการโรงเรียน${D.school||''}</div><div style="margin-top:4px;font-size:8pt">วันที่ <u>&nbsp;${approveDay||'......'}&nbsp;</u> เดือน <u>&nbsp;${approveMonth||'................'}&nbsp;</u> พ.ศ. <u>&nbsp;${approveYear||'........'}&nbsp;</u></div></td></tr></table>`;
-  }
-
-  // ── inject combined rows (เหมือน printCurrentPage) ──
-  const schoolRow=document.querySelector('#page-cover .xls-form > .xls-row:has(#f-school)');
-  const teacherNameRow=document.getElementById('teacher-name-row');
-  const advisorNameRow=document.getElementById('advisor-name-row');
-
-  // โรงเรียน+สังกัด
-  let pSchool=document.getElementById('_p_school');
-  if(!pSchool&&schoolRow){
-    pSchool=document.createElement('div');pSchool.id='_p_school';
-    pSchool.innerHTML='<div class="print-combined-row"><span class="xls-label">โรงเรียน</span><span class="print-combined-val">'+(gv2('f-school')||'')+'</span></div>'
-      +'<div class="print-combined-row" style="margin-top:3px"><span class="xls-label">สังกัด</span><span class="print-combined-val">'+(gv2('f-dept')||'')+'</span></div>';
-    schoolRow.parentNode.insertBefore(pSchool,schoolRow);
-  } else if(pSchool){
-    pSchool.innerHTML='<div class="print-combined-row"><span class="xls-label">โรงเรียน</span><span class="print-combined-val">'+(gv2('f-school')||'')+'</span></div>'
-      +'<div class="print-combined-row" style="margin-top:3px"><span class="xls-label">สังกัด</span><span class="print-combined-val">'+(gv2('f-dept')||'')+'</span></div>';
-  }
-
-  // ชั้น+ภาคเรียน+ปีการศึกษา+ชม
-  let pYearHours=document.getElementById('_p_year_hours');
-  const semRow=document.querySelector('#page-cover .xls-row-2col:has(#f-sem)');
-  if(!pYearHours&&semRow){
-    pYearHours=document.createElement('div');pYearHours.id='_p_year_hours';
-    pYearHours.className='print-3col-extra';
-    pYearHours.innerHTML='<div class="print-combined-row"><span class="xls-label">ปีการศึกษา</span><span class="xls-val">'+(gv2('f-year')||'')+'</span></div>'
-      +'<div class="print-combined-row"><span class="xls-label">ชม./สัปดาห์</span><span class="xls-val">'+(gv2('f-hours')||'')+'</span></div>';
-    semRow.after(pYearHours);
-  }
-
-  // ครูผู้สอน
-  let pTeacher=document.getElementById('_p_teacher');
-  if(!pTeacher&&teacherNameRow){
-    pTeacher=document.createElement('div');pTeacher.id='_p_teacher';
-    pTeacher.className='print-2col-row';
-    pTeacher.innerHTML='<div class="print-combined-row"><span class="xls-label">ครูผู้สอน</span><span class="print-combined-val">'+(gv2('f-teacher')||'')+'</span></div>'
-      +'<div class="print-combined-row"><span class="xls-label">ตำแหน่ง</span><span class="print-combined-val">'+(gv2('f-teacher-pos')||'')+'</span></div>';
-    teacherNameRow.after(pTeacher);
-  }
-
-  // ครูที่ปรึกษา
-  let pAdvisor=document.getElementById('_p_advisor');
-  if(!pAdvisor&&advisorNameRow){
-    pAdvisor=document.createElement('div');pAdvisor.id='_p_advisor';
-    pAdvisor.className='print-2col-row';
-    pAdvisor.innerHTML='<div class="print-combined-row"><span class="xls-label">ครูที่ปรึกษา</span><span class="print-combined-val">'+(gv2('f-advisor')||'')+'</span></div>'
-      +'<div class="print-combined-row"><span class="xls-label">ตำแหน่ง</span><span class="print-combined-val">'+(gv2('f-advisor-pos')||'')+'</span></div>';
-    advisorNameRow.after(pAdvisor);
-  }
-
-  // วันที่อนุมัติ
-  const gradeDistTable=document.getElementById('grade-dist-table');
-  let pApvDate=document.getElementById('_p_apv_date');
-  if(!pApvDate&&gradeDistTable){
-    pApvDate=document.createElement('div');pApvDate.id='_p_apv_date';
-    pApvDate.style.cssText='text-align:center;margin:8px 0 4px;font-family:inherit';
-    pApvDate.innerHTML='<div style="font-size:9pt;font-weight:700;color:#1f2937;margin-bottom:5px">วันที่อนุมัติผลการเรียน</div>'
-      +'<div style="display:flex;align-items:center;justify-content:center;gap:6px;font-size:9pt">'
-      +'<span>วันที่</span><span style="border:1px solid #94a3b8;border-radius:4px;min-width:32px;text-align:center;font-weight:700;padding:2px 6px">'+(gv2('f-approve-day')||'...')+'</span>'
-      +'<span>เดือน</span><span style="border:1px solid #94a3b8;border-radius:4px;min-width:70px;text-align:center;font-weight:700;padding:2px 6px">'+(gv2('f-approve-month')||'............')+'</span>'
-      +'<span>พ.ศ.</span><span style="border:1px solid #94a3b8;border-radius:4px;min-width:48px;text-align:center;font-weight:700;padding:2px 6px">'+(gv2('f-approve-year')||'........')+'</span>'
-      +'</div>';
-    gradeDistTable.after(pApvDate);
-  }
-
-  // ซ่อน original rows
-  if(schoolRow)      schoolRow.style.display='none';
-  if(teacherNameRow) teacherNameRow.style.display='none';
-  if(advisorNameRow) advisorNameRow.style.display='none';
-}
+/* ══ PDF ══ */
 
 /* ══ HELPERS ══ */
 const openModal=id=>document.getElementById(id).classList.add('open');
@@ -4149,59 +2718,318 @@ const hideLoading=()=>document.getElementById('loading-overlay').classList.remov
 /* ══ PRINT CURRENT PAGE ══ */
 function printCurrentPage(){
   // render ข้อมูลปัจจุบันก่อน print
-  if(currentPage==='att')    {renderAttPage();_buildAttPrintAll();}
-  if(currentPage==='s1')     renderScore(1);
-  if(currentPage==='s2')     renderScore(2);
-  if(currentPage==='total')  {renderTotal();drawCharts();}
-  if(currentPage==='beh')    renderBehavior();
-  if(currentPage==='ind')    {populateIndSel();renderIndividual();}
-  if(currentPage==='cover')  {renderCoverStats();renderCoverBehRead();}
-
-  // อัพเดตลายเซ็น
-  const sigT=document.getElementById('sig-teacher');
-  const sigTP=document.getElementById('sig-teacher-pos');
-  const sigD=document.getElementById('sig-director');
-  const sigDP=document.getElementById('sig-director-pos');
-  if(sigT)  sigT.textContent  = D.teacher||'';
-  if(sigTP) sigTP.textContent = D.teacherPos?'ตำแหน่ง'+D.teacherPos:'';
-  if(sigD)  sigD.textContent  = D.director||'';
-  if(sigDP) sigDP.textContent = D.school?'ตำแหน่งผู้อำนวยการโรงเรียน'+D.school:'ตำแหน่งผู้อำนวยการโรงเรียน';
-
-  // orientation — inject @page แบบ !important ให้ override ทุก stylesheet
-  const isLandscape = currentPage==='s1'||currentPage==='s2'||currentPage==='att';
-  // ลบ style เก่าก่อน แล้วสร้างใหม่ทุกครั้ง (force browser re-apply)
-  const oldStyle=document.getElementById('print-orientation-style');
-  if(oldStyle) oldStyle.remove();
-  const styleEl=document.createElement('style');
-  styleEl.id='print-orientation-style';
-  // ต้องเป็น style แรกสุดใน head เพื่อให้ override ได้
-  document.head.insertBefore(styleEl, document.head.firstChild);
-  if(isLandscape){
-    styleEl.textContent='@media print{@page{size:A4 landscape;margin:12mm 12mm 18mm 12mm;}#page-att.active,#page-s1.active,#page-s2.active{-webkit-print-color-adjust:exact;}}';
-  } else {
-    styleEl.textContent='@media print{@page{size:A4 portrait;margin:15mm 14mm 20mm 14mm;}}';
-  }
-
+  if(currentPage==='att')renderAttPage();
+  if(currentPage==='s1')renderScore(1);
+  if(currentPage==='s2')renderScore(2);
+  if(currentPage==='total'){renderTotal();drawCharts();}
+  if(currentPage==='beh')renderBehavior();
+  if(currentPage==='ind'){populateIndSel();renderIndividual();}
   if(currentPage==='cover'){
-    // เตรียม cover elements แล้ว print
-    _prepareCoverPrintElements();
+    renderCoverStats();renderCoverBehRead();
+    // สร้าง cover-summary-print (แสดงเฉพาะ print)
+    const n=D.students.filter(s=>s.name).length;
+    const {bDist,rDist}=calcBehReadDist();
+    const csp=document.getElementById('cover-summary-print');
+    // สร้างตารางเกรด distribution สำหรับ print
+    const gradeKeysPrint=[4,3.5,3,2.5,2,1.5,1,0];
+    const gradesPrint=D.students.map((_,i)=>calcFinalGrade(i)).filter(g=>g!==null);
+    const distPrint={};gradeKeysPrint.forEach(k=>{distPrint[k]=0;});
+    gradesPrint.forEach(g=>{const k=gradeKeysPrint.find(k=>k===g)||0;distPrint[k]=(distPrint[k]||0)+1;});
+    const avgPrint=gradesPrint.length?(gradesPrint.reduce((a,b)=>a+b,0)/gradesPrint.length).toFixed(2):'0';
+    const passPrint=gradesPrint.filter(g=>g>=1).length;
+    const passPct=gradesPrint.length?Math.round(passPrint/gradesPrint.length*100):0;
+    // ══ สร้างตาราง cover-summary-print ตรงแบบฟอร์ม Excel ปพ.5 ══
+
+    // ── ค่าวันที่อนุมัติ ──
+    const approveDay   = D.approveDay   || gv('f-approve-day')   || '';
+    const approveMonth = D.approveMonth || gv('f-approve-month') || '';
+    const approveYear  = D.approveYear  || gv('f-approve-year')  || '';
+
+    // ── helper: dash ถ้าเป็น 0 หรือ null ──
+    const dash = v => (v===0||v===null||v===''||v===undefined) ? '-' : v;
+    const pct  = (v,t) => t ? Math.round(v/t*100) : '-';
+
+    // ── สรุปผลสัมฤทธิ์ทางการเรียนรู้ ──
+    // แถว: จำนวนนักเรียนทั้งหมด, ร้อยละ
+    // คอลัมน์เกรด: 4, 3.5, 3, 2.5, 2, 1.5, 1, 0, แก้ไข(0)
+    const gradeKeys = [4,3.5,3,2.5,2,1.5,1,0];
+    const totalStu  = n; // นักเรียนมีเกรด
+    let achieveRow1 = '', achieveRow2 = '';
+    gradeKeys.forEach(k=>{
+      const cnt = distPrint[k]||0;
+      achieveRow1 += '<td>'+dash(cnt)+'</td>';
+      achieveRow2 += '<td>'+dash(pct(cnt,gradesPrint.length))+'</td>';
+    });
+    // แก้ไข(0) — ยังไม่มีข้อมูลในระบบ
+    achieveRow1 += '<td>-</td>';
+    achieveRow2 += '<td>-</td>';
+
+    // ── สรุปผลประเมินคุณลักษณะ ──
+    // bDist: {3:n,2:n,1:n,0:n}
+    const bKeys = [3,2,1,0];
+    let bRow = '';
+    bKeys.forEach(k=>{ bRow += '<td>'+dash(bDist[k]||0)+'</td>'; });
+
+    // ── สรุปผลประเมินการอ่านคิดวิเคราะห์ ──
+    // rDist: {3:n,2:n,1:n,0:n}
+    let rRow = '';
+    bKeys.forEach(k=>{ rRow += '<td>'+dash(rDist[k]||0)+'</td>'; });
+
+    // ── ผลประเมินกิจกรรมพัฒนาผู้เรียน ──
+    // ยังไม่มีข้อมูลในระบบ → แสดง -
+    let actRow = '<td>-</td><td>-</td><td>-</td><td>-</td>';
+
+    // ── HTML ──
+    csp.innerHTML = `
+<table class="csp-outer" style="width:100%;border-collapse:collapse;font-size:7.5pt;">
+  <!-- หัวสุด: จำนวนนักเรียนทั้งหมด + สรุปผลสัมฤทธิ์ -->
+  <thead>
+    <tr>
+      <th rowspan="3" style="width:9%;text-align:center;vertical-align:middle">จำนวนนักเรียน<br>ทั้งหมด</th>
+      <th colspan="10" style="text-align:center">สรุปผลสัมฤทธิ์ทางการเรียนรู้</th>
+      <th rowspan="3" style="width:8%;text-align:center;vertical-align:middle">หมายเหตุ</th>
+    </tr>
+    <tr>
+      <th colspan="9" style="text-align:center">จำนวนนักเรียนที่ได้ระดับผลการเรียน</th>
+      <th rowspan="2" style="text-align:center;vertical-align:middle">จำนวนนักเรียนที่ได้รับ<br>การแก้ไขผลการเรียนรู้ (0)</th>
+    </tr>
+    <tr>
+      <th>4</th><th>3.5</th><th>3</th><th>2.5</th><th>2</th><th>1.5</th><th>1</th><th>0</th><th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>${dash(totalStu)}</td>
+      ${achieveRow1}
+      <td></td>
+    </tr>
+    <tr>
+      <td class="csp-label">ร้อยละ</td>
+      ${achieveRow2}
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- สรุปผลประเมิน 3 ส่วน -->
+<table class="csp-outer" style="width:100%;border-collapse:collapse;font-size:7.5pt;margin-top:0;border-top:none;">
+  <thead>
+    <tr>
+      <th rowspan="3" style="width:9%;vertical-align:middle;text-align:center">สรุปผล</th>
+      <th colspan="4" style="text-align:center">สรุปผลการประเมิน<br>คุณลักษณะอันพึงประสงค์</th>
+      <th colspan="4" style="text-align:center">สรุปผลการประเมิน<br>การอ่าน คิดวิเคราะห์และการเขียน</th>
+      <th colspan="4" style="text-align:center">สรุปผลการประเมิน<br>กิจกรรมพัฒนาผู้เรียน</th>
+      <th rowspan="3" style="width:8%;vertical-align:middle;text-align:center">หมายเหตุ</th>
+    </tr>
+    <tr>
+      <th>3<br><small>(ดีเยี่ยม)</small></th><th>2<br><small>(ดี)</small></th>
+      <th>1<br><small>(ผ่าน)</small></th><th>0<br><small>(ไม่ผ่าน)</small></th>
+      <th>3<br><small>(ดีเยี่ยม)</small></th><th>2<br><small>(ดี)</small></th>
+      <th>1<br><small>(ผ่าน)</small></th><th>0<br><small>(ไม่ผ่าน)</small></th>
+      <th>ผ่าน</th><th>ไม่ผ่าน</th><th colspan="2"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="csp-label">ผลการประเมิน<br>จำนวนนักเรียน</td>
+      ${bRow}
+      ${rRow}
+      ${actRow}
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- หมายเหตุ -->
+<div class="csp-remark">
+  <b>หมายเหตุ :</b> ไม่ได้นำผลการเรียนนักเรียนพิการเรียนร่วมมาคิดคำนวน (นักเรียนพิการเรียนร่วมจะแยกส่วนตามแผน IEP)
+</div>
+
+<!-- การอนุมัติผลการเรียน -->
+<div style="text-align:center;font-size:8.5pt;font-weight:700;margin:6px 0 4px">การอนุมัติผลการเรียน</div>
+<table class="csp-outer" style="width:100%;border-collapse:collapse;font-size:8pt;">
+  <tr>
+    <td style="width:33%;text-align:center;padding:4px 8px;border:1px solid #000">
+      ครูผู้สอน<br>
+      <div style="border-bottom:1px dotted #000;height:18px;margin:4px 10px 2px"></div>
+      <div style="font-size:8pt">(${D.teacher||'................................'})</div>
+    </td>
+    <td style="width:33%;text-align:center;padding:4px 8px;border:1px solid #000">
+      หัวหน้ากลุ่มสาระการเรียนรู้<br>
+      <div style="border-bottom:1px dotted #000;height:18px;margin:4px 10px 2px"></div>
+      <div style="font-size:8pt">(................................)</div>
+    </td>
+    <td style="width:33%;text-align:center;padding:4px 8px;border:1px solid #000">
+      หัวหน้างานวิชาการ<br>
+      <div style="border-bottom:1px dotted #000;height:18px;margin:4px 10px 2px"></div>
+      <div style="font-size:8pt">(................................)</div>
+    </td>
+  </tr>
+</table>
+
+<!-- อนุมัติ / ไม่อนุมัติ + ลายเซ็นผู้อำนวยการ -->
+<table class="csp-outer" style="width:100%;border-collapse:collapse;font-size:8pt;margin-top:0;border-top:none;">
+  <tr>
+    <td style="width:40%;padding:6px 8px;border:1px solid #000;vertical-align:middle">
+      <span style="margin-right:16px">☐ อนุมัติ</span>
+      <span>☐ ไม่อนุมัติ</span>
+    </td>
+    <td style="width:60%;text-align:center;padding:6px 8px;border:1px solid #000">
+      <div style="border-bottom:1px dotted #000;height:18px;margin:0 20px 2px"></div>
+      <div>(${D.director||'................................'})</div>
+      <div style="font-size:7.5pt">ผู้อำนวยการโรงเรียน${D.school||''}</div>
+      <div style="margin-top:4px;font-size:8pt">
+        วันที่ <u>&nbsp;${approveDay||'......'}&nbsp;</u>
+        เดือน <u>&nbsp;${approveMonth||'................'}&nbsp;</u>
+        พ.ศ. <u>&nbsp;${approveYear||'........'}&nbsp;</u>
+      </div>
+    </td>
+  </tr>
+</table>`;
+    // โลโก้ใน print header
+    const printLogoWrap=document.getElementById('cover-logo-print-wrap');
+    const printLogoImg=document.getElementById('cover-print-logo');
+    const printLogoPh=document.getElementById('cover-logo-placeholder-print');
+    if(D.logoData){
+      printLogoImg.src=D.logoData;
+      printLogoWrap.classList.add('cover-logo-show');
+      printLogoPh.classList.remove('cover-logo-show');
+    } else {
+      printLogoWrap.classList.remove('cover-logo-show');
+      printLogoPh.classList.add('cover-logo-show');
+    }
+  }renderCoverBehRead();
+
+  // หน้าคะแนน → landscape, อื่นๆ → portrait
+  const isLandscape = currentPage==='s1' || currentPage==='s2' || currentPage==='att';
+  let styleEl = document.getElementById('print-orientation-style');
+  if(!styleEl){styleEl=document.createElement('style');styleEl.id='print-orientation-style';document.head.appendChild(styleEl);}
+  styleEl.textContent = isLandscape
+    ? '@media print{@page{size:A4 landscape;margin:10mm 12mm;}}'
+    : '@media print{@page{size:A4 portrait;margin:12mm 14mm;}}';
+
+  // ── อัพเดตลายเซ็น ──
+  document.getElementById('sig-teacher').textContent = D.teacher || '';
+  document.getElementById('sig-teacher-pos').textContent = D.teacherPos ? 'ตำแหน่ง'+D.teacherPos : '';
+  document.getElementById('sig-director').textContent = D.director || '';
+  document.getElementById('sig-director-pos').textContent = D.school ? 'ตำแหน่งผู้อำนวยการโรงเรียน'+D.school : 'ตำแหน่งผู้อำนวยการโรงเรียน';
+
+  setTimeout(()=>{
+    const gv2 = id => { const el=document.getElementById(id); return el ? (el.value||el.textContent||'') : ''; };
+
+    // ── 1. inject โรงเรียน+สังกัด combined ──
+    const schoolRow = document.querySelector('#page-cover .xls-form > .xls-row:has(#f-school)');
+    let pSchool = document.getElementById('_p_school');
+    if(!pSchool && schoolRow){
+      pSchool = document.createElement('div');
+      pSchool.id = '_p_school';
+      pSchool.style.cssText = 'display:grid;gap:5px;';
+      pSchool.innerHTML =
+        '<div class="print-combined-row">'
+          +'<span class="xls-label">โรงเรียน</span>'
+          +'<span class="print-combined-val">'+(gv2('f-school')||'')+'</span>'
+        +'</div>'
+        +'<div class="print-combined-row">'
+          +'<span class="xls-label">สังกัด</span>'
+          +'<span class="print-combined-val">'+(gv2('f-dept')||'')+'</span>'
+        +'</div>';
+      schoolRow.after(pSchool);
+    }
+
+    // ── 2. inject ปีการศึกษา เป็น col ที่ 3 ใน row-2col:has(#f-sem) ──
+    const semRow2col = document.querySelector('#page-cover .xls-row-2col:has(#f-sem)');
+    let pYear = document.getElementById('_p_year_col');
+    if(!pYear && semRow2col){
+      pYear = document.createElement('div');
+      pYear.id = '_p_year_col';
+      pYear.className = 'print-3col-extra';
+      pYear.innerHTML = '<span class="xls-label">ปีการศึกษา</span><span class="xls-val">'+(gv2('f-year')||'')+'</span>';
+      semRow2col.appendChild(pYear);
+    }
+
+    // ── 3. inject ชม./สัปดาห์ เป็น col ที่ 3 ใน row-2col:has(#f-subject) ──
+    const subjectRow2col = document.querySelector('#page-cover .xls-row-2col:has(#f-subject)');
+    let pHours = document.getElementById('_p_hours_col');
+    if(!pHours && subjectRow2col){
+      pHours = document.createElement('div');
+      pHours.id = '_p_hours_col';
+      pHours.className = 'print-3col-extra';
+      pHours.innerHTML = '<span class="xls-label">ชม./สัปดาห์</span><span class="xls-val">'+(gv2('f-hours')||'')+'</span>';
+      subjectRow2col.appendChild(pHours);
+    }
+
+    // ── 4. inject ครูผู้สอน + ตำแหน่ง ในแถวเดียวกัน (2 กล่อง) ──
+    const teacherNameRow = document.getElementById('teacher-name-row');
+    let pTeacher = document.getElementById('_p_teacher');
+    if(!pTeacher && teacherNameRow){
+      pTeacher = document.createElement('div');
+      pTeacher.id = '_p_teacher';
+      pTeacher.className = 'print-2col-row';
+      pTeacher.innerHTML =
+        '<div class="print-combined-row">'
+          +'<span class="xls-label">ครูผู้สอน</span>'
+          +'<span class="print-combined-val">'+(gv2('f-teacher')||'')+'</span>'
+        +'</div>'
+        +'<div class="print-combined-row">'
+          +'<span class="xls-label">ตำแหน่ง</span>'
+          +'<span class="print-combined-val">'+(gv2('f-teacher-pos')||'')+'</span>'
+        +'</div>';
+      teacherNameRow.after(pTeacher);
+    }
+
+    // ── 5. inject ครูที่ปรึกษา + ตำแหน่ง ในแถวเดียวกัน (2 กล่อง) ──
+    const advisorNameRow = document.getElementById('advisor-name-row');
+    let pAdvisor = document.getElementById('_p_advisor');
+    if(!pAdvisor && advisorNameRow){
+      pAdvisor = document.createElement('div');
+      pAdvisor.id = '_p_advisor';
+      pAdvisor.className = 'print-2col-row';
+      pAdvisor.innerHTML =
+        '<div class="print-combined-row">'
+          +'<span class="xls-label">ครูที่ปรึกษา</span>'
+          +'<span class="print-combined-val">'+(gv2('f-advisor')||'')+'</span>'
+        +'</div>'
+        +'<div class="print-combined-row">'
+          +'<span class="xls-label">ตำแหน่ง</span>'
+          +'<span class="print-combined-val">'+(gv2('f-advisor-pos')||'')+'</span>'
+        +'</div>';
+      advisorNameRow.after(pAdvisor);
+    }
+
+    // ── 6. inject วันที่อนุมัติ ใต้ grade-dist ใน approval-body ──
+    const gradeDistTable = document.getElementById('grade-dist-table');
+    let pApvDate = document.getElementById('_p_apv_date');
+    if(!pApvDate && gradeDistTable){
+      pApvDate = document.createElement('div');
+      pApvDate.id = '_p_apv_date';
+      pApvDate.style.cssText = 'text-align:center;margin:8px 0 4px;font-family:inherit';
+      pApvDate.innerHTML =
+        '<div style="font-size:9pt;font-weight:700;color:#1f2937;margin-bottom:5px">วันที่อนุมัติผลการเรียน</div>'
+        +'<div style="display:flex;align-items:center;justify-content:center;gap:6px;font-size:9pt">'
+        +'<span>วันที่</span>'
+        +'<span style="border:1px solid #94a3b8;border-radius:4px;min-width:32px;text-align:center;font-weight:700;padding:2px 6px">'+(gv2('f-approve-day')||'...')+'</span>'
+        +'<span>เดือน</span>'
+        +'<span style="border:1px solid #94a3b8;border-radius:4px;min-width:70px;text-align:center;font-weight:700;padding:2px 6px">'+(gv2('f-approve-month')||'............')+'</span>'
+        +'<span>พ.ศ.</span>'
+        +'<span style="border:1px solid #94a3b8;border-radius:4px;min-width:48px;text-align:center;font-weight:700;padding:2px 6px">'+(gv2('f-approve-year')||'........')+'</span>'
+        +'</div>';
+      gradeDistTable.after(pApvDate);
+    }
+
+    // ── ซ่อน original rows ──
+    if(schoolRow)      schoolRow.style.display='none';
+    if(teacherNameRow) teacherNameRow.style.display='none';
+    if(advisorNameRow) advisorNameRow.style.display='none';
+
+    window.print();
+
     setTimeout(()=>{
-      window.print();
-      setTimeout(()=>{
-        ['_p_school','_p_year_hours','_p_year_col','_p_hours_col','_p_teacher','_p_advisor','_p_apv_date'].forEach(id=>{
-          const el=document.getElementById(id);if(el)el.remove();
-        });
-        const schoolRow=document.querySelector('#page-cover .xls-form > .xls-row:has(#f-school)');
-        const teacherNameRow=document.getElementById('teacher-name-row');
-        const advisorNameRow=document.getElementById('advisor-name-row');
-        if(schoolRow)      schoolRow.style.display='';
-        if(teacherNameRow) teacherNameRow.style.display='';
-        if(advisorNameRow) advisorNameRow.style.display='';
-      },500);
-    },200);
-  } else {
-    setTimeout(()=>{ window.print(); },150);
-  }
+      [pSchool,pYear,pHours,pTeacher,pAdvisor,pApvDate].forEach(el=>{ if(el) el.remove(); });
+      if(schoolRow)      schoolRow.style.display='';
+      if(teacherNameRow) teacherNameRow.style.display='';
+      if(advisorNameRow) advisorNameRow.style.display='';
+    }, 500);
+  },150);
 }
 
 /* ══ BOOT ══ */
