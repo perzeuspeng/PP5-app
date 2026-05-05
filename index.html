@@ -3006,53 +3006,50 @@ function renderIndividual(){
 async function generatePDF(){
   closeModal('report-modal');
 
-  const pageList=[
-    {id:'r-cover', page:'cover',    landscape:false},
-    {id:'r-stu',   page:'students', landscape:false},
-    {id:'r-att',   page:'att',      landscape:true},
-    {id:'r-s1',    page:'s1',       landscape:true},
-    {id:'r-s2',    page:'s2',       landscape:true},
-    {id:'r-tot',   page:'total',    landscape:false},
-    {id:'r-beh',   page:'beh',      landscape:false},
-    {id:'r-ind',   page:'ind',      landscape:false},
+  const SEL=[
+    {id:'r-cover', page:'cover',    ls:false},
+    {id:'r-stu',   page:'students', ls:false},
+    {id:'r-att',   page:'att',      ls:true},
+    {id:'r-s1',    page:'s1',       ls:true},
+    {id:'r-s2',    page:'s2',       ls:true},
+    {id:'r-tot',   page:'total',    ls:false},
+    {id:'r-beh',   page:'beh',      ls:false},
+    {id:'r-ind',   page:'ind',      ls:false},
   ].filter(p=>document.getElementById(p.id)?.checked);
 
-  if(!pageList.length){showToast('\u26a0\ufe0f \u0e01\u0e23\u0e38\u0e13\u0e32\u0e40\u0e25\u0e37\u0e2d\u0e01\u0e2d\u0e22\u0e48\u0e32\u0e07\u0e19\u0e49\u0e2d\u0e22 1 \u0e2b\u0e19\u0e49\u0e32');return;}
-
+  if(!SEL.length){showToast('⚠️ กรุณาเลือกอย่างน้อย 1 หน้า');return;}
   const jsPDFLib=(window.jspdf&&window.jspdf.jsPDF)||window.jsPDF;
-  if(!jsPDFLib){showToast('\u274c \u0e42\u0e2b\u0e25\u0e14 jsPDF \u0e44\u0e21\u0e48\u0e2a\u0e33\u0e40\u0e23\u0e47\u0e08');return;}
+  if(!jsPDFLib){showToast('❌ โหลด jsPDF ไม่สำเร็จ');return;}
 
-  showLoading('\u0e01\u0e33\u0e25\u0e31\u0e07\u0e40\u0e15\u0e23\u0e35\u0e22\u0e21\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25...');
+  showLoading('กำลังเตรียมข้อมูล...');
   await new Promise(r=>setTimeout(r,80));
 
-  // ── 1. render ข้อมูลทุกหน้า ──
-  const needRender=new Set(pageList.map(p=>p.page));
-  if(needRender.has('att'))   {renderAttPage();_buildAttPrintAll();}
-  if(needRender.has('s1'))    renderScore(1);
-  if(needRender.has('s2'))    renderScore(2);
-  if(needRender.has('total')) {renderTotal();drawCharts();}
-  if(needRender.has('beh'))   renderBehavior();
-  if(needRender.has('ind'))   {populateIndSel();renderIndividual();}
-  if(needRender.has('cover')) {renderCoverStats();renderCoverBehRead();}
+  // ── render ข้อมูลทุกหน้า ──
+  const need=new Set(SEL.map(p=>p.page));
+  if(need.has('att'))   {renderAttPage();_buildAttPrintAll();}
+  if(need.has('s1'))    renderScore(1);
+  if(need.has('s2'))    renderScore(2);
+  if(need.has('total')) {renderTotal();drawCharts();}
+  if(need.has('beh'))   renderBehavior();
+  if(need.has('ind'))   {populateIndSel();renderIndividual();}
+  if(need.has('cover')) {renderCoverStats();renderCoverBehRead();}
   const sigT=document.getElementById('sig-teacher');
   const sigTP=document.getElementById('sig-teacher-pos');
   const sigD=document.getElementById('sig-director');
   const sigDP=document.getElementById('sig-director-pos');
   if(sigT)  sigT.textContent=D.teacher||'';
-  if(sigTP) sigTP.textContent=D.teacherPos?'\u0e15\u0e33\u0e41\u0e2b\u0e19\u0e48\u0e07'+D.teacherPos:'';
+  if(sigTP) sigTP.textContent=D.teacherPos?'ตำแหน่ง'+D.teacherPos:'';
   if(sigD)  sigD.textContent=D.director||'';
-  if(sigDP) sigDP.textContent=D.school?'\u0e15\u0e33\u0e41\u0e2b\u0e19\u0e48\u0e07\u0e1c\u0e39\u0e49\u0e2d\u0e33\u0e19\u0e27\u0e22\u0e01\u0e32\u0e23\u0e42\u0e23\u0e07\u0e40\u0e23\u0e35\u0e22\u0e19'+D.school:'\u0e15\u0e33\u0e41\u0e2b\u0e19\u0e48\u0e07\u0e1c\u0e39\u0e49\u0e2d\u0e33\u0e19\u0e27\u0e22\u0e01\u0e32\u0e23\u0e42\u0e23\u0e07\u0e40\u0e23\u0e35\u0e22\u0e19';
-  if(needRender.has('cover')) _prepareCoverPrintElements();
-  await new Promise(r=>setTimeout(r,350));
+  if(sigDP) sigDP.textContent=D.school?'ตำแหน่งผู้อำนวยการโรงเรียน'+D.school:'ตำแหน่งผู้อำนวยการโรงเรียน';
+  if(need.has('cover')) _prepareCoverPrintElements();
+  await new Promise(r=>setTimeout(r,400));
 
-  // ── 2. จำ active page เดิม ──
+  // ── จำ active page เดิม ──
   const allPageEls=document.querySelectorAll('.page');
-  const prevActivePage=currentPage;
+  const prevPage=currentPage;
 
-  // ── 3. CSS print rules ที่ใช้จำลอง print layout บนหน้าจอ ──
-  // ดึง print CSS แล้ว inject เป็น screen style (ไม่ใช่ @media print)
-  // เพื่อให้ html2canvas เห็น layout เหมือนหน้าพิมพ์จริง
-  const PRINT_INNER_CSS=`
+  // ── print CSS ที่ inject เป็น screen CSS เพื่อให้ html2canvas เห็น ──
+  const PCSS=`
 
   /* ═══ ฐาน ═══ */
   *{
@@ -3063,6 +3060,13 @@ async function generatePDF(){
   /* margin ล่าง 35mm เผื่อที่เซ็นชื่อ */
   @page          { size:A4 portrait;  margin:15mm 14mm 20mm 14mm; }
   @page landscape{ size:A4 landscape; margin:12mm 12mm 18mm 12mm; }
+  @page att-page { size:A4 landscape; margin:12mm 12mm 18mm 12mm; }
+  @page s1-page  { size:A4 landscape; margin:12mm 12mm 18mm 12mm; }
+  @page s2-page  { size:A4 landscape; margin:12mm 12mm 18mm 12mm; }
+  /* Fallback: กำหนด size โดยตรงสำหรับ browser ที่ไม่รองรับ named page */
+  #page-att.active, #page-s1.active, #page-s2.active{
+    /* hint เพิ่มเติม */
+  }
 
   /* ═══ ซ่อน UI ═══ */
   #loading-overlay,.bottom-nav,.topbar,
@@ -3510,17 +3514,32 @@ async function generatePDF(){
      หน้าเวลาเรียน (Landscape)
   ════════════════════════════════════════════ */
   #page-att.active{}
-  #page-att.active .tbl-wrap{overflow:visible!important;width:auto!important;max-width:100%!important;}
-  #page-att.active #att-grid-table{
-    width:auto!important;max-width:100%!important;min-width:0!important;
+  /* ── web view: ซ่อน att-print-all ── */
+  #att-print-all{display:none!important;}
+  /* ── print: แสดง att-print-all ซ่อน grid/year wraps ── */
+  #page-att.active #att-print-all{display:block!important;}
+  #page-att.active #att-grid-wrap{display:none!important;}
+  #page-att.active #att-year-wrap{display:none!important;}
+  #page-att.active .att-month-tabs{display:none!important;}
+  /* แต่ละ block เดือนแยกหน้า */
+  .att-print-month{page-break-after:always!important;break-after:page!important;padding-bottom:4mm!important;}
+  .att-print-month:last-child{page-break-after:auto!important;break-after:auto!important;}
+  .att-print-month-title{font-size:10pt!important;font-weight:800!important;text-align:center!important;padding:4px 0!important;border-bottom:2px solid #000!important;margin-bottom:5px!important;}
+  #page-att.active .tbl-wrap{overflow:visible!important;width:100%!important;max-width:100%!important;}
+  #page-att.active #att-grid-table,
+  #page-att.active .att-grid-table{
+    width:100%!important;min-width:0!important;
     table-layout:fixed!important;font-size:5.5pt!important;border-collapse:collapse!important;
   }
-  #page-att.active #att-grid-table th,#page-att.active #att-grid-table td,
-  #page-att.active .att-grid-table th,#page-att.active .att-grid-table td{
+  #page-att.active #att-grid-table th,
+  #page-att.active #att-grid-table td,
+  #page-att.active .att-grid-table th,
+  #page-att.active .att-grid-table td{
     position:static!important;padding:2px 1px!important;overflow:hidden!important;
     font-size:5.5pt!important;white-space:nowrap!important;border:1px solid #888!important;
   }
-  #page-att.active #att-grid-table th,#page-att.active .att-grid-table th{
+  #page-att.active #att-grid-table th,
+  #page-att.active .att-grid-table th{
     background:#f0f0f0!important;color:#000!important;font-weight:700!important;
   }
   #page-att.active #att-grid-table th.name-th,#page-att.active #att-grid-table td.name-td,
@@ -3560,35 +3579,47 @@ async function generatePDF(){
   #page-s1.active .tbl-wrap,#page-s2.active .tbl-wrap{
     overflow:visible!important;width:auto!important;max-width:100%!important;
   }
-  #page-s1.active table.xlt,#page-s2.active table.xlt{
-    width:auto!important;max-width:100%!important;min-width:0!important;
-    table-layout:fixed!important;font-size:6pt!important;border-collapse:collapse!important;
+  /* ── ตาราง score: layout เหมือน web view แต่ย่อให้พอดีหน้า landscape ── */
+  #page-s1.active .tbl-wrap,#page-s2.active .tbl-wrap{
+    overflow:visible!important;width:100%!important;max-width:100%!important;
   }
+  #page-s1.active table.xlt,#page-s2.active table.xlt{
+    width:100%!important;min-width:0!important;
+    table-layout:fixed!important;font-size:7pt!important;
+    border-collapse:collapse!important;
+  }
+  /* th ทั่วไป */
   #page-s1.active table.xlt th,#page-s2.active table.xlt th{
-    position:static!important;font-size:5.5pt!important;
+    position:static!important;font-size:6pt!important;
     padding:3px 2px!important;white-space:normal!important;
-    word-break:break-word!important;overflow:hidden!important;
     background:#f0f0f0!important;color:#000!important;
     border:1px solid #000!important;font-weight:700!important;
+    text-align:center!important;vertical-align:middle!important;
   }
+  /* td ทั่วไป */
   #page-s1.active table.xlt td,#page-s2.active table.xlt td{
-    position:static!important;font-size:6pt!important;padding:2px 2px!important;
-    overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
-    border:1px solid #888!important;background:#fff!important;color:#000!important;
+    position:static!important;font-size:7pt!important;padding:2px 3px!important;
+    border:1px solid #bbb!important;background:#fff!important;color:#000!important;
+    text-align:center!important;vertical-align:middle!important;white-space:nowrap!important;
   }
-  #page-s1.active table.xlt th.name-th,#page-s2.active table.xlt th.name-th,
+  /* คอลัมน์ชื่อ */
+  #page-s1.active table.xlt th.name-th,#page-s2.active table.xlt th.name-th{
+    width:16%!important;text-align:left!important;padding-left:4px!important;
+    border-right:2px solid #000!important;vertical-align:middle!important;
+    white-space:nowrap!important;
+  }
   #page-s1.active table.xlt td.name-td,#page-s2.active table.xlt td.name-td{
-    width:13%!important;font-size:6pt!important;
-    white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
-    text-align:left!important;padding-left:4px!important;border-right:1px solid #000!important;
+    width:16%!important;text-align:left!important;padding-left:4px!important;
+    border-right:2px solid #000!important;background:#fafafa!important;
+    font-size:6.5pt!important;overflow:hidden!important;text-overflow:ellipsis!important;
   }
-  #page-s1.active table.xlt td.name-td,#page-s2.active table.xlt td.name-td{background:#fafafa!important;}
+  /* คอลัมน์เลขที่ */
   #page-s1.active table.xlt th.no-th,#page-s2.active table.xlt th.no-th,
   #page-s1.active table.xlt td.no-td,#page-s2.active table.xlt td.no-td{
-    width:2%!important;border-right:1px solid #000!important;
+    width:3%!important;border-right:1px solid #000!important;
   }
   #page-s1.active table.xlt td.no-td,#page-s2.active table.xlt td.no-td{background:#fafafa!important;}
-  /* header ชื่อหน่วย: เอียงล่าง→บน เหมือน web */
+  /* header ชื่อหน่วย — เอียงเหมือน web view */
   #page-s1.active table.xlt thead th.score-item-th,
   #page-s2.active table.xlt thead th.score-item-th{
     width:3%!important;min-width:0!important;height:80px!important;
@@ -3599,7 +3630,7 @@ async function generatePDF(){
     background:#f0f0f0!important;color:#000!important;
     display:table-cell!important;
   }
-  /* แถว max score ด้านล่าง header */
+  /* แถว max score */
   #page-s1.active table.xlt thead tr:nth-child(2) th,
   #page-s2.active table.xlt thead tr:nth-child(2) th{
     height:auto!important;writing-mode:horizontal-tb!important;
@@ -3607,32 +3638,123 @@ async function generatePDF(){
     font-weight:800!important;padding:2px!important;
     vertical-align:middle!important;text-align:center!important;
   }
-  /* th สรุปคะแนน (rowspan cols ขวา — ไม่เอียง) */
+  /* th สรุปคะแนน (rowspan cols ขวา) */
   #page-s1.active table.xlt thead th:not(.name-th):not(.no-th):not(.score-item-th),
   #page-s2.active table.xlt thead th:not(.name-th):not(.no-th):not(.score-item-th){
     writing-mode:horizontal-tb!important;transform:none!important;
     font-size:6pt!important;height:auto!important;
     padding:3px 2px!important;vertical-align:middle!important;
     white-space:normal!important;word-break:break-word!important;
-    width:5%!important;
   }
+  /* ac cell */
   #page-s1.active table.xlt td.ac,#page-s2.active table.xlt td.ac{
-    width:4%!important;font-size:6pt!important;
-    background:#efefef!important;color:#000!important;
-    font-weight:700!important;border:1px solid #555!important;
+    background:#f5f5f5!important;color:#000!important;
+    font-weight:700!important;border:1px solid #888!important;
   }
+  /* gc cell */
   #page-s1.active table.xlt td.gc,#page-s2.active table.xlt td.gc{
-    width:4%!important;font-size:6pt!important;
     background:#e0e0e0!important;color:#000!important;
-    font-weight:800!important;border:1px solid #555!important;
+    font-weight:800!important;border:1px solid #555!important;font-size:7pt!important;
   }
   #page-s1.active table.xlt td.gc span,#page-s2.active table.xlt td.gc span{color:#000!important;}
-  #page-s1.active table.xlt input,#page-s2.active table.xlt input{
-    width:100%!important;font-size:6pt!important;padding:0!important;
+  /* input ในเซล */
+  #page-s1.active table.xlt td input,#page-s2.active table.xlt td input{
+    width:100%!important;font-size:7pt!important;padding:0!important;
     border:none!important;background:transparent!important;text-align:center!important;
   }
   #page-s1.active .sec-box,#page-s2.active .sec-box{margin-bottom:4px!important;}
   #page-s1.active table.xlt tr,#page-s2.active table.xlt tr{page-break-inside:avoid!important;}
+
+
+  /* ════════════════════════════════════════════
+     หน้าคุณลักษณะ — แยก 3 แผ่น portrait A4
+  ════════════════════════════════════════════ */
+  /* ซ่อน tab buttons, save button ใน print */
+  #page-beh.active .no-print{display:none!important;}
+  #page-beh.active .btn{display:none!important;}
+  /* ซ่อน control box (sec-box แรก มี tab buttons) */
+  #page-beh.active .sec-box:first-child{display:none!important;}
+
+  /* แต่ละ beh section พอดีหน้า A4 */
+  #page-beh.active .sec-box{
+    page-break-inside:avoid!important;
+    margin-bottom:0!important;
+    border:1px solid #000!important;
+    box-shadow:none!important;
+  }
+  /* beh-wrap และ read-wrap อยู่คนละ section — แต่ละหน้าแสดงทั้งคู่ */
+  /* แยก 3 หน้า: ต้องสร้าง wrapper พิเศษใน print */
+  #beh-print-s1,#beh-print-s2,#beh-print-all{display:none!important;}
+  #page-beh.active #beh-print-s1,
+  #page-beh.active #beh-print-s2,
+  #page-beh.active #beh-print-all{
+    display:block!important;
+    page-break-after:always!important;
+    break-after:page!important;
+    width:100%!important;
+    min-height:220mm!important;
+  }
+  #page-beh.active #beh-print-all{
+    page-break-after:auto!important;
+    break-after:auto!important;
+  }
+  /* title แต่ละแผ่น */
+  .beh-print-title{
+    display:none!important;
+  }
+  #page-beh.active .beh-print-title{
+    display:block!important;
+    font-size:11pt!important;font-weight:800!important;
+    text-align:center!important;color:#000!important;
+    padding:6px 0 4px!important;
+    border-bottom:2px solid #000!important;
+    margin-bottom:6px!important;
+  }
+  /* ตารางใน beh เต็มหน้า A4 */
+  #page-beh.active .tbl-wrap{
+    overflow:visible!important;width:100%!important;
+  }
+  #page-beh.active table.xlt{
+    width:100%!important;table-layout:fixed!important;
+    border-collapse:collapse!important;font-size:8pt!important;
+    min-width:0!important;
+  }
+  #page-beh.active table.xlt th{
+    font-size:7pt!important;padding:3px 2px!important;
+    background:#f0f0f0!important;color:#000!important;
+    border:1px solid #000!important;font-weight:700!important;
+    text-align:center!important;white-space:normal!important;
+    word-break:break-word!important;
+  }
+  #page-beh.active table.xlt th.name-th{
+    width:22%!important;text-align:left!important;padding-left:4px!important;
+  }
+  #page-beh.active table.xlt th.no-th{width:4%!important;}
+  #page-beh.active table.xlt th:not(.name-th):not(.no-th){
+    width:auto!important;
+  }
+  #page-beh.active table.xlt td{
+    font-size:8pt!important;padding:2px 3px!important;
+    border:1px solid #bbb!important;color:#000!important;
+    text-align:center!important;background:#fff!important;
+  }
+  #page-beh.active table.xlt td.name-td{
+    text-align:left!important;padding-left:4px!important;
+    background:#fafafa!important;font-size:7.5pt!important;
+    overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+  }
+  #page-beh.active table.xlt td.no-td{background:#fafafa!important;}
+  #page-beh.active table.xlt td.ac{
+    background:#f5f5f5!important;font-weight:700!important;
+    border:1px solid #888!important;
+  }
+  /* rating-btn → แสดงตัวเลขเรียบๆ */
+  #page-beh.active .rating-btn{
+    display:inline!important;background:none!important;
+    border:none!important;padding:0!important;
+    font-size:8pt!important;font-weight:700!important;color:#000!important;
+  }
+  #page-beh.active table.xlt tr{page-break-inside:avoid!important;}
 
   /* ════════════════════════════════════════════
      ลายเซ็น — fixed bottom + ที่ว่างเซ็น 28mm
@@ -3736,115 +3858,133 @@ async function generatePDF(){
   }
 `;
 
-  const A4mm={w:210,h:297}; // portrait mm
-  const A4px={w:794,h:1123}; // 96dpi A4 portrait
+  // mm → px at 96dpi (1mm = 3.7795px)
+  const MM=3.7795;
+  // A4 portrait พื้นที่พิมพ์จริง (หักขอบ 14mm ซ้าย/ขวา, 15mm บน, 20mm ล่าง)
+  const PW_PORT=Math.round((210-14*2)*MM); // 686px ≈ 182mm
+  const PH_PORT=Math.round((297-15-20)*MM); // 990px ≈ 262mm
+  // A4 landscape (หักขอบ 12mm ทุกด้าน ยกเว้นล่าง 18mm)
+  const PW_LAND=Math.round((297-12*2)*MM); // 1030px ≈ 273mm
+  const PH_LAND=Math.round((210-12-18)*MM); // 681px ≈ 180mm
 
-  // สร้าง jsPDF
-  const firstLs=pageList[0].landscape;
+  const firstLs=SEL[0].ls;
   const pdf=new jsPDFLib({
     orientation:firstLs?'landscape':'portrait',
-    unit:'mm',
-    format:'a4'
+    unit:'mm',format:'a4'
   });
 
-  for(let i=0;i<pageList.length;i++){
-    const p=pageList[i];
-    showLoading(`\u0e01\u0e33\u0e25\u0e31\u0e07\u0e2a\u0e23\u0e49\u0e32\u0e07 PDF... (${i+1}/${pageList.length})`);
+  for(let i=0;i<SEL.length;i++){
+    const p=SEL[i];
+    showLoading(`กำลังสร้าง PDF... (${i+1}/${SEL.length}) — ${p.page}`);
     await new Promise(r=>setTimeout(r,30));
 
-    const ls=p.landscape;
-    // A4: portrait=794x1123px, landscape=1123x794px at 96dpi
-    const capW=ls?1123:794;
-    const capH=ls?794:1123;
-    const pdfW=ls?297:210; // mm
+    const ls=p.ls;
+    const capW=ls?PW_LAND:PW_PORT;
+    const capH=ls?PH_LAND:PH_PORT;
+    const pdfW=ls?297:210;
     const pdfH=ls?210:297;
+    const mgTop=ls?12:15;   // mm
+    const mgSide=ls?12:14;  // mm
+    const mgBot=ls?18:20;   // mm
 
     // แสดงหน้านี้
     allPageEls.forEach(e=>e.classList.remove('active'));
     const pageEl=document.getElementById('page-'+p.page);
-    if(!pageEl) continue;
+    if(!pageEl)continue;
     pageEl.classList.add('active');
 
-    // inject print-simulation CSS เป็น screen style
-    let sim=document.getElementById('_pdf_sim_style');
-    if(!sim){sim=document.createElement('style');sim.id='_pdf_sim_style';document.head.appendChild(sim);}
+    // inject screen CSS จำลอง print layout
+    let sim=document.getElementById('_pdf_sim');
+    if(!sim){sim=document.createElement('style');sim.id='_pdf_sim';document.head.appendChild(sim);}
 
-    // CSS สำหรับ capture: layout เหมือน print จริง บน screen
-    // margin: 12mm top/bottom = ~45px, 14mm left/right = ~53px
-    const mTop=45, mSide=53, mBot=75; // px (bottom เผื่อ footer)
-    // inject @page landscape/portrait ก่อน capture เพื่อให้ browser render ถูก orientation
-    let pageOrientStyle=document.getElementById('_pdf_page_orient');
-    if(!pageOrientStyle){pageOrientStyle=document.createElement('style');pageOrientStyle.id='_pdf_page_orient';document.head.appendChild(pageOrientStyle);}
-    pageOrientStyle.textContent=ls
-      ?'@media print{@page{size:A4 landscape!important;margin:12mm 12mm 18mm 12mm!important;}}'
-      :'@media print{@page{size:A4 portrait!important;margin:15mm 14mm 20mm 14mm!important;}}';
+    const mTop=Math.round(mgTop*MM);
+    const mSide=Math.round(mgSide*MM);
+    const mBot=Math.round(mgBot*MM);
 
     sim.textContent=`
+      /* ── reset layout ── */
       body,html{
         margin:0!important;padding:0!important;
         overflow:visible!important;background:#fff!important;
+        width:${capW+mSide*2}px!important;
         -webkit-print-color-adjust:exact!important;
         print-color-adjust:exact!important;
       }
       .bottom-nav,.topbar,.status-bar,.topbar-actions,.no-print,
       .toast,#launcher,#auth-overlay,#sync-status,.modal-overlay,
-      #print-copyright-footer{display:none!important;}
-      .app-wrap{
-        display:block!important;width:${capW}px!important;
-        height:auto!important;overflow:visible!important;
-        position:static!important;background:#fff!important;
-      }
-      .scroll-area,.scroll-content{
+      #report-modal,.sec-box.no-print{display:none!important;}
+      .app-wrap,.scroll-area,.scroll-content{
         display:block!important;width:100%!important;height:auto!important;
-        overflow:visible!important;position:static!important;padding:0!important;
+        overflow:visible!important;position:static!important;
+        padding:0!important;margin:0!important;background:#fff!important;
       }
+      /* ── page container ── */
       .page{display:none!important;}
       .page.active{
         display:block!important;
-        width:${capW-(mSide*2)}px!important;
-        min-height:${capH-(mTop+mBot)}px!important;
+        width:${capW}px!important;
+        min-height:${capH}px!important;
         overflow:visible!important;
-        margin:${mTop}px ${mSide}px ${mBot}px!important;
-        box-sizing:border-box!important;
+        padding:${mTop}px ${mSide}px ${mBot}px!important;
+        box-sizing:content-box!important;
         background:#fff!important;
+        margin:0!important;
       }
-      ${PRINT_INNER_CSS}
-      /* override @page ที่อยู่ใน print CSS */
-      @page{size:auto;margin:0;}
+      /* ── inject print rules เป็น screen rules ── */
+      ${PCSS}
+      /* ── override selectors ที่ต้องการ .active ── */
+      #page-cover.active,#page-students.active,#page-att.active,
+      #page-s1.active,#page-s2.active,#page-total.active,
+      #page-beh.active,#page-ind.active{
+        display:block!important;
+      }
     `;
 
-    await new Promise(r=>setTimeout(r,120));
+    await new Promise(r=>setTimeout(r,200));
 
-    // capture
+    // capture พื้นที่ content (ไม่รวม margin)
+    const pageRect=pageEl.getBoundingClientRect();
     let canvas;
     try{
-      canvas=await html2canvas(document.body,{
-        scale:1,
+      canvas=await html2canvas(pageEl,{
+        scale:2,
         useCORS:true,
         allowTaint:true,
         backgroundColor:'#ffffff',
         width:capW,
-        height:capH,
-        windowWidth:capW,
-        windowHeight:capH,
-        x:0, y:0,
-        scrollX:0, scrollY:0,
+        height:Math.max(capH, pageRect.height||capH),
+        windowWidth:capW+mSide*2,
+        windowHeight:Math.max(capH,pageRect.height||capH)+mTop+mBot,
+        x:0,y:0,
+        scrollX:0,scrollY:0,
         logging:false,
-        imageTimeout:8000,
+        imageTimeout:10000,
+        onclone:(doc)=>{
+          // ใน clone ให้แน่ใจว่า page active แสดง
+          const pg=doc.getElementById('page-'+p.page);
+          if(pg){
+            pg.style.cssText=`display:block!important;width:${capW}px!important;overflow:visible!important;padding:0!important;margin:0!important;background:#fff!important;`;
+          }
+          // ซ่อน elements ที่ไม่ต้องการ
+          ['bottom-nav','loading-overlay'].forEach(cls=>{
+            doc.querySelectorAll('.'+cls).forEach(e=>e.style.display='none');
+          });
+        }
       });
-    }catch(e){console.error('h2c err',e);continue;}
+    }catch(e){console.error('h2c',e);continue;}
 
-    const imgData=canvas.toDataURL('image/jpeg',0.90);
-
-    if(i>0) pdf.addPage([pdfW,pdfH], ls?'landscape':'portrait');
-    pdf.addImage(imgData,'JPEG',0,0,pdfW,pdfH,'','FAST');
+    const imgData=canvas.toDataURL('image/jpeg',0.92);
+    if(i>0) pdf.addPage([pdfW,pdfH],ls?'landscape':'portrait');
+    // วางภาพพอดีหน้า (เว้น margin)
+    pdf.addImage(imgData,'JPEG',mgSide,mgTop,pdfW-mgSide*2,pdfH-mgTop-mgBot,'','FAST');
   }
 
   // ── cleanup ──
-  const sim=document.getElementById('_pdf_sim_style');
-  if(sim) sim.remove();
-  const pageOrientEl=document.getElementById('_pdf_page_orient');
-  if(pageOrientEl) pageOrientEl.remove();
+  const sim=document.getElementById('_pdf_sim');
+  if(sim)sim.remove();
+  const pgOri=document.getElementById('_pdf_page_orient');
+  if(pgOri)pgOri.remove();
+  // คืน cover elements
   ['_p_school','_p_year_hours','_p_year_col','_p_hours_col','_p_teacher','_p_advisor','_p_apv_date'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.remove();
   });
@@ -3854,17 +3994,17 @@ async function generatePDF(){
   if(schoolRow)      schoolRow.style.display='';
   if(teacherNameRow) teacherNameRow.style.display='';
   if(advisorNameRow) advisorNameRow.style.display='';
+  // คืน active page เดิม
   allPageEls.forEach(e=>e.classList.remove('active'));
-  const cur=document.getElementById('page-'+prevActivePage);
-  if(cur) cur.classList.add('active');
+  const cur=document.getElementById('page-'+prevPage);
+  if(cur)cur.classList.add('active');
 
   hideLoading();
-  const fname=`\u0e1b\u0e1e5_${D.school||'\u0e42\u0e23\u0e07\u0e40\u0e23\u0e35\u0e22\u0e19'}_${D.subject||'\u0e27\u0e34\u0e0a\u0e32'}_${D.year||''}.pdf`;
+  const fname=`ปพ5_${D.school||'โรงเรียน'}_${D.subject||'วิชา'}_${D.year||''}.pdf`;
   pdf.save(fname);
-  showToast('\u2705 \u0e14\u0e32\u0e27\u0e19\u0e4c\u0e42\u0e2b\u0e25\u0e14 PDF \u0e2a\u0e33\u0e40\u0e23\u0e47\u0e08');
+  showToast('✅ ดาวน์โหลด PDF สำเร็จ');
 }
 
-/* ══ เตรียม cover print elements (ใช้ร่วมกับ printCurrentPage และ generatePDF) ══ */
 function _prepareCoverPrintElements(){
   const gv2=id=>{const el=document.getElementById(id);return el?(el.value||el.textContent||''):''};
 
