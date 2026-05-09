@@ -1945,36 +1945,40 @@ function loadSlot(key){
 }
 async function deleteSlot(key){
   if(!confirm('ลบข้อมูลนี้?'))return;
-  // ลบไฟล์ใน Google Drive ก่อน (ถ้ามี)
+
+  // 1. ลบ _driveFileId เพื่อใช้ลบไฟล์ใน Drive
+  let driveFileId = null;
   try{
     const raw = localStorage.getItem(key);
-    if(raw){
-      const data = JSON.parse(raw);
-      const fileId = data._driveFileId;
-      if(fileId && gAccessToken){
-        setSyncStatus('syncing','กำลังลบจาก Drive...');
-        const res = await fetch(
-          `https://www.googleapis.com/drive/v3/files/${fileId}`,
-          {method:'DELETE', headers:{'Authorization':'Bearer '+gAccessToken}}
-        );
-        if(res.ok || res.status===204){
-          setSyncStatus('ok','ลบจาก Drive แล้ว');
-        } else {
-          console.warn('Drive delete status:', res.status);
-        }
-      }
-    }
-  }catch(e){
-    console.error('deleteSlot Drive error:',e);
-  }
-  // บันทึก key ที่ถูกลบ เพื่อป้องกัน sync นำกลับมา
-  try{
-    const delKey = 'pp5_deleted_slots';
-    const deleted = JSON.parse(localStorage.getItem(delKey)||'[]');
-    if(!deleted.includes(key)) deleted.push(key);
-    localStorage.setItem(delKey, JSON.stringify(deleted));
+    if(raw){ driveFileId = (JSON.parse(raw)||{})._driveFileId || null; }
   }catch(e){}
+
+  // 2. ลบออกจาก localStorage ก่อนเลย
   localStorage.removeItem(key);
+
+  // 3. ถ้า login Google อยู่ → จัดการ Drive
+  if(gAccessToken && gDriveFolderId){
+    setSyncStatus('syncing','กำลังอัปเดต Drive...');
+    try{
+      // 3a. ลบไฟล์ใน Drive ที่ตรงกับ slot นี้
+      if(driveFileId){
+        await fetch(
+          `https://www.googleapis.com/drive/v3/files/${driveFileId}`,
+          {method:'DELETE', headers:{'Authorization':'Bearer '+gAccessToken}}
+        ).catch(()=>{});
+      }
+      // 3b. อัปโหลด slot ที่เหลือทั้งหมดขึ้น Drive ทันที
+      const remaining = getAllSlots();
+      for(const s of remaining){
+        await uploadSlotToDrive(s.key);
+      }
+      setSyncStatus('ok', gUser ? gUser.email : 'ซิงค์แล้ว');
+    }catch(e){
+      console.error('deleteSlot Drive error:',e);
+      setSyncStatus('err','ซิงค์ไม่สำเร็จ');
+    }
+  }
+
   openLauncher();
 }
 function defaultD(){
@@ -3825,9 +3829,6 @@ async function syncSlotsFromDrive(){
         const key = SLOT_PREFIX+g+'__'+s;
         // บันทึก driveFileId ใน content
         content._driveFileId = file.id;
-        // ข้ามถ้า key นี้ถูกลบโดยผู้ใช้แล้ว
-        const _deleted = JSON.parse(localStorage.getItem('pp5_deleted_slots')||'[]');
-        if(_deleted.includes(key)) continue;
         // Drive เป็น source of truth เสมอ
         localStorage.setItem(key, JSON.stringify(content));
       }catch(fe){ console.warn('file fetch error', fe); }
