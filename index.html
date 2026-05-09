@@ -141,8 +141,8 @@ table.xlt td.edit-cell{background:#fefce8!important;padding:3px;}
 .rating-btn{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:6px;font-size:13px;font-weight:800;cursor:pointer;border:2px solid var(--border);background:white;color:var(--text2);transition:all .15s;user-select:none;}
 .rating-btn.sel-0{background:#fee2e2;border-color:#f87171;color:#b91c1c;}
 .rating-btn.sel-1{background:#fef9c3;border-color:#fbbf24;color:#a16207;}
-.rating-btn.sel-2{background:#dbeafe;border-color:#60a5fa;color:#1d4ed8;}
-.rating-btn.sel-3{background:#dcfce7;border-color:#4ade80;color:#15803d;}
+.rating-btn.sel-2{background:#dcfce7;border-color:#4ade80;color:#15803d;}
+.rating-btn.sel-3{background:#dbeafe;border-color:#60a5fa;color:#1d4ed8;}
 
 /* ── INDIVIDUAL REPORT ── */
 .ind-header{background:#f3f4f6;border-top:3px solid #f97316;color:#1f2937;border-radius:12px;padding:20px;text-align:center;margin-bottom:10px;}
@@ -2669,8 +2669,8 @@ function drawReadChart(){
     dist[avg]=(dist[avg]||0)+1;
   });
   const slices=[
-    {label:'ดีเยี่ยม',value:dist[3]||0,color:'#16a34a'},
-    {label:'ดี',value:dist[2]||0,color:'#3b82f6'},
+    {label:'ดีเยี่ยม',value:dist[3]||0,color:'#3b82f6'},
+    {label:'ดี',value:dist[2]||0,color:'#16a34a'},
     {label:'ผ่าน',value:dist[1]||0,color:'#f59e0b'},
     {label:'ไม่ผ่าน',value:dist[0]||0,color:'#ef4444'},
   ];
@@ -2693,8 +2693,8 @@ function drawBehChart(){
     dist[avg]=(dist[avg]||0)+1;
   });
   const slices=[
-    {label:'ดีเยี่ยม',value:dist[3]||0,color:'#16a34a'},
-    {label:'ดี',value:dist[2]||0,color:'#3b82f6'},
+    {label:'ดีเยี่ยม',value:dist[3]||0,color:'#3b82f6'},
+    {label:'ดี',value:dist[2]||0,color:'#16a34a'},
     {label:'ผ่าน',value:dist[1]||0,color:'#f59e0b'},
     {label:'ไม่ผ่าน',value:dist[0]||0,color:'#ef4444'},
   ];
@@ -2947,9 +2947,9 @@ function renderIndividual(){
         <div class="info-cell" style="text-align:center"><strong>กิจกรรมพัฒนาผู้เรียน</strong><span></span></div>
       </div>
       <div class="chart-title" style="font-size:12px;margin-bottom:8px">คุณลักษณะอันพึงประสงค์</div>
-      ${BEH.map((l,ii)=>{const v=bItemAvg[ii]||0;const LABELS=['ไม่ผ่าน','ผ่าน','ดี','ดีเยี่ยม'];const lbl=LABELS[Math.round(v)]||'ไม่ผ่าน';const col=v===0?'#c0392b':v<1?'#e74c3c':v<2?'#f39c12':v<3?'#2d6a9f':'#27ae60';return`<div class="bar-row"><div class="bar-label">${l}</div><div class="bar-track"><div class="bar-fill" style="width:${v/3*100}%;background:${col}"></div></div><div class="bar-val" style="color:${col};font-weight:700">${lbl}</div></div>`}).join('')}
+      ${BEH.map((l,ii)=>{const v=bItemAvg[ii]||0;const LABELS=['ไม่ผ่าน','ผ่าน','ดี','ดีเยี่ยม'];const lbl=LABELS[Math.round(v)]||'ไม่ผ่าน';const col=v===0?'#c0392b':v<1?'#e74c3c':v<2?'#f39c12':v<3?'#16a34a':'#3b82f6';return`<div class="bar-row"><div class="bar-label">${l}</div><div class="bar-track"><div class="bar-fill" style="width:${v/3*100}%;background:${col}"></div></div><div class="bar-val" style="color:${col};font-weight:700">${lbl}</div></div>`}).join('')}
       <div class="chart-title" style="font-size:12px;margin:10px 0 8px">การอ่าน คิดวิเคราะห์ เขียน</div>
-      ${READ.map((l,ii)=>{const v=rItemAvg[ii]||0;const LABELS=['ไม่ผ่าน','ผ่าน','ดี','ดีเยี่ยม'];const lbl=LABELS[Math.round(v)]||'ไม่ผ่าน';const col=v===0?'#c0392b':v<1?'#e74c3c':v<2?'#f39c12':v<3?'#2d6a9f':'#27ae60';return`<div class="bar-row"><div class="bar-label">${l}</div><div class="bar-track"><div class="bar-fill" style="width:${v/3*100}%;background:${col}"></div></div><div class="bar-val" style="color:${col};font-weight:700">${lbl}</div></div>`}).join('')}
+      ${READ.map((l,ii)=>{const v=rItemAvg[ii]||0;const LABELS=['ไม่ผ่าน','ผ่าน','ดี','ดีเยี่ยม'];const lbl=LABELS[Math.round(v)]||'ไม่ผ่าน';const col=v===0?'#c0392b':v<1?'#e74c3c':v<2?'#f39c12':v<3?'#16a34a':'#3b82f6';return`<div class="bar-row"><div class="bar-label">${l}</div><div class="bar-track"><div class="bar-fill" style="width:${v/3*100}%;background:${col}"></div></div><div class="bar-val" style="color:${col};font-weight:700">${lbl}</div></div>`}).join('')}
     </div>
   </div>`;
 }
