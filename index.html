@@ -2772,7 +2772,7 @@ function renderBehTable(sem){
     const vals=BEH.map((_,i)=>getV(i));
     const avg=vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length*10)/10:0;
     const result=avg>=3?'ดีเยี่ยม':avg>=2?'ดี':avg>=1?'ผ่าน':'ไม่ผ่าน';
-    const resColor=avg>=3?'var(--success)':avg>=2?'#ca8a04':avg>=1?'var(--accent)':'var(--danger)';
+    const resColor=avg>=3?'#3b82f6':avg>=2?'#16a34a':avg>=1?'#ca8a04':'#dc2626';
     const cells=BEH.map((_,ii)=>{
       if(isAll)return `<td class="ac">${vals[ii]}</td>`;
       const arrKey=`beh${sem}`;
@@ -2806,7 +2806,7 @@ function renderReadTable(sem){
     const vals=READ.map((_,i)=>getV(i));
     const avg=vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length*10)/10:0;
     const result=avg>=3?'ดีเยี่ยม':avg>=2?'ดี':avg>=1?'ผ่าน':'ไม่ผ่าน';
-    const resColor=avg>=3?'var(--success)':avg>=2?'#ca8a04':avg>=1?'var(--accent)':'var(--danger)';
+    const resColor=avg>=3?'#3b82f6':avg>=2?'#16a34a':avg>=1?'#ca8a04':'#dc2626';
     const cells=READ.map((_,ii)=>{
       if(isAll)return `<td class="ac">${vals[ii]}</td>`;
       const arrKey=`read${sem}`;
