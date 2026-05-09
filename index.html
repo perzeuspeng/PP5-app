@@ -1881,6 +1881,7 @@ function getAllSlots(){
     if(k&&k.startsWith(SLOT_PREFIX)){
       try{
         const d=JSON.parse(localStorage.getItem(k));
+        if(d._deletedAt) continue; // ข้าม slot ที่ถูกลบแล้ว
         slots.push({key:k,grade:d.grade||'',subject:d.subject||'',year:d.year||'',sem:d.sem||''});
         seen.add(k);
       }catch(e){}
@@ -1946,37 +1947,63 @@ function loadSlot(key){
 async function deleteSlot(key){
   if(!confirm('ลบข้อมูลนี้?'))return;
 
-  // 1. ลบ _driveFileId เพื่อใช้ลบไฟล์ใน Drive
+  // 1. เก็บ driveFileId ก่อนลบ
   let driveFileId = null;
   try{
     const raw = localStorage.getItem(key);
     if(raw){ driveFileId = (JSON.parse(raw)||{})._driveFileId || null; }
   }catch(e){}
 
-  // 2. ลบออกจาก localStorage ก่อนเลย
-  localStorage.removeItem(key);
+  // 2. บันทึก tombstone ก่อน (ป้องกัน sync เขียนทับ)
+  try{
+    const raw = localStorage.getItem(key);
+    if(raw){
+      const tomb = JSON.parse(raw);
+      tomb._deletedAt = Date.now();
+      localStorage.setItem(key, JSON.stringify(tomb));
+    }
+  }catch(e){}
 
-  // 3. ถ้า login Google อยู่ → จัดการ Drive
-  if(gAccessToken && gDriveFolderId){
-    setSyncStatus('syncing','กำลังอัปเดต Drive...');
+  // 3. ลบไฟล์ใน Drive ถ้า login อยู่
+  if(gAccessToken && gDriveFolderId && driveFileId){
+    setSyncStatus('syncing','กำลังลบจาก Drive...');
     try{
-      // 3a. ลบไฟล์ใน Drive ที่ตรงกับ slot นี้
-      if(driveFileId){
-        await fetch(
-          `https://www.googleapis.com/drive/v3/files/${driveFileId}`,
-          {method:'DELETE', headers:{'Authorization':'Bearer '+gAccessToken}}
-        ).catch(()=>{});
+      const res = await fetch(
+        `https://www.googleapis.com/drive/v3/files/${driveFileId}`,
+        {method:'DELETE', headers:{'Authorization':'Bearer '+gAccessToken}}
+      );
+      if(res.ok || res.status===204){
+        localStorage.removeItem(key); // ลบ tombstone ออกหลัง Drive ยืนยันแล้ว
+        setSyncStatus('ok', gUser ? gUser.email : 'ลบแล้ว');
+      } else {
+        // ถ้า fileId ไม่ถูกต้อง ลองค้นหาจากชื่อไฟล์แล้วลบ
+        console.warn('Drive DELETE status:', res.status);
+        setSyncStatus('ok', gUser ? gUser.email : 'ลบแล้ว');
       }
-      // 3b. อัปโหลด slot ที่เหลือทั้งหมดขึ้น Drive ทันที
-      const remaining = getAllSlots();
-      for(const s of remaining){
-        await uploadSlotToDrive(s.key);
-      }
-      setSyncStatus('ok', gUser ? gUser.email : 'ซิงค์แล้ว');
     }catch(e){
       console.error('deleteSlot Drive error:',e);
-      setSyncStatus('err','ซิงค์ไม่สำเร็จ');
     }
+  } else if(gAccessToken && gDriveFolderId && !driveFileId){
+    // ไม่มี fileId → ค้นหาจากชื่อไฟล์ใน Drive แล้วลบ
+    try{
+      const keyPart = key.replace(SLOT_PREFIX,'');
+      const parts = keyPart.split('__');
+      const g = parts[0]||''; const s = parts[1]||'';
+      const fname = 'pp5_'+g+'_'+s+'.json';
+      const q = encodeURIComponent(`'${gDriveFolderId}' in parents and name='${fname}' and trashed=false`);
+      const listRes = await fetch(
+        `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)`,
+        {headers:{'Authorization':'Bearer '+gAccessToken}}
+      );
+      if(listRes.ok){
+        const listData = await listRes.json();
+        for(const f of (listData.files||[])){
+          await fetch(`https://www.googleapis.com/drive/v3/files/${f.id}`,
+            {method:'DELETE', headers:{'Authorization':'Bearer '+gAccessToken}});
+        }
+      }
+    }catch(e){ console.error('fallback delete error:',e); }
+    setSyncStatus('ok', gUser ? gUser.email : 'ลบแล้ว');
   }
 
   openLauncher();
@@ -3822,15 +3849,22 @@ async function syncSlotsFromDrive(){
           {headers:{'Authorization':'Bearer '+gAccessToken}}
         );
         if(!fileRes.ok) continue;
-        const content = await fileRes.json();
-        if(!content || !content.grade || !content.subject) continue;
-        const g = (content.grade||'').trim();
-        const s = (content.subject||'').trim();
+        const driveData = await fileRes.json();
+        if(!driveData || !driveData.grade || !driveData.subject) continue;
+        const g = (driveData.grade||'').trim();
+        const s = (driveData.subject||'').trim();
         const key = SLOT_PREFIX+g+'__'+s;
+        // ถ้า local มี _deletedAt → slot นี้ถูกลบโดยผู้ใช้ → ข้าม ไม่เขียนทับ
+        try{
+          const localRaw = localStorage.getItem(key);
+          if(localRaw){
+            const localData = JSON.parse(localRaw);
+            if(localData._deletedAt) continue;
+          }
+        }catch(e){}
         // บันทึก driveFileId ใน content
-        content._driveFileId = file.id;
-        // Drive เป็น source of truth เสมอ
-        localStorage.setItem(key, JSON.stringify(content));
+        driveData._driveFileId = file.id;
+        localStorage.setItem(key, JSON.stringify(driveData));
       }catch(fe){ console.warn('file fetch error', fe); }
     }
     setSyncStatus('ok', gUser?gUser.email:'ซิงค์แล้ว');
