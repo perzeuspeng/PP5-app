@@ -1946,7 +1946,7 @@ function loadSlot(key){
 async function deleteSlot(key){
   if(!confirm('ลบข้อมูลนี้?'))return;
 
-  // 1. ดึง grade/subject จาก localStorage ก่อนลบ (เพื่อหาชื่อไฟล์ใน Drive)
+  // 1. ดึงข้อมูลที่ต้องการก่อนลบ
   let slotGrade = '', slotSubject = '', driveFileId = null;
   try{
     const d = JSON.parse(localStorage.getItem(key)||'{}');
@@ -1955,43 +1955,41 @@ async function deleteSlot(key){
     driveFileId = d._driveFileId || null;
   }catch(e){}
 
-  // 2. ลบออกจาก localStorage ทันทีเลย
-  localStorage.removeItem(key);
-  openLauncher(); // แสดง launcher ทันที ไม่รอ Drive
-
-  // 3. ลบออกจาก Drive ใน background (ไม่บล็อก UI)
+  // 2. ลบจาก Drive ก่อน (รอให้สำเร็จ)
   if(gAccessToken && gDriveFolderId){
     setSyncStatus('syncing','กำลังลบจาก Drive...');
     try{
-      // 3a. ลบด้วย fileId (เร็ว)
+      // ลบด้วย fileId
       if(driveFileId){
         await fetch(
           `https://www.googleapis.com/drive/v3/files/${driveFileId}`,
           {method:'DELETE', headers:{'Authorization':'Bearer '+gAccessToken}}
-        );
+        ).catch(()=>{});
       }
-      // 3b. ค้นหาจากชื่อไฟล์แล้วลบทุกไฟล์ที่ตรง (ครอบคลุมกรณีไม่มี fileId)
+      // ค้นหาจากชื่อไฟล์ แล้วลบทุกไฟล์ที่ตรง (ครอบคลุมทุกกรณี)
       if(slotGrade && slotSubject){
-        const fname = encodeURIComponent('pp5_'+slotGrade+'_'+slotSubject+'.json');
         const q = encodeURIComponent(`'${gDriveFolderId}' in parents and name='pp5_${slotGrade}_${slotSubject}.json' and trashed=false`);
         const listRes = await fetch(
           `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)`,
           {headers:{'Authorization':'Bearer '+gAccessToken}}
-        );
-        if(listRes.ok){
+        ).catch(()=>null);
+        if(listRes && listRes.ok){
           const listData = await listRes.json();
           for(const f of (listData.files||[])){
             await fetch(`https://www.googleapis.com/drive/v3/files/${f.id}`,
-              {method:'DELETE', headers:{'Authorization':'Bearer '+gAccessToken}});
+              {method:'DELETE', headers:{'Authorization':'Bearer '+gAccessToken}}).catch(()=>{});
           }
         }
       }
       setSyncStatus('ok', gUser ? gUser.email : 'ลบแล้ว');
     }catch(e){
       console.error('deleteSlot Drive error:',e);
-      setSyncStatus('err','ลบจาก Drive ไม่สำเร็จ');
     }
   }
+
+  // 3. ลบจาก localStorage หลัง Drive ยืนยันแล้ว
+  localStorage.removeItem(key);
+  openLauncher();
 }
 function defaultD(){
   return{school:'',dept:'',grade:'',sem:'1,2',year:'2568',subject:'',subcode:'',hours:0,
@@ -3933,25 +3931,8 @@ function startAutoSync(){
 
 async function onVisibilityChange(){
   if(document.visibilityState === 'visible' && gAccessToken){
-    // โหลดจาก Drive ก่อน (อาจมีการแก้จากอุปกรณ์อื่น)
-    await syncSlotsFromDrive();
-    // render ใหม่ถ้า slot ปัจจุบันเปลี่ยน
-    const key = sessionStorage.getItem('pp5_slot');
-    if(key){
-      const raw = localStorage.getItem(key);
-      if(raw){
-        const newD = JSON.parse(raw);
-        // เช็คว่าข้อมูลเปลี่ยนไปไหม (เปรียบ JSON สั้นๆ)
-        const oldHash = JSON.stringify(D).length;
-        const newHash = JSON.stringify(newD).length;
-        if(Math.abs(oldHash - newHash) > 10){
-          D = Object.assign({}, defaultD(), newD);
-          initArrays(); fillForm(); refreshSubtitle();
-          renderCoverStats(); renderCoverBehRead(); applyLogo();
-          showToast('🔄 ซิงค์ข้อมูลล่าสุดจาก Drive แล้ว');
-        }
-      }
-    }
+    // upload ข้อมูลล่าสุดขึ้น Drive (ไม่ดึงลงมา เพราะจะเขียนทับข้อมูลที่ลบ)
+    syncAllSlotsUp();
   }
 }
 
