@@ -1943,30 +1943,8 @@ function loadSlot(key){
     }
   }catch(e){showToast('❌ '+e.message);}
 }
-async function deleteSlot(key){
+function deleteSlot(key){
   if(!confirm('ลบข้อมูลนี้?'))return;
-  // ลบไฟล์ใน Google Drive ก่อน (ถ้ามี)
-  try{
-    const raw = localStorage.getItem(key);
-    if(raw){
-      const data = JSON.parse(raw);
-      const fileId = data._driveFileId;
-      if(fileId && gAccessToken){
-        setSyncStatus('syncing','กำลังลบจาก Drive...');
-        const res = await fetch(
-          `https://www.googleapis.com/drive/v3/files/${fileId}`,
-          {method:'DELETE', headers:{'Authorization':'Bearer '+gAccessToken}}
-        );
-        if(res.ok || res.status===204){
-          setSyncStatus('ok','ลบจาก Drive แล้ว');
-        } else {
-          console.warn('Drive delete status:', res.status);
-        }
-      }
-    }
-  }catch(e){
-    console.error('deleteSlot Drive error:',e);
-  }
   localStorage.removeItem(key);
   openLauncher();
 }
@@ -4040,12 +4018,12 @@ window.addEventListener('load', ()=>{
   <!-- ปุ่มหลัก: เพิ่มวิชาใหม่ + import -->
   <div style="width:100%;max-width:500px;padding:10px 14px 0;display:flex;gap:8px">
     <button onclick="launcherNew()" style="
-      flex:1;padding:14px;border-radius:12px;border:2px solid #94a3b8;
+      flex:1;padding:14px;border-radius:12px;border:2px dashed #94a3b8;
       background:#fff;color:#1f2937;font-family:inherit;font-size:14px;
       font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;
     ">➕ เพิ่มรายวิชาใหม่</button>
     <button onclick="importData()" title="นำเข้าข้อมูลจากไฟล์ .json" style="
-      padding:14px 16px;border-radius:12px;border:2px solid #94a3b8;
+      padding:14px 16px;border-radius:12px;border:2px dashed #94a3b8;
       background:#fff;color:#1f2937;font-family:inherit;font-size:14px;
       font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;
       white-space:nowrap;
