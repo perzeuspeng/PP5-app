@@ -3783,6 +3783,7 @@ function bootAfterAuth(){
     // เคยเลือกวิชาไว้แล้ว → โหลดต่อ
     D = Object.assign({}, defaultD(), JSON.parse(localStorage.getItem(sessionSlot)));
     initArrays(); fillForm(); refreshSubtitle(); renderCoverStats(); renderCoverBehRead(); applyLogo();
+    closeLauncher();
     setSyncStatus('ok', gUser.email);
   } else if(allSlots.length === 1){
     // วิชาเดียว (รวมถึงกรณีดึงมาจาก Drive 1 ไฟล์) → เข้าแอปเลย
@@ -3790,6 +3791,7 @@ function bootAfterAuth(){
     initArrays();
     sessionStorage.setItem('pp5_slot', allSlots[0].key);
     fillForm(); refreshSubtitle(); renderCoverStats(); renderCoverBehRead(); applyLogo();
+    closeLauncher();
     setSyncStatus('ok', gUser.email);
   } else {
     // หลายวิชา หรือยังไม่มีวิชา → เปิด launcher แสดงรายการ
@@ -4089,7 +4091,7 @@ window.addEventListener('load', ()=>{
 <div id="launcher" style="
   position:fixed;inset:0;z-index:9999;
   background:#f0f4f8;
-  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  display:none;flex-direction:column;align-items:center;justify-content:flex-start;
   overflow-y:auto;padding:0 0 40px 0;
 ">
   <!-- header -->
