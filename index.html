@@ -1946,51 +1946,50 @@ function loadSlot(key){
 async function deleteSlot(key){
   if(!confirm('ลบข้อมูลนี้?'))return;
 
-  // 1. ดึงข้อมูลที่ต้องการก่อนลบ
-  let slotGrade = '', slotSubject = '', driveFileId = null;
+  // 1. ดึงข้อมูลที่จำเป็นก่อนลบ
+  let grade='', subject='', driveFileId=null;
   try{
     const d = JSON.parse(localStorage.getItem(key)||'{}');
-    slotGrade   = (d.grade||'').trim();
-    slotSubject = (d.subject||'').trim();
-    driveFileId = d._driveFileId || null;
+    grade   = (d.grade||'').trim();
+    subject = (d.subject||'').trim();
+    driveFileId = d._driveFileId||null;
   }catch(e){}
 
-  // 2. ลบจาก Drive ก่อน (รอให้สำเร็จ)
-  if(gAccessToken && gDriveFolderId){
+  // 2. ถ้า login อยู่ → ลบออกจาก Drive ก่อน (รอให้สำเร็จ)
+  if(gAccessToken && gDriveFolderId && grade && subject){
     setSyncStatus('syncing','กำลังลบจาก Drive...');
     try{
-      // ลบด้วย fileId
-      if(driveFileId){
-        await fetch(
-          `https://www.googleapis.com/drive/v3/files/${driveFileId}`,
-          {method:'DELETE', headers:{'Authorization':'Bearer '+gAccessToken}}
-        ).catch(()=>{});
+      // ค้นหาไฟล์จากชื่อ (เชื่อถือได้กว่า fileId)
+      const fname = 'pp5_'+grade+'_'+subject+'.json';
+      const q = encodeURIComponent(
+        `'${gDriveFolderId}' in parents and name='${fname}' and trashed=false`
+      );
+      const listRes = await fetch(
+        `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)`,
+        {headers:{'Authorization':'Bearer '+gAccessToken}}
+      );
+      if(listRes.ok){
+        const {files=[]} = await listRes.json();
+        // ลบทุกไฟล์ที่ตรงชื่อ (รวมถึง driveFileId เดิมด้วย)
+        const idsToDelete = [...new Set([...files.map(f=>f.id), driveFileId].filter(Boolean))];
+        await Promise.all(idsToDelete.map(id=>
+          fetch(`https://www.googleapis.com/drive/v3/files/${id}`,
+            {method:'DELETE', headers:{'Authorization':'Bearer '+gAccessToken}}
+          ).catch(()=>{})
+        ));
       }
-      // ค้นหาจากชื่อไฟล์ แล้วลบทุกไฟล์ที่ตรง (ครอบคลุมทุกกรณี)
-      if(slotGrade && slotSubject){
-        const q = encodeURIComponent(`'${gDriveFolderId}' in parents and name='pp5_${slotGrade}_${slotSubject}.json' and trashed=false`);
-        const listRes = await fetch(
-          `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)`,
-          {headers:{'Authorization':'Bearer '+gAccessToken}}
-        ).catch(()=>null);
-        if(listRes && listRes.ok){
-          const listData = await listRes.json();
-          for(const f of (listData.files||[])){
-            await fetch(`https://www.googleapis.com/drive/v3/files/${f.id}`,
-              {method:'DELETE', headers:{'Authorization':'Bearer '+gAccessToken}}).catch(()=>{});
-          }
-        }
-      }
-      setSyncStatus('ok', gUser ? gUser.email : 'ลบแล้ว');
+      setSyncStatus('ok', gUser?gUser.email:'ลบแล้ว');
     }catch(e){
       console.error('deleteSlot Drive error:',e);
+      setSyncStatus('err','ลบจาก Drive ไม่สำเร็จ');
     }
   }
 
-  // 3. ลบจาก localStorage หลัง Drive ยืนยันแล้ว
+  // 3. ลบออกจาก localStorage หลัง Drive สำเร็จแล้ว
   localStorage.removeItem(key);
   openLauncher();
 }
+
 function defaultD(){
   return{school:'',dept:'',grade:'',sem:'1,2',year:'2568',subject:'',subcode:'',hours:0,
     teacher:'',teacherPos:'',advisor:'',advisorPos:'',director:'',logoData:'',
