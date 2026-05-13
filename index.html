@@ -2401,9 +2401,9 @@ function renderScore(sem){
         <th class="no-th" rowspan="2">ที่</th>
         ${items.map(it=>`<th class="score-item-th" style="padding:4px 2px;vertical-align:middle;text-align:left;writing-mode:vertical-lr;transform:rotate(180deg);font-size:11px;font-weight:700;white-space:normal;line-height:1.4;word-break:break-all;height:160px;overflow:hidden">${it.name}</th>`).join('')}
         <th rowspan="2" style="width:70px;border-left:2px solid white">รวม<br>ระหว่าง<br><small>${maxBet}</small><br><small>คะแนน</small></th>
-        <th rowspan="2" style="width:75px;background:#f3f4f6;color:#1f2937">ระหว่าง<br>เรียน<br><small>${bet}</small><br><small>คะแนน</small></th>
+        <th rowspan="2" style="width:75px">ระหว่าง<br>เรียน<br><small>${bet}</small><br><small>คะแนน</small></th>
         <th rowspan="2" style="width:70px">สอบ<br>ปลาย<br><small>${examMax}</small><br><small>คะแนน</small></th>
-        <th rowspan="2" style="width:75px;background:#f3f4f6;color:#1f2937">คะแนน<br>ปลายภาค<br><small>${ex}</small><br><small>คะแนน</small></th>
+        <th rowspan="2" style="width:75px">คะแนน<br>ปลายภาค<br><small>${ex}</small><br><small>คะแนน</small></th>
         <th rowspan="2" style="width:100px;background:#fff7ed;color:#c2410c">รวม<br><small>100</small><br><small>คะแนน</small></th>
 
       </tr>
@@ -2435,9 +2435,9 @@ function renderScore(sem){
       ${tdNo(si,s.no)}
       ${cells}
       <td class="ac" style="border-left:2px solid #8da4b8" id="bt-${sem}-${si}">${betTotal}</td>
-      <td class="ac" style="background:#f3f4f6;color:#374151" id="bs-${sem}-${si}">${betScaled.toFixed(2)}</td>
+      <td class="ac" id="bs-${sem}-${si}">${betScaled.toFixed(2)}</td>
       <td class="edit-cell" style="padding:2px"><input type="number" min="0" max="${examMax}" value="${exv}" style="width:62px" oninput="setExam(${sem},${si},this.value)"></td>
-      <td class="ac" style="background:#f3f4f6;color:#374151" id="es-${sem}-${si}">${exScaled.toFixed(2)}</td>
+      <td class="ac" id="es-${sem}-${si}">${exScaled.toFixed(2)}</td>
       <td class="gc" style="min-width:100px" id="tot-${sem}-${si}">${total.toFixed(2)}</td>
     </tr>`;
   });
@@ -2956,45 +2956,45 @@ function renderIndividual(){
         <thead>
           <tr>
             <th rowspan="2" style="font-size:11px;text-align:center">รายการ</th>
-            <th colspan="2" style="background:#f3f4f6;color:#1f2937;font-size:10px">ระหว่าง</th>
-            <th colspan="2" style="background:#f3f4f6;color:#1f2937;font-size:10px">ปลายภาค</th>
+            <th colspan="2" style="font-size:10px">ระหว่าง</th>
+            <th colspan="2" style="font-size:10px">ปลายภาค</th>
             <th rowspan="2" style="font-size:10px">เต็ม</th>
             <th rowspan="2" style="font-size:10px">รวม</th>
           </tr>
           <tr>
-            <th style="background:#f3f4f6;color:#1f2937;font-size:9px">เต็ม</th>
-            <th style="background:#f3f4f6;color:#1f2937;font-size:9px">ได้</th>
-            <th style="background:#e5e7eb;color:#1f2937;font-size:9px">เต็ม</th>
-            <th style="background:#e5e7eb;color:#1f2937;font-size:9px">ได้</th>
+            <th style="font-size:9px">เต็ม</th>
+            <th style="font-size:9px">ได้</th>
+            <th style="font-size:9px">เต็ม</th>
+            <th style="font-size:9px">ได้</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td style="font-size:11px;text-align:center;font-weight:600">ภาคเรียนที่ 1</td>
-            <td style="background:#f3f4f6;color:#374151;font-weight:700;font-size:11px">${D.s1bet}</td>
+            <td style="font-size:11px;font-weight:700">${D.s1bet}</td>
             <td class="ac" style="font-size:11px">${s1.bet}</td>
-            <td style="background:#e5e7eb;color:#374151;font-weight:700;font-size:11px">${D.s1ex}</td>
+            <td style="font-size:11px;font-weight:700">${D.s1ex}</td>
             <td class="ac" style="font-size:11px">${s1.ex}</td>
             <td style="font-size:11px">100</td>
             <td class="ac" style="font-weight:800;font-size:11px">${s1.total}</td>
           </tr>
           <tr>
             <td style="font-size:11px;text-align:center;font-weight:600">ภาคเรียนที่ 2</td>
-            <td style="background:#f3f4f6;color:#374151;font-weight:700;font-size:11px">${D.s2bet}</td>
+            <td style="font-size:11px;font-weight:700">${D.s2bet}</td>
             <td class="ac" style="font-size:11px">${s2.bet}</td>
-            <td style="background:#e5e7eb;color:#374151;font-weight:700;font-size:11px">${D.s2ex}</td>
+            <td style="font-size:11px;font-weight:700">${D.s2ex}</td>
             <td class="ac" style="font-size:11px">${s2.ex}</td>
             <td style="font-size:11px">100</td>
             <td class="ac" style="font-weight:800;font-size:11px">${s2.total}</td>
           </tr>
-          <tr style="background:#f3f4f6">
-            <td style="font-weight:700;font-size:11px;text-align:center">เฉลี่ยตลอดปี</td>
-            <td style="background:#e5e7eb;color:#374151;font-weight:700;font-size:11px">${Math.round((D.s1bet+D.s2bet)/2)}</td>
+          <tr>
+            <td style="font-size:11px;text-align:center;font-weight:700">เฉลี่ยตลอดปี</td>
+            <td style="font-size:11px;font-weight:700">${Math.round((D.s1bet+D.s2bet)/2)}</td>
             <td class="ac" style="font-size:11px">${parseFloat(((s1.bet+s2.bet)/2).toFixed(2))}</td>
-            <td style="background:#d1d5db;color:#374151;font-weight:700;font-size:11px">${Math.round((D.s1ex+D.s2ex)/2)}</td>
+            <td style="font-size:11px;font-weight:700">${Math.round((D.s1ex+D.s2ex)/2)}</td>
             <td class="ac" style="font-size:11px">${parseFloat(((s1.ex+s2.ex)/2).toFixed(2))}</td>
             <td style="font-size:11px">100</td>
-            <td class="ac" style="font-weight:800;font-size:11px;color:var(--primary)">${avg}</td>
+            <td class="ac" style="font-weight:800;font-size:11px">${avg}</td>
           </tr>
         </tbody>
       </table>
