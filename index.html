@@ -3752,7 +3752,30 @@ async function afterSignIn(){
 
 /* ── Boot หลัง Auth ── */
 function bootAfterAuth(){
-  // เรียก getAllSlots() หลัง syncSlotsFromDrive เสร็จแล้ว → ได้ข้อมูลล่าสุด
+  // ── migrate ข้อมูล nouser → user จริง (ถ้ามี) ──
+  // กรณีผู้ใช้เคยใช้งานก่อน login → ข้อมูลอยู่ใน prefix nouser
+  const nouserPrefix = 'pp5v3:__nouser__:';
+  const migratedFlag = 'pp5_migrated_to_' + SLOT_PREFIX;
+  if(SLOT_PREFIX !== nouserPrefix && !sessionStorage.getItem(migratedFlag)){
+    const allKeys = [];
+    for(let i=0;i<localStorage.length;i++) allKeys.push(localStorage.key(i));
+    for(const k of allKeys){
+      if(k && k.startsWith(nouserPrefix)){
+        try{
+          const raw = localStorage.getItem(k);
+          if(!raw) continue;
+          const newKey = SLOT_PREFIX + k.slice(nouserPrefix.length);
+          // ย้ายเฉพาะถ้า key ใหม่ยังไม่มีข้อมูล (ไม่เขียนทับข้อมูลจาก Drive)
+          if(!localStorage.getItem(newKey)){
+            localStorage.setItem(newKey, raw);
+          }
+        }catch(e){}
+      }
+    }
+    sessionStorage.setItem(migratedFlag, '1');
+  }
+
+  // เรียก getAllSlots() หลัง syncSlotsFromDrive เสร็จและ migrate แล้ว
   const allSlots = getAllSlots();
   const sessionSlot = sessionStorage.getItem('pp5_slot');
 
@@ -3864,7 +3887,15 @@ async function syncSlotsFromDrive(){
           try{
             const localTs = JSON.parse(localRaw)._savedAt||0;
             const driveTs = new Date(file.modifiedTime).getTime();
-            if(localTs >= driveTs){ driveData._driveFileId=file.id; continue; }
+            if(localTs >= driveTs){
+              // local ใหม่กว่า → บันทึก fileId กลับเข้า local แต่ไม่เขียนทับข้อมูล
+              const localObj = JSON.parse(localRaw);
+              if(!localObj._driveFileId){
+                localObj._driveFileId = file.id;
+                localStorage.setItem(key, JSON.stringify(localObj));
+              }
+              continue;
+            }
           }catch(e){}
         }
         driveData._driveFileId = file.id;
