@@ -92,26 +92,36 @@ html,body{height:100%;font-family:'Sarabun',sans-serif;background:var(--bg);colo
 /* ── EXCEL TABLES ── */
 .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:0 0 10px 10px;}
 table.xlt{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;}
-table.xlt th{background:#e5e7eb;color:#1f2937!important;color:#1f2937;padding:7px 5px;text-align:center;font-weight:700;white-space:nowrap;font-size:11px;border-top:1px solid rgba(255,255,255,.15);border-right:1px solid rgba(255,255,255,.15);border-bottom:1px solid rgba(255,255,255,.15);border-left:none;position:sticky;top:0;z-index:5;}
-table.xlt th:first-child{border-left:1px solid rgba(255,255,255,.15);}
+
+/* ── HEADER ── พื้นหลังขาวอมส้มอ่อนมาก / ตัวหนังสือเข้ม */
+table.xlt th{background:#fff3e8;color:#1f2937;padding:7px 5px;text-align:center;font-weight:700;white-space:nowrap;font-size:11px;border-top:1px solid #f0d5c0;border-right:1px solid #f0d5c0;border-bottom:2px solid #f97316;border-left:none;position:sticky;top:0;z-index:5;}
+table.xlt th:first-child{border-left:1px solid #f0d5c0;}
 table.xlt th.left{text-align:left;padding-left:8px;}
-table.xlt td{padding:6px 5px;border-top:none;border-right:1px solid var(--border);border-bottom:1px solid var(--border);border-left:none;vertical-align:middle;text-align:center;background:#fff;}
-table.xlt tbody tr:first-child td{border-top:1px solid var(--border);}
-table.xlt td:first-child{border-left:1px solid var(--border);}
+
+/* ── BODY CELLS ── พื้นขาว / เส้นบาง */
+table.xlt td{padding:6px 5px;border-top:none;border-right:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;border-left:none;vertical-align:middle;text-align:center;background:#fff;color:#1f2937;}
+table.xlt tbody tr:first-child td{border-top:1px solid #e5e7eb;}
+table.xlt td:first-child{border-left:1px solid #e5e7eb;}
 table.xlt td.left{text-align:left;padding-left:8px;}
-table.xlt th.name-th{min-width:180px;width:180px;position:sticky;left:0;z-index:6;background:#e5e7eb;text-align:center;padding-left:0;border-left:1px solid rgba(255,255,255,.15);border-right:1.5px solid rgba(255,255,255,.4);}
-table.xlt th.no-th{width:32px;min-width:32px;position:sticky;left:180px;z-index:6;background:#e5e7eb;border-left:none;border-right:1.5px solid rgba(255,255,255,.4);}
-table.xlt td.name-td{width:180px;min-width:180px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;padding:6px 5px 6px 8px;font-weight:400;position:sticky;left:0;z-index:3;border-left:1px solid var(--border);border-right:1.5px solid #94a3b8;background:#f8fafc;}
-table.xlt td.no-td{width:32px;min-width:32px;max-width:32px;font-weight:700;text-align:center;padding:6px 2px;position:sticky;left:180px;z-index:3;border-left:none;border-right:1.5px solid #94a3b8;background:#f8fafc;}
-/* auto/formula cells */
-table.xlt td.ac{background:#fff7ed!important;color:#c2410c;font-weight:400;}
-table.xlt td.gc{background:#e5e7eb!important;color:#1f2937;font-weight:800;font-size:12px;}
-table.xlt td.gc-chip{background:white!important;font-weight:800;font-size:12px;text-align:center;}
-/* editable inputs in table */
+
+/* ── STICKY NAME / NO COLUMNS ── พื้นขาวอมเทาอ่อนมาก */
+table.xlt th.name-th{min-width:180px;width:180px;position:sticky;left:0;z-index:6;background:#fff3e8;text-align:center;padding-left:0;border-left:1px solid #f0d5c0;border-right:2px solid #f97316;}
+table.xlt th.no-th{width:32px;min-width:32px;position:sticky;left:180px;z-index:6;background:#fff3e8;border-left:none;border-right:2px solid #f97316;}
+table.xlt td.name-td{width:180px;min-width:180px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;padding:6px 5px 6px 8px;font-weight:500;position:sticky;left:0;z-index:3;border-left:1px solid #e5e7eb;border-right:2px solid #f97316;background:#fafafa;}
+table.xlt td.no-td{width:32px;min-width:32px;max-width:32px;font-weight:700;text-align:center;padding:6px 2px;position:sticky;left:180px;z-index:3;border-left:none;border-right:2px solid #f97316;background:#fafafa;}
+
+/* ── FORMULA / AUTO CELLS (ac) ── ฟ้าอ่อนมาก สบายตา */
+table.xlt td.ac{background:#f0f7ff!important;color:#1d4ed8;font-weight:600;}
+
+/* ── GRADE / SUMMARY CELLS (gc) ── เขียวอ่อนมาก */
+table.xlt td.gc{background:#f0fdf4!important;color:#15803d;font-weight:800;font-size:12px;}
+table.xlt td.gc-chip{background:#fff!important;font-weight:800;font-size:12px;text-align:center;}
+
+/* ── EDITABLE INPUT CELLS ── เหลืองอ่อนมาก */
 table.xlt td input[type=number],table.xlt td input[type=text]{
   width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:12px;text-align:center;color:var(--text);padding:1px 2px;}
 table.xlt td input:focus{background:#fef9c3;border-radius:4px;}
-table.xlt td.edit-cell{background:#fefce8!important;padding:3px;}
+table.xlt td.edit-cell{background:#fffbeb!important;padding:3px;}
 
 .result-cell{white-space:nowrap;min-width:90px;width:90px;}
 /* grade chips */
@@ -2160,7 +2170,7 @@ function makeSummaryTableHTML(dist,total,compact){
   keys.forEach(function(k,i){
     const cnt=dist[k]||0;
     const pct=total?Math.round(cnt/total*100):0;
-    h+='<tr style="background:'+(i%2===0?'#fff':'#f7fafd')+'">';
+    h+='<tr style="background:'+(i%2===0?'#ffffff':'#f9fafb')+'">';
     h+='<td style="color:'+colors[i]+';font-weight:700;'+pd+'">'+labels[i]+'</td>';
     h+='<td class="ac" style="'+pd+'">'+cnt+'</td>';
     h+='<td class="ac" style="'+pd+'">'+pct+'</td>';
@@ -2206,15 +2216,15 @@ function renderCoverStats(){
 }
 
 /* ══ ROW HELPERS ══ */
-function rowBg(i){return i%2===0?'#ffffff':'#f7fafd';}
-function tdName(i,txt){const bg=rowBg(i);return `<td class="name-td" style="background:${bg}">${txt}</td>`;}
-function tdNo(i,txt){const bg=rowBg(i);return `<td class="no-td" style="background:${bg}">${txt}</td>`;}
+function rowBg(i){return i%2===0?'#ffffff':'#f9fafb';}
+function tdName(i,txt){return `<td class="name-td">${txt}</td>`;}
+function tdNo(i,txt){return `<td class="no-td">${txt}</td>`;}
 
 /* ══ STUDENTS ══ */
 function renderStudents(){
   const tbody=document.getElementById('student-tbody');
   tbody.innerHTML=D.students.map((s,i)=>`
-    <tr style="background:${i%2===0?'#fff':'#f7fafd'}">
+    <tr style="background:${i%2===0?'#ffffff':'#f9fafb'}">
       <td>${s.no||i+1}</td>
       <td>${s.id||''}</td>
       ${tdName(i,s.name||'')}
@@ -2293,7 +2303,7 @@ function renderAttGrid(){
     const tot=D.attDays[attMonth]||days;
     const pct=tot>0?Math.round(m/tot*100):0;
     const ok=pct>=80;
-    html+=`<tr style="background:${si%2===0?'#fff':'#f7fafd'}">
+    html+=`<tr style="background:${si%2===0?'#ffffff':'#f9fafb'}">
       ${tdName(si,s.name)}
       ${tdNo(si,s.no)}
       ${dayNums.map(d=>{
@@ -2354,7 +2364,7 @@ function calcYearlyAtt(){
     }).join('');
     const pct=totD>0?Math.round(totM/totD*100):0;
     const ok=pct>=80;
-    html+=`<tr style="background:${si%2===0?'#fff':'#f7fafd'}">
+    html+=`<tr style="background:${si%2===0?'#ffffff':'#f9fafb'}">
       ${tdName(si,s.name)}${tdNo(si,s.no)}
       ${mCells}
       <td class="ac">${totM}</td><td class="ac">${totD}</td>
@@ -2420,7 +2430,7 @@ function renderScore(sem){
     const exScaled=parseFloat((exv/examMax*ex).toFixed(2));
     const total=parseFloat((betScaled+exScaled).toFixed(2));
     const grade=scoreToGrade(total);
-    html+=`<tr style="background:${si%2===0?'#fff':'#f7fafd'}">
+    html+=`<tr style="background:${si%2===0?'#ffffff':'#f9fafb'}">
       ${tdName(si,s.name)}
       ${tdNo(si,s.no)}
       ${cells}
@@ -2631,7 +2641,7 @@ function renderTotal(){
     } else {
       gradeDisplay=gradeChip(grade);
     }
-    html+=`<tr style="background:${si%2===0?'#fff':'#f7fafd'}">
+    html+=`<tr style="background:${si%2===0?'#ffffff':'#f9fafb'}">
       ${tdName(si,s.name)}${tdNo(si,s.no)}
       <td class="ac">${s1.bet.toFixed(2)}</td><td class="ac">${s1.ex.toFixed(2)}</td><td class="ac">${s1.total.toFixed(2)}</td>
       <td class="ac">${s2.bet.toFixed(2)}</td><td class="ac">${s2.ex.toFixed(2)}</td><td class="ac">${s2.total.toFixed(2)}</td>
@@ -2837,7 +2847,7 @@ function renderBehTable(sem){
       const arrKey=`beh${sem}`;
       return `<td style="padding:3px;text-align:center">${ratingButtons(arrKey,si,ii,vals[ii])}</td>`;
     }).join('');
-    html+=`<tr style="background:${si%2===0?'#fff':'#f7fafd'}">${tdName(si,s.name)}${tdNo(si,s.no)}${cells}<td class="ac">${avg}</td><td class="ac" style="color:${resColor};font-weight:700;white-space:nowrap">${result}</td></tr>`;
+    html+=`<tr style="background:${si%2===0?'#ffffff':'#f9fafb'}">${tdName(si,s.name)}${tdNo(si,s.no)}${cells}<td class="ac">${avg}</td><td class="ac" style="color:${resColor};font-weight:700;white-space:nowrap">${result}</td></tr>`;
   });
   html+=`</tbody></table>`;
   document.getElementById('beh-wrap').innerHTML=html;
@@ -2871,7 +2881,7 @@ function renderReadTable(sem){
       const arrKey=`read${sem}`;
       return `<td style="padding:3px;text-align:center">${ratingButtons(arrKey,si,ii,vals[ii])}</td>`;
     }).join('');
-    html+=`<tr style="background:${si%2===0?'#fff':'#f7fafd'}">${tdName(si,s.name)}${tdNo(si,s.no)}${cells}<td class="ac">${avg}</td><td class="ac" style="color:${resColor};font-weight:700;white-space:nowrap">${result}</td></tr>`;
+    html+=`<tr style="background:${si%2===0?'#ffffff':'#f9fafb'}">${tdName(si,s.name)}${tdNo(si,s.no)}${cells}<td class="ac">${avg}</td><td class="ac" style="color:${resColor};font-weight:700;white-space:nowrap">${result}</td></tr>`;
   });
   html+=`</tbody></table>`;
   document.getElementById('read-wrap').innerHTML=html;
