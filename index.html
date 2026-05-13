@@ -1947,28 +1947,52 @@ function loadSlot(key){
 async function deleteSlot(key){
   if(!confirm('ลบข้อมูลนี้?'))return;
 
-  // ดึงข้อมูลที่จำเป็น
-  let driveFileId=null;
-  try{ driveFileId=(JSON.parse(localStorage.getItem(key)||'{}')||{})._driveFileId||null; }catch(e){}
+  // ดึงข้อมูลก่อนลบ
+  let driveFileId=null, grade='', subject='';
+  try{
+    const d=JSON.parse(localStorage.getItem(key)||'{}');
+    driveFileId=d._driveFileId||null;
+    grade=(d.grade||'').trim();
+    subject=(d.subject||'').trim();
+  }catch(e){}
 
-  // ลบออกจาก localStorage ทันที แล้วแสดง launcher
+  // ลบจาก Drive ก่อน (รอให้สำเร็จ) แล้วค่อยลบ localStorage
+  if(gAccessToken && gDriveFolderId){
+    setSyncStatus('syncing','กำลังลบจาก Drive...');
+    try{
+      // ลบด้วย fileId ถ้ามี
+      if(driveFileId){
+        await fetch(
+          `https://www.googleapis.com/drive/v3/files/${driveFileId}`,
+          {method:'DELETE',headers:{'Authorization':'Bearer '+gAccessToken}}
+        ).catch(()=>{});
+      }
+      // ค้นหาและลบจากชื่อไฟล์ (ครอบคลุมกรณี fileId ไม่ตรง)
+      if(grade && subject){
+        const fname='pp5_'+grade+'_'+subject+'.json';
+        const q=encodeURIComponent(`'${gDriveFolderId}' in parents and name='${fname}' and trashed=false`);
+        const r=await fetch(
+          `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)`,
+          {headers:{'Authorization':'Bearer '+gAccessToken}}
+        ).catch(()=>null);
+        if(r&&r.ok){
+          const {files=[]}=await r.json();
+          await Promise.all(files.map(f=>
+            fetch(`https://www.googleapis.com/drive/v3/files/${f.id}`,
+              {method:'DELETE',headers:{'Authorization':'Bearer '+gAccessToken}}
+            ).catch(()=>{})
+          ));
+        }
+      }
+      setSyncStatus('ok',gUser?gUser.email:'ลบแล้ว');
+    }catch(e){
+      console.error('deleteSlot Drive error:',e);
+    }
+  }
+
+  // ลบ localStorage และแสดง launcher
   localStorage.removeItem(key);
   openLauncher();
-
-  // ลบออกจาก Drive (background) ถ้า login อยู่
-  if(!gAccessToken || !gDriveFolderId) return;
-  setSyncStatus('syncing','กำลังลบจาก Drive...');
-  try{
-    if(driveFileId){
-      await fetch(
-        `https://www.googleapis.com/drive/v3/files/${driveFileId}`,
-        {method:'DELETE',headers:{'Authorization':'Bearer '+gAccessToken}}
-      ).catch(()=>{});
-    }
-    setSyncStatus('ok',gUser?gUser.email:'ลบแล้ว');
-  }catch(e){
-    setSyncStatus('err','ลบจาก Drive ไม่สำเร็จ');
-  }
 }
 
 
