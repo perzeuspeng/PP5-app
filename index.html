@@ -3780,21 +3780,13 @@ function bootAfterAuth(){
   const sessionSlot = sessionStorage.getItem('pp5_slot');
 
   if(sessionSlot && localStorage.getItem(sessionSlot)){
-    // เคยเลือกวิชาไว้แล้ว → โหลดต่อ
+    // reload หน้า / เคยเลือกวิชาแล้ว → โหลดต่อโดยไม่ผ่าน launcher
     D = Object.assign({}, defaultD(), JSON.parse(localStorage.getItem(sessionSlot)));
     initArrays(); fillForm(); refreshSubtitle(); renderCoverStats(); renderCoverBehRead(); applyLogo();
     closeLauncher();
     setSyncStatus('ok', gUser.email);
-  } else if(allSlots.length === 1){
-    // วิชาเดียว (รวมถึงกรณีดึงมาจาก Drive 1 ไฟล์) → เข้าแอปเลย
-    D = Object.assign({}, defaultD(), JSON.parse(localStorage.getItem(allSlots[0].key)));
-    initArrays();
-    sessionStorage.setItem('pp5_slot', allSlots[0].key);
-    fillForm(); refreshSubtitle(); renderCoverStats(); renderCoverBehRead(); applyLogo();
-    closeLauncher();
-    setSyncStatus('ok', gUser.email);
   } else {
-    // หลายวิชา หรือยังไม่มีวิชา → เปิด launcher แสดงรายการ
+    // ยังไม่ได้เลือกวิชา → เปิด launcher เสมอ (แม้มีวิชาเดียว ให้ผู้ใช้กดเลือกเอง)
     initArrays(); fillForm(); refreshSubtitle(); renderCoverStats(); renderCoverBehRead(); applyLogo();
     setSyncStatus('ok', gUser.email);
     openLauncher();
