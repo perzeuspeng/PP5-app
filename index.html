@@ -1881,7 +1881,6 @@ function getAllSlots(){
     if(k&&k.startsWith(SLOT_PREFIX)){
       try{
         const d=JSON.parse(localStorage.getItem(k));
-        if(d._localDeletedAt) continue; // ข้าม slot ที่ถูกลบแล้ว
         slots.push({key:k,grade:d.grade||'',subject:d.subject||'',year:d.year||'',sem:d.sem||''});
         seen.add(k);
       }catch(e){}
@@ -1947,59 +1946,30 @@ function loadSlot(key){
 async function deleteSlot(key){
   if(!confirm('ลบข้อมูลนี้?'))return;
 
-  // 1. ดึงข้อมูลที่จำเป็นก่อนลบ
-  let grade='', subject='', driveFileId=null;
-  try{
-    const d = JSON.parse(localStorage.getItem(key)||'{}');
-    grade   = (d.grade||'').trim();
-    subject = (d.subject||'').trim();
-    driveFileId = d._driveFileId||null;
-  }catch(e){}
+  // ดึงข้อมูลที่จำเป็น
+  let driveFileId=null;
+  try{ driveFileId=(JSON.parse(localStorage.getItem(key)||'{}')||{})._driveFileId||null; }catch(e){}
 
-  // 2. ถ้า login อยู่ → ลบออกจาก Drive ก่อน (รอให้สำเร็จ)
-  if(gAccessToken && gDriveFolderId && grade && subject){
-    setSyncStatus('syncing','กำลังลบจาก Drive...');
-    try{
-      // ค้นหาไฟล์จากชื่อ (เชื่อถือได้กว่า fileId)
-      const fname = 'pp5_'+grade+'_'+subject+'.json';
-      const q = encodeURIComponent(
-        `'${gDriveFolderId}' in parents and name='${fname}' and trashed=false`
-      );
-      const listRes = await fetch(
-        `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)`,
-        {headers:{'Authorization':'Bearer '+gAccessToken}}
-      );
-      if(listRes.ok){
-        const {files=[]} = await listRes.json();
-        // ลบทุกไฟล์ที่ตรงชื่อ (รวมถึง driveFileId เดิมด้วย)
-        const idsToDelete = [...new Set([...files.map(f=>f.id), driveFileId].filter(Boolean))];
-        await Promise.all(idsToDelete.map(id=>
-          fetch(`https://www.googleapis.com/drive/v3/files/${id}`,
-            {method:'DELETE', headers:{'Authorization':'Bearer '+gAccessToken}}
-          ).catch(()=>{})
-        ));
-      }
-      setSyncStatus('ok', gUser?gUser.email:'ลบแล้ว');
-    }catch(e){
-      console.error('deleteSlot Drive error:',e);
-      setSyncStatus('err','ลบจาก Drive ไม่สำเร็จ');
-    }
-  }
-
-  // 3. บันทึก tombstone _localDeletedAt ก่อนลบ เพื่อป้องกัน sync เขียนทับ
-  try{
-    const raw = localStorage.getItem(key);
-    if(raw){
-      const tomb = JSON.parse(raw);
-      tomb._localDeletedAt = Date.now();
-      localStorage.setItem(key, JSON.stringify(tomb));
-    }
-  }catch(e){}
-
-  // 4. ลบออกจาก localStorage จริงๆ
+  // ลบออกจาก localStorage ทันที แล้วแสดง launcher
   localStorage.removeItem(key);
   openLauncher();
+
+  // ลบออกจาก Drive (background) ถ้า login อยู่
+  if(!gAccessToken || !gDriveFolderId) return;
+  setSyncStatus('syncing','กำลังลบจาก Drive...');
+  try{
+    if(driveFileId){
+      await fetch(
+        `https://www.googleapis.com/drive/v3/files/${driveFileId}`,
+        {method:'DELETE',headers:{'Authorization':'Bearer '+gAccessToken}}
+      ).catch(()=>{});
+    }
+    setSyncStatus('ok',gUser?gUser.email:'ลบแล้ว');
+  }catch(e){
+    setSyncStatus('err','ลบจาก Drive ไม่สำเร็จ');
+  }
 }
+
 
 function defaultD(){
   return{school:'',dept:'',grade:'',sem:'1,2',year:'2568',subject:'',subcode:'',hours:0,
@@ -3847,21 +3817,15 @@ async function syncSlotsFromDrive(){
         const g = (driveData.grade||'').trim();
         const s = (driveData.subject||'').trim();
         const key = SLOT_PREFIX+g+'__'+s;
-        // ตรวจสอบ tombstone: ถ้าผู้ใช้ลบหลังจาก Drive แก้ไขล่าสุด → ข้าม
-        try{
-          const localRaw = localStorage.getItem(key);
-          if(localRaw){
-            const localData = JSON.parse(localRaw);
-            if(localData._localDeletedAt){
-              const driveModified = new Date(file.modifiedTime).getTime();
-              if(localData._localDeletedAt > driveModified){
-                // ผู้ใช้ลบหลัง Drive update → ข้าม ไม่เขียนทับ
-                continue;
-              }
-            }
-          }
-        }catch(e){}
-        // บันทึก driveFileId ใน content
+        // ถ้า local ใหม่กว่า Drive → ไม่เขียนทับ (local เป็น source of truth)
+        const localRaw = localStorage.getItem(key);
+        if(localRaw){
+          try{
+            const localTs = JSON.parse(localRaw)._savedAt||0;
+            const driveTs = new Date(file.modifiedTime).getTime();
+            if(localTs >= driveTs){ driveData._driveFileId=file.id; continue; }
+          }catch(e){}
+        }
         driveData._driveFileId = file.id;
         localStorage.setItem(key, JSON.stringify(driveData));
       }catch(fe){ console.warn('file fetch error', fe); }
@@ -3887,6 +3851,7 @@ async function uploadSlotToDrive(key){
     const filename = 'pp5_'+g+'_'+s+'.json';
     // สร้าง payload ไม่มี internal fields
     const payload = Object.assign({}, data);
+    payload._savedAt = Date.now(); // timestamp สำหรับ conflict resolution
     delete payload._driveFileId;
     const jsonBlob = new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
 
