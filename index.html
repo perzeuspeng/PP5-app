@@ -1970,18 +1970,23 @@ async function deleteSlot(key){
       // ค้นหาและลบจากชื่อไฟล์ (ครอบคลุมกรณี fileId ไม่ตรง)
       if(grade && subject){
         const fname='pp5_'+grade+'_'+subject+'.json';
+        console.log('[deleteSlot] searching Drive for:', fname, 'in folder:', gDriveFolderId);
         const q=encodeURIComponent(`'${gDriveFolderId}' in parents and name='${fname}' and trashed=false`);
         const r=await fetch(
-          `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)`,
+          `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`,
           {headers:{'Authorization':'Bearer '+gAccessToken}}
         ).catch(()=>null);
         if(r&&r.ok){
           const {files=[]}=await r.json();
+          console.log('[deleteSlot] found files in Drive:', files);
           await Promise.all(files.map(f=>
             fetch(`https://www.googleapis.com/drive/v3/files/${f.id}`,
               {method:'DELETE',headers:{'Authorization':'Bearer '+gAccessToken}}
-            ).catch(()=>{})
+            ).catch(e=>console.error('[deleteSlot] delete error:', e))
           ));
+          console.log('[deleteSlot] deleted', files.length, 'file(s) from Drive');
+        } else {
+          console.warn('[deleteSlot] Drive search failed:', r?.status);
         }
       }
       setSyncStatus('ok',gUser?gUser.email:'ลบแล้ว');
@@ -3829,6 +3834,8 @@ async function syncSlotsFromDrive(){
       setSyncStatus('ok', gUser?gUser.email:'ซิงค์แล้ว');
       return;
     }
+    console.log('[syncSlotsFromDrive] files in Drive:', listData.files.map(f=>f.name));
+    console.log('[syncSlotsFromDrive] SLOT_PREFIX:', SLOT_PREFIX);
     // ดึงเนื้อหาแต่ละไฟล์
     for(const file of listData.files){
       try{
