@@ -1911,6 +1911,7 @@ function saveData(){
   readForm();
   const key=getCurrentKey();
   try{
+    D._savedAt=Date.now();
     localStorage.setItem(key,JSON.stringify(D));
     showToast('✅ บันทึก: '+((D.grade||'')+' · '+(D.subject||'')));
     refreshSubtitle();renderCoverStats();renderCoverBehRead();
@@ -3879,8 +3880,9 @@ async function uploadSlotToDrive(key){
     }
     if(!uploadRes.ok) throw new Error('upload failed '+uploadRes.status);
     const result = await uploadRes.json();
-    // บันทึก fileId กลับ localStorage
+    // บันทึก fileId และ _savedAt กลับ localStorage ด้วย
     data._driveFileId = result.id || fileId;
+    data._savedAt = payload._savedAt; // sync timestamp กลับ local
     localStorage.setItem(key, JSON.stringify(data));
     setSyncStatus('ok', gUser?gUser.email:'ซิงค์แล้ว');
   }catch(e){
