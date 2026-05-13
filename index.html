@@ -1875,12 +1875,14 @@ function getCurrentKey(){
 function getAllSlots(){
   const slots=[];
   const seen=new Set();
-  // โหลดเฉพาะ key ของ user ที่ login อยู่
-  for(let i=0;i<localStorage.length;i++){
-    const k=localStorage.key(i);
+  // เก็บ keys ทั้งหมดก่อน (localStorage.key(i) ไม่ stable ระหว่างลบ)
+  const allKeys=[];
+  for(let i=0;i<localStorage.length;i++) allKeys.push(localStorage.key(i));
+  for(const k of allKeys){
     if(k&&k.startsWith(SLOT_PREFIX)){
       try{
         const d=JSON.parse(localStorage.getItem(k));
+        if(!d) continue;
         slots.push({key:k,grade:d.grade||'',subject:d.subject||'',year:d.year||'',sem:d.sem||''});
         seen.add(k);
       }catch(e){}
