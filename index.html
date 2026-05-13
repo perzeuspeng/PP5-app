@@ -1881,6 +1881,7 @@ function getAllSlots(){
     if(k&&k.startsWith(SLOT_PREFIX)){
       try{
         const d=JSON.parse(localStorage.getItem(k));
+        if(d._localDeletedAt) continue; // ข้าม slot ที่ถูกลบแล้ว
         slots.push({key:k,grade:d.grade||'',subject:d.subject||'',year:d.year||'',sem:d.sem||''});
         seen.add(k);
       }catch(e){}
@@ -1985,7 +1986,17 @@ async function deleteSlot(key){
     }
   }
 
-  // 3. ลบออกจาก localStorage หลัง Drive สำเร็จแล้ว
+  // 3. บันทึก tombstone _localDeletedAt ก่อนลบ เพื่อป้องกัน sync เขียนทับ
+  try{
+    const raw = localStorage.getItem(key);
+    if(raw){
+      const tomb = JSON.parse(raw);
+      tomb._localDeletedAt = Date.now();
+      localStorage.setItem(key, JSON.stringify(tomb));
+    }
+  }catch(e){}
+
+  // 4. ลบออกจาก localStorage จริงๆ
   localStorage.removeItem(key);
   openLauncher();
 }
@@ -3836,6 +3847,20 @@ async function syncSlotsFromDrive(){
         const g = (driveData.grade||'').trim();
         const s = (driveData.subject||'').trim();
         const key = SLOT_PREFIX+g+'__'+s;
+        // ตรวจสอบ tombstone: ถ้าผู้ใช้ลบหลังจาก Drive แก้ไขล่าสุด → ข้าม
+        try{
+          const localRaw = localStorage.getItem(key);
+          if(localRaw){
+            const localData = JSON.parse(localRaw);
+            if(localData._localDeletedAt){
+              const driveModified = new Date(file.modifiedTime).getTime();
+              if(localData._localDeletedAt > driveModified){
+                // ผู้ใช้ลบหลัง Drive update → ข้าม ไม่เขียนทับ
+                continue;
+              }
+            }
+          }
+        }catch(e){}
         // บันทึก driveFileId ใน content
         driveData._driveFileId = file.id;
         localStorage.setItem(key, JSON.stringify(driveData));
