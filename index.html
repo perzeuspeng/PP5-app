@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#16192b">
+<meta name="theme-color" content="#6c5ce7">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>ปพ.5 สมุดบันทึกการพัฒนาคุณภาพผู้เรียน</title>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -182,7 +182,7 @@ table.xlt td.edit-cell{background:#fffbeb!important;padding:3px;}
 .modal-sheet{background:white;width:100%;border-radius:20px 20px 0 0;padding:20px 18px calc(20px + var(--safe-bottom));transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1);max-height:92vh;overflow-y:auto;touch-action:pan-y;-webkit-overflow-scrolling:touch;}
 .modal-overlay.open .modal-sheet{transform:translateY(0);}
 .modal-handle{width:32px;height:4px;background:#e2e8f0;border-radius:2px;margin:0 auto 14px;}
-.modal-title{font-size:16px;font-weight:800;color:#e4eaf6;margin-bottom:14px;}
+.modal-title{font-size:16px;font-weight:800;color:#1f2340;margin-bottom:14px;}
 dialog.unit-dialog{border:none;padding:0;border-radius:20px 20px 0 0;width:100%;max-width:100%;margin:auto 0 0 0;max-height:92dvh;overflow-y:auto;box-shadow:0 -4px 24px rgba(0,0,0,.18);}
 dialog.unit-dialog::backdrop{background:rgba(0,0,0,.5);}
 .unit-dialog-inner{padding:20px 18px calc(20px + var(--safe-bottom));}
@@ -1216,67 +1216,68 @@ tr{ break-inside:avoid!important; }
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
 </style>
 
-<!-- ══ MODYCHAT DARK THEME ══ -->
+<!-- ══ MODYCHAT LIGHT THEME ══ -->
 <style>
-/* ── Palette
-   bg0 #16192b  พื้นเข้มสุด
-   bg1 #1e2237  card
-   bg2 #252b40  card header / elevated
-   bg3 #2d3452  input / row
-   bdr #353c5a  เส้นขอบ
-   acc #6c5ce7  purple accent
-   ac2 #4facfe  sky blue
-   txt #e4eaf6  ตัวหนังสือหลัก
-   tx2 #7b87aa  ตัวหนังสือรอง
+/* ── Palette (Modychat Light — ตรงกับภาพ)
+   bg   #eef0fb  พื้นหลัง lavender อ่อน
+   card #ffffff  การ์ดขาว
+   card2 #f5f6ff กdark-lite / header การ์ด
+   inp  #f0f2ff  input / row
+   bdr  #dde1f5  เส้นขอบ lavender
+   acc  #6c5ce7  purple accent
+   ac2  #4facfe  sky blue
+   txt  #1f2340  ตัวหนังสือเข้ม
+   tx2  #7b87aa  ตัวหนังสือรอง
+   nav  #1a1d3a  navbar เข้มกรมท่า
 ── */
 
 /* root */
 :root{
-  --bg:#16192b;--text:#e4eaf6;--text2:#7b87aa;
-  --border:#353c5a;--accent:#6c5ce7;--primary:#6c5ce7;--primary2:#4facfe;
+  --bg:#eef0fb;--text:#1f2340;--text2:#7b87aa;
+  --border:#dde1f5;--accent:#6c5ce7;--primary:#6c5ce7;--primary2:#4facfe;
   --success:#22c55e;--danger:#f87171;
 }
-meta[name=theme-color]{content:#16192b}
 
 /* base */
-html,body{background:#16192b;color:#e4eaf6;}
-.status-bar{background:#16192b;}
+html,body{background:#eef0fb;color:#1f2340;}
+.status-bar{background:#ffffff;}
 
-/* topbar */
-.topbar{background:#1e2237;border-bottom:1px solid #353c5a;box-shadow:0 2px 12px rgba(0,0,0,.4);}
-.topbar-logo{background:rgba(108,92,231,.25);}
-.topbar-title h1{color:#e4eaf6;}
+/* topbar — ขาวสะอาด เหมือนในภาพ */
+.topbar{background:#ffffff;border-bottom:1px solid #dde1f5;box-shadow:0 2px 10px rgba(108,92,231,.08);}
+.topbar-logo{background:rgba(108,92,231,.12);}
+.topbar-title h1{color:#6c5ce7;}
 .topbar-title p{color:#7b87aa;}
-.tb-btn{background:rgba(108,92,231,.2);color:#e4eaf6;border:none;}
-.tb-btn:active{background:rgba(108,92,231,.4);}
+.tb-btn{background:#f0f2ff;color:#1f2340;border:none;}
+.tb-btn:active{background:#e4e7fd;}
 .tb-btn.accent{background:linear-gradient(135deg,#6c5ce7,#4facfe);color:#fff;}
 
 /* scroll */
-.scroll-area{background:#16192b;}
+.scroll-area{background:#eef0fb;}
 
-/* bottom nav */
-.bottom-nav{background:#1e2237;border-top:1px solid #353c5a;box-shadow:0 -4px 20px rgba(0,0,0,.4);}
-.nav-item{color:#4a5578;}
-.nav-item.active{color:#6c5ce7;}
+/* bottom nav — เข้มกรมท่าเหมือนในภาพ */
+.bottom-nav{background:#1a1d3a;border-top:none;box-shadow:0 -4px 24px rgba(26,29,58,.25);}
+.nav-item{color:#5a6080;}
+.nav-item.active{color:#ffffff;}
 .nav-item.active::before{background:linear-gradient(90deg,#6c5ce7,#4facfe);}
+.nav-label{color:inherit;}
 
-/* section box */
-.xls-header{background:#1e2237;color:#e4eaf6;border:1px solid #353c5a;border-top:3px solid #6c5ce7;}
-.xls-header-title{color:#e4eaf6;}
-.xls-row{background:#252b40;border:1px solid #353c5a;}
+/* section box — การ์ดขาว เงาเบา */
+.xls-header{background:#ffffff;color:#1f2340;border:1px solid #dde1f5;border-top:3px solid #6c5ce7;box-shadow:0 2px 12px rgba(108,92,231,.06);}
+.xls-header-title{color:#1f2340;}
+.xls-row{background:#f5f6ff;border:1px solid #dde1f5;}
 .xls-label{color:#7b87aa;}
-.xls-val{background:#252b40;color:#e4eaf6;}
-.xls-val::placeholder{color:#4a5578;}
-.xls-val:focus{background:#2d3452;}
+.xls-val{background:#f5f6ff;color:#1f2340;}
+.xls-val::placeholder{color:#b0b8d0;}
+.xls-val:focus{background:#eef0fb;}
 .xls-row-readonly .xls-val{color:#7b87aa;}
 
-.sec-box{background:#1e2237;border-top:3px solid #6c5ce7;box-shadow:0 4px 20px rgba(0,0,0,.35);}
-.sec-head{background:#252b40;color:#e4eaf6;}
-.sec-head-title{color:#e4eaf6;}
+.sec-box{background:#ffffff;border-top:3px solid #6c5ce7;box-shadow:0 2px 12px rgba(108,92,231,.07);}
+.sec-head{background:#f5f6ff;color:#1f2340;}
+.sec-head-title{color:#1f2340;}
 .sec-head-dot{background:#6c5ce7;}
 
 /* stat tiles */
-.stat-tile{background:#1e2237;border-top:3px solid #6c5ce7;box-shadow:0 4px 16px rgba(0,0,0,.3);}
+.stat-tile{background:#ffffff;border-top:3px solid #6c5ce7;box-shadow:0 2px 12px rgba(108,92,231,.07);}
 .stat-num{color:#6c5ce7;}
 .stat-lbl{color:#7b87aa;}
 
@@ -1285,113 +1286,110 @@ html,body{background:#16192b;color:#e4eaf6;}
 .btn-accent{background:linear-gradient(135deg,#6c5ce7,#4facfe);color:#fff;}
 .btn-outline{background:transparent;color:#6c5ce7;border:1.5px solid #6c5ce7;}
 .btn-success{background:#16a34a;color:#fff;}
-.btn-danger{background:rgba(248,113,113,.18);color:#f87171;}
+.btn-danger{background:#fee2e2;color:#dc2626;}
 
 /* tables */
-table.xlt th{background:#252b40;color:#a0aec8;border-color:#353c5a;border-bottom:2px solid #6c5ce7;}
-table.xlt th:first-child{border-left:1px solid #353c5a;}
-table.xlt td{background:#1e2237;color:#e4eaf6;border-color:#353c5a;}
-table.xlt tbody tr:first-child td{border-top:1px solid #353c5a;}
-table.xlt td:first-child{border-left:1px solid #353c5a;}
-table.xlt th.name-th{background:#252b40;border-left:1px solid #353c5a;border-right:2px solid #6c5ce7;}
-table.xlt th.no-th{background:#252b40;border-right:2px solid #6c5ce7;}
-table.xlt td.name-td{background:#252b40;color:#e4eaf6;border-left:1px solid #353c5a;border-right:2px solid #6c5ce7;}
-table.xlt td.no-td{background:#252b40;color:#a0aec8;border-right:2px solid #6c5ce7;}
-table.xlt td.ac{background:#1a2640!important;color:#7dd3fc;font-weight:600;}
-table.xlt td.gc{background:#1a2a1e!important;color:#4ade80;font-weight:800;}
-table.xlt td.gc-chip{background:#1e2237!important;color:#e4eaf6;}
-table.xlt td.edit-cell{background:#252b40!important;}
-table.xlt td input[type=number],table.xlt td input[type=text]{color:#e4eaf6;}
-table.xlt td input:focus{background:rgba(108,92,231,.2);border-radius:4px;}
+table.xlt th{background:#f0f2ff;color:#4a5080;border-color:#dde1f5;border-bottom:2px solid #6c5ce7;}
+table.xlt th:first-child{border-left:1px solid #dde1f5;}
+table.xlt td{background:#ffffff;color:#1f2340;border-color:#dde1f5;}
+table.xlt tbody tr:first-child td{border-top:1px solid #dde1f5;}
+table.xlt td:first-child{border-left:1px solid #dde1f5;}
+table.xlt th.name-th{background:#f0f2ff;border-left:1px solid #dde1f5;border-right:2px solid #6c5ce7;}
+table.xlt th.no-th{background:#f0f2ff;border-right:2px solid #6c5ce7;}
+table.xlt td.name-td{background:#f8f9ff;color:#1f2340;border-left:1px solid #dde1f5;border-right:2px solid #6c5ce7;}
+table.xlt td.no-td{background:#f8f9ff;color:#7b87aa;border-right:2px solid #6c5ce7;}
+table.xlt td.ac{background:#f0f7ff!important;color:#1d4ed8;font-weight:600;}
+table.xlt td.gc{background:#f0fdf4!important;color:#15803d;font-weight:800;}
+table.xlt td.gc-chip{background:#ffffff!important;color:#1f2340;}
+table.xlt td.edit-cell{background:#fffbeb!important;}
+table.xlt td input[type=number],table.xlt td input[type=text]{color:#1f2340;}
+table.xlt td input:focus{background:#fef9c3;border-radius:4px;}
 
-/* zebra */
-tr[style*="#fff"]{--row:#1e2237;}
-tr[style*="#f9fafb"],tr[style*="#f7fafd"]{--row:#22273d;}
+/* grade chips — คงสีเดิม สดใส */
+.gA{background:#dcfce7;color:#15803d;}
+.gB{background:#dbeafe;color:#1d4ed8;}
+.gC{background:#fef9c3;color:#a16207;}
+.gD{background:#ffedd5;color:#c2410c;}
+.gF{background:#fee2e2;color:#b91c1c;}
+.gX{background:#ede9fe;color:#6d28d9;}
 
-/* grade chips */
-.gA{background:rgba(34,197,94,.18);color:#4ade80;}
-.gB{background:rgba(108,92,231,.18);color:#a5b4fc;}
-.gC{background:rgba(251,191,36,.18);color:#fbbf24;}
-.gD{background:rgba(251,146,60,.18);color:#fb923c;}
-.gF{background:rgba(248,113,113,.18);color:#f87171;}
-.gX{background:rgba(167,139,250,.18);color:#c4b5fd;}
-
-/* attendance */
-.att-tab{background:#252b40;border-color:#353c5a;color:#7b87aa;}
+/* attendance tabs */
+.att-tab{background:#ffffff;border-color:#dde1f5;color:#7b87aa;}
 .att-tab.active{background:linear-gradient(135deg,#6c5ce7,#4facfe);border-color:#6c5ce7;color:#fff;}
-.att-m{background:rgba(34,197,94,.22);color:#4ade80;}
-.att-x{background:rgba(248,113,113,.22);color:#f87171;}
-.att-l{background:rgba(251,191,36,.22);color:#fbbf24;}
-.att-lv{background:rgba(108,92,231,.22);color:#a5b4fc;}
-.att-empty{background:rgba(255,255,255,.04);color:#353c5a;}
-.att-noday{background:#1e2237;color:#353c5a;cursor:default;}
+.att-m{background:#dcfce7;color:#15803d;}
+.att-x{background:#fee2e2;color:#b91c1c;}
+.att-l{background:#fef9c3;color:#a16207;}
+.att-lv{background:#dbeafe;color:#1d4ed8;}
+.att-empty{background:#f1f5f9;color:#cbd5e1;}
+.att-noday{background:#f8fafc;color:#e2e8f0;cursor:default;}
 
 /* rating buttons */
-.rating-btn{background:#252b40;border-color:#353c5a;color:#7b87aa;}
-.rating-btn.sel-0{background:rgba(248,113,113,.2);border-color:#f87171;color:#f87171;}
-.rating-btn.sel-1{background:rgba(251,191,36,.2);border-color:#fbbf24;color:#fbbf24;}
-.rating-btn.sel-2{background:rgba(34,197,94,.2);border-color:#4ade80;color:#4ade80;}
-.rating-btn.sel-3{background:rgba(108,92,231,.2);border-color:#6c5ce7;color:#a5b4fc;}
+.rating-btn{background:#ffffff;border-color:#dde1f5;color:#7b87aa;}
+.rating-btn.sel-0{background:#fee2e2;border-color:#f87171;color:#b91c1c;}
+.rating-btn.sel-1{background:#fef9c3;border-color:#fbbf24;color:#a16207;}
+.rating-btn.sel-2{background:#dcfce7;border-color:#4ade80;color:#15803d;}
+.rating-btn.sel-3{background:#dbeafe;border-color:#60a5fa;color:#1d4ed8;}
 
 /* individual report */
-.ind-header{background:#1e2237;border-top:3px solid #6c5ce7;color:#e4eaf6;}
-.info-cell{background:#252b40;}
+.ind-header{background:#f5f6ff;border-top:3px solid #6c5ce7;color:#1f2340;}
+.info-cell{background:#f5f6ff;}
 .info-cell strong{color:#7b87aa;}
-.info-cell span{color:#e4eaf6;}
-.bar-track{background:rgba(255,255,255,.08);}
+.info-cell span{color:#1f2340;}
+.bar-track{background:#e2e8f0;}
 
 /* modal / sheet */
-.modal-overlay{background:rgba(0,0,12,.65);}
-.modal-box{background:#1e2237;}
-.modal-head{border-bottom:1px solid #353c5a;}
-.modal-title2{color:#e4eaf6;}
+.modal-overlay{background:rgba(26,29,58,.4);}
+.modal-box{background:#ffffff;}
+.modal-head{border-bottom:1px solid #dde1f5;}
+.modal-title2{color:#1f2340;}
 .modal-close{color:#7b87aa;}
-.modal-sheet{background:#1e2237;}
-.modal-handle{background:rgba(255,255,255,.15);}
-.modal-title{color:#e4eaf6;}
-dialog.unit-dialog{background:#1e2237;box-shadow:0 -4px 30px rgba(0,0,0,.5);}
-dialog.unit-dialog::backdrop{background:rgba(0,0,12,.7);}
+.modal-sheet{background:#ffffff;}
+.modal-handle{background:#dde1f5;}
+.modal-title{color:#1f2340;}
+dialog.unit-dialog{background:#ffffff;box-shadow:0 -4px 24px rgba(108,92,231,.12);}
+dialog.unit-dialog::backdrop{background:rgba(26,29,58,.4);}
 
 /* form fields */
 .field-label{color:#7b87aa;}
-.field-input{background:#252b40;color:#e4eaf6;border:1.5px solid #353c5a;}
+.field-input{background:#f5f6ff;color:#1f2340;border:1.5px solid #dde1f5;}
 .field-input:focus{border-color:#6c5ce7;}
 
 /* toast / loading */
-.toast{background:#252b40;color:#e4eaf6;border:1px solid #353c5a;}
-#loading-overlay{background:rgba(10,12,28,.92);}
-.spinner{border-color:rgba(108,92,231,.2);border-top-color:#6c5ce7;}
+.toast{background:#ffffff;color:#1f2340;border:1px solid #dde1f5;box-shadow:0 4px 16px rgba(108,92,231,.12);}
+#loading-overlay{background:rgba(238,240,251,.92);}
+.spinner{border-color:rgba(108,92,231,.15);border-top-color:#6c5ce7;}
+#loading-overlay #loading-text{color:#1f2340;}
 
 /* sync */
-#sync-status{background:rgba(30,34,55,.95);color:#7b87aa;}
-#sync-dot{background:#4a5578;}
+#sync-status{background:rgba(255,255,255,.9);color:#7b87aa;}
+#sync-dot{background:#b0b8d0;}
 #sync-dot.ok{background:#22c55e;}
 #sync-dot.err{background:#f87171;}
 #sync-dot.syncing{background:#6c5ce7;}
 
 /* auth overlay */
 #auth-overlay{
-  background:linear-gradient(160deg,#16192b 0%,#1e2237 60%,#16192b 100%);
+  background:linear-gradient(160deg,#eef0fb 0%,#f5f6ff 60%,#eef0fb 100%);
 }
 #auth-overlay .auth-card{
-  background:#1e2237;border-radius:20px;
-  border:1px solid #353c5a;border-top:3px solid #6c5ce7;
-  box-shadow:0 8px 40px rgba(0,0,0,.5);
+  background:#ffffff;border-radius:20px;
+  border:1px solid #dde1f5;border-top:3px solid #6c5ce7;
+  box-shadow:0 8px 40px rgba(108,92,231,.12);
 }
-#auth-overlay .auth-title{color:#e4eaf6;}
+#auth-overlay .auth-title{color:#1f2340;}
 #auth-overlay .auth-sub{color:#7b87aa;}
-#auth-overlay .auth-divider{border-top:1px solid #353c5a;}
-#auth-overlay .auth-note{color:#4a5578;}
+#auth-overlay .auth-divider{border-top:1px solid #dde1f5;}
+#auth-overlay .auth-note{color:#b0b8d0;}
 
-/* launcher */
-#launcher{background:#16192b!important;}
-#launcher > div:first-child{background:#1e2237!important;border-bottom:1px solid #353c5a!important;}
-#launcher > div:first-child > div:nth-child(2){color:#e4eaf6!important;}
+/* launcher — ขาว/lavender เหมือนในภาพ */
+#launcher{background:#eef0fb!important;}
+#launcher > div:first-child{background:#ffffff!important;border-bottom:1px solid #dde1f5!important;}
+#launcher > div:first-child > div:nth-child(2){color:#1f2340!important;}
 #launcher > div:first-child > div:nth-child(3){color:#7b87aa!important;}
 </style>
 </head>
 <body>
-<div id="loading-overlay"><div class="spinner"></div><div style="color:#1f2937;font-size:13px" id="loading-text">กำลังโหลด...</div></div>
+<div id="loading-overlay"><div class="spinner"></div><div style="color:#6c5ce7;font-size:13px" id="loading-text">กำลังโหลด...</div></div>
 <div class="app-wrap">
 <div class="status-bar"></div>
 <div class="topbar">
@@ -3896,7 +3894,7 @@ async function afterSignIn(){
   const card = document.querySelector('#auth-overlay .auth-card');
   if(card) card.innerHTML =
     '<div style="font-size:48px;margin-bottom:16px">📚</div>'+
-    '<div style="font-size:16px;font-weight:800;color:#e4eaf6;margin-bottom:8px">'+gUser.name+'</div>'+
+    '<div style="font-size:16px;font-weight:800;color:#1f2340;margin-bottom:8px">'+gUser.name+'</div>'+
     '<div style="font-size:13px;color:#64748b;margin-bottom:24px">'+gUser.email+'</div>'+
     '<div style="display:flex;align-items:center;justify-content:center;gap:10px;color:#f97316;font-size:14px;font-weight:700">'+
     '<div style="width:20px;height:20px;border:3px solid #f3f4f6;border-top-color:#f97316;border-radius:50%;animation:spin 0.8s linear infinite"></div>'+
@@ -4266,14 +4264,14 @@ window.addEventListener('load', ()=>{
 <!-- ══ LAUNCHER OVERLAY ══ -->
 <div id="launcher" style="
   position:fixed;inset:0;z-index:9999;
-  background:#16192b;
+  background:#eef0fb;
   display:none;flex-direction:column;align-items:center;justify-content:flex-start;
   overflow-y:auto;padding:0 0 40px 0;
 ">
   <!-- header -->
-  <div style="width:100%;background:#1e2237;padding:18px 20px 14px;text-align:center;flex-shrink:0;border-bottom:1px solid #353c5a;">
+  <div style="width:100%;background:#ffffff;padding:18px 20px 14px;text-align:center;flex-shrink:0;border-bottom:1px solid #dde1f5;box-shadow:0 2px 10px rgba(108,92,231,.07);">
     <div style="font-size:28px;margin-bottom:6px">📚</div>
-    <div style="font-size:16px;font-weight:800;color:#e4eaf6">สมุดบันทึกคุณภาพผู้เรียน</div>
+    <div style="font-size:16px;font-weight:800;color:#1f2340">สมุดบันทึกคุณภาพผู้เรียน</div>
     <div style="font-size:11px;color:#7b87aa;margin-top:2px">ปพ.5 — เลือกรายวิชาที่ต้องการ</div>
   </div>
 
@@ -4284,12 +4282,12 @@ window.addEventListener('load', ()=>{
   <div style="width:100%;max-width:500px;padding:10px 14px 0;display:flex;gap:8px">
     <button onclick="launcherNew()" style="
       flex:1;padding:14px;border-radius:12px;border:2px solid #6c5ce7;
-      background:rgba(108,92,231,.15);color:#e4eaf6;font-family:inherit;font-size:14px;
+      background:rgba(108,92,231,.08);color:#6c5ce7;font-family:inherit;font-size:14px;
       font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;
     ">➕ เพิ่มรายวิชาใหม่</button>
     <button onclick="importData()" title="นำเข้าข้อมูลจากไฟล์ .json" style="
       padding:14px 16px;border-radius:12px;border:2px solid #6c5ce7;
-      background:rgba(108,92,231,.15);color:#e4eaf6;font-family:inherit;font-size:14px;
+      background:rgba(108,92,231,.08);color:#6c5ce7;font-family:inherit;font-size:14px;
       font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;
       white-space:nowrap;
     ">📥 นำเข้า</button>
@@ -4298,48 +4296,48 @@ window.addEventListener('load', ()=>{
 
   <!-- new slot form (ซ่อนไว้ก่อน) -->
   <div id="launcher-form" style="display:none;width:100%;max-width:500px;padding:12px 14px 0">
-    <div style="background:#252b40;border-radius:12px;border:1.5px solid #353c5a;padding:16px">
-      <div style="font-size:13px;font-weight:700;color:#e4eaf6;margin-bottom:12px"> รายวิชาใหม่</div>
+    <div style="background:#ffffff;border-radius:12px;border:1.5px solid #dde1f5;padding:16px;box-shadow:0 2px 12px rgba(108,92,231,.07);">
+      <div style="font-size:13px;font-weight:700;color:#1f2340;margin-bottom:12px"> รายวิชาใหม่</div>
       <div style="display:flex;flex-direction:column;gap:8px">
         <div>
           <div style="font-size:11px;font-weight:700;color:#7b87aa;margin-bottom:3px">ชั้นเรียน *</div>
           <input id="lf-grade" placeholder="เช่น ประถมศึกษาปีที่ 2" style="
-            width:100%;padding:10px 12px;border:1.5px solid #353c5a;border-radius:8px;
-            font-family:inherit;font-size:13px;box-sizing:border-box;background:#16192b;color:#e4eaf6;
+            width:100%;padding:10px 12px;border:1.5px solid #dde1f5;border-radius:8px;
+            font-family:inherit;font-size:13px;box-sizing:border-box;background:#f5f6ff;color:#1f2340;
           ">
         </div>
         <div>
           <div style="font-size:11px;font-weight:700;color:#7b87aa;margin-bottom:3px">รายวิชา *</div>
           <input id="lf-subject" placeholder="เช่น คณิตศาสตร์" style="
-            width:100%;padding:10px 12px;border:1.5px solid #353c5a;border-radius:8px;
-            font-family:inherit;font-size:13px;box-sizing:border-box;background:#16192b;color:#e4eaf6;
+            width:100%;padding:10px 12px;border:1.5px solid #dde1f5;border-radius:8px;
+            font-family:inherit;font-size:13px;box-sizing:border-box;background:#f5f6ff;color:#1f2340;
           ">
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
           <div>
             <div style="font-size:11px;font-weight:700;color:#7b87aa;margin-bottom:3px">รหัสวิชา</div>
             <input id="lf-subcode" placeholder="ค12101" style="
-              width:100%;padding:10px 12px;border:1.5px solid #cbd5e1;border-radius:8px;
-              font-family:inherit;font-size:13px;box-sizing:border-box;
+              width:100%;padding:10px 12px;border:1.5px solid #dde1f5;border-radius:8px;
+              font-family:inherit;font-size:13px;box-sizing:border-box;background:#f5f6ff;color:#1f2340;
             ">
           </div>
           <div>
             <div style="font-size:11px;font-weight:700;color:#7b87aa;margin-bottom:3px">ปีการศึกษา</div>
             <input id="lf-year" placeholder="2568" style="
-              width:100%;padding:10px 12px;border:1.5px solid #cbd5e1;border-radius:8px;
-              font-family:inherit;font-size:13px;box-sizing:border-box;
+              width:100%;padding:10px 12px;border:1.5px solid #dde1f5;border-radius:8px;
+              font-family:inherit;font-size:13px;box-sizing:border-box;background:#f5f6ff;color:#1f2340;
             ">
           </div>
         </div>
         <div style="display:flex;gap:8px;margin-top:4px">
           <button onclick="launcherCreate()" style="
             flex:1;padding:12px;border-radius:10px;border:none;
-            background:#f97316;color:#fff;font-family:inherit;font-size:13px;
+            background:linear-gradient(135deg,#6c5ce7,#4facfe);color:#fff;font-family:inherit;font-size:13px;
             font-weight:700;cursor:pointer;
           ">✅ สร้างรายวิชา</button>
           <button onclick="document.getElementById('launcher-form').style.display='none'" style="
-            padding:12px 16px;border-radius:10px;border:1.5px solid #cbd5e1;
-            background:#fff;color:#64748b;font-family:inherit;font-size:13px;
+            padding:12px 16px;border-radius:10px;border:1.5px solid #dde1f5;
+            background:#f5f6ff;color:#7b87aa;font-family:inherit;font-size:13px;
             font-weight:600;cursor:pointer;
           ">ยกเลิก</button>
         </div>
